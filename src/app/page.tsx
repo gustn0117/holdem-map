@@ -108,24 +108,6 @@ export default function Home() {
       </section>
 
       {/* Stats */}
-      <section className="max-w-5xl mx-auto px-4 mb-16 w-full">
-        <div className="bg-card rounded-2xl border border-white/[0.04] p-6 glow-border">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-0 md:divide-x md:divide-white/[0.04]">
-            {[
-              { value: "12", label: "등록 매장", color: "text-accent-light", sub: "수도권" },
-              { value: "3", label: "서비스 지역", color: "text-green", sub: "서울/경기/인천" },
-              { value: "6", label: "예정 대회", color: "text-gold", sub: "이번 주" },
-              { value: "3", label: "추천 매장", color: "text-accent", sub: "에디터 추천" },
-            ].map((stat) => (
-              <div key={stat.label} className="text-center px-4">
-                <p className={`text-3xl md:text-4xl font-bold ${stat.color}`}>{stat.value}</p>
-                <p className="text-surface/80 text-xs font-medium mt-1">{stat.label}</p>
-                <p className="text-muted/30 text-[10px] mt-0.5">{stat.sub}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
 
       {/* How it Works */}
       <section className="max-w-5xl mx-auto px-4 mb-16 w-full">
