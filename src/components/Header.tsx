@@ -18,26 +18,26 @@ export default function Header() {
   return (
     <>
       <header className="sticky top-0 z-50 bg-white border-b border-border-custom">
-        <div className="max-w-7xl mx-auto px-4 h-14 flex items-center gap-4">
-          <Link href="/" className="text-xl font-black text-accent tracking-tight shrink-0">홀덤맵</Link>
+        <div className="max-w-7xl mx-auto px-4 h-16 flex items-center gap-6">
+          <Link href="/" className="text-2xl font-black text-accent tracking-tight shrink-0">홀덤맵</Link>
 
-          {/* Search in header */}
-          <form onSubmit={handleSearch} className="flex-1 max-w-xl hidden md:block">
-            <div className="relative">
-              <svg className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          {/* Search in header - centered */}
+          <form onSubmit={handleSearch} className="flex-1 hidden md:flex justify-center">
+            <div className="relative w-full max-w-lg">
+              <svg className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
               <input
                 type="text" value={query} onChange={(e) => setQuery(e.target.value)}
                 placeholder="지역명, 매장명 검색"
-                className="w-full bg-gray-100 border border-transparent text-surface rounded-lg pl-10 pr-4 py-2 text-sm focus:outline-none focus:border-accent focus:bg-white focus:ring-1 focus:ring-accent/20 transition-all placeholder:text-muted"
+                className="w-full bg-gray-100 border border-transparent text-surface rounded-xl pl-12 pr-4 py-2.5 text-base focus:outline-none focus:border-accent focus:bg-white focus:ring-2 focus:ring-accent/20 transition-all placeholder:text-muted"
               />
             </div>
           </form>
 
-          <div className="flex items-center gap-2 ml-auto shrink-0">
+          <div className="flex items-center gap-3 ml-auto shrink-0">
             <Link href="/admin" className="text-muted hover:text-surface text-sm transition-colors hidden md:block">관리자</Link>
-            <Link href="/contact" className="bg-accent hover:bg-accent-hover text-white text-sm font-bold px-4 py-2 rounded-lg transition-all hidden md:block">
+            <Link href="/contact" className="bg-accent hover:bg-accent-hover text-white text-sm font-bold px-5 py-2.5 rounded-lg transition-all hidden md:block">
               매장 등록
             </Link>
             <button className="md:hidden text-surface p-2" onClick={() => setMenuOpen(!menuOpen)}>
