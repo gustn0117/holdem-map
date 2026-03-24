@@ -27,7 +27,7 @@ export default function Home() {
   return (
     <div className="flex flex-col min-h-screen pb-16 md:pb-0 bg-[#f5f5f5]">
       {/* ─── Main Banner Ad ─── */}
-      <div className="w-full bg-white border-b border-border-custom">
+      <div className="w-full ad-pattern border-b border-border-custom">
         <div className="max-w-7xl mx-auto px-4 h-24 md:h-28 flex items-center justify-center">
           <p className="text-muted text-base">메인 광고 예정</p>
         </div>
@@ -62,7 +62,7 @@ export default function Home() {
           </div>
           <div className="hidden lg:flex flex-col gap-3">
             {[1, 2, 3, 4, 5].map((n) => (
-              <div key={n} className="h-24 bg-white rounded-xl border border-border-custom flex items-center justify-center text-muted text-sm hover:border-accent/30 transition-all">
+              <div key={n} className="h-24 ad-pattern rounded-xl border border-border-custom flex items-center justify-center text-muted text-sm hover:border-accent/30 transition-all">
                 배너 광고 {n}
               </div>
             ))}
