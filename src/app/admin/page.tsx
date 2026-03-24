@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useStores, useEvents, useNotices } from "@/hooks/useData";
 import { Store } from "@/types";
 import * as api from "@/lib/api";
+import { geocodeAddress } from "@/lib/geocode";
 
 type Tab = "stores" | "events" | "notices";
 const ADMIN_PASSWORD = "1234";
@@ -50,15 +51,22 @@ export default function AdminPage() {
     setSaving(true);
     try {
       if (modal?.tab === "stores") {
+        const address = formData.address as string;
+        let lat = parseFloat(formData.lat as string) || 0;
+        let lng = parseFloat(formData.lng as string) || 0;
+        if (!lat || !lng) {
+          const coords = await geocodeAddress(address);
+          if (coords) { lat = coords.lat; lng = coords.lng; }
+          else { alert("주소로 좌표를 찾을 수 없습니다. 주소를 확인해주세요."); setSaving(false); return; }
+        }
         const payload = {
           name: formData.name as string,
-          address: formData.address as string,
+          address,
           phone: (formData.phone as string) || "",
           hours: (formData.hours as string) || "",
           description: (formData.description as string) || "",
           images: [] as string[],
-          lat: parseFloat(formData.lat as string) || 37.5,
-          lng: parseFloat(formData.lng as string) || 127.0,
+          lat, lng,
           region: formData.region as string,
           tags: (formData.tags as string).split(",").map((t: string) => t.trim()).filter(Boolean),
           is_recommended: formData.is_recommended === "true",
@@ -322,14 +330,12 @@ function AdminModal({ modal, stores, saving, onClose, onSave }: {
               <div><label className="text-muted/50 text-xs block mb-1.5">연락처</label><input className={inputClass} value={(form.phone as string) || ""} onChange={e => set("phone", e.target.value)} /></div>
               <div><label className="text-muted/50 text-xs block mb-1.5">영업시간</label><input className={inputClass} value={(form.hours as string) || ""} onChange={e => set("hours", e.target.value)} /></div>
             </div>
-            <div className="grid grid-cols-3 gap-3">
-              <div><label className="text-muted/50 text-xs block mb-1.5">지역 *</label>
-                <select className={inputClass} value={(form.region as string) || "서울"} onChange={e => set("region", e.target.value)}>
-                  <option value="서울">서울</option><option value="경기">경기</option><option value="인천">인천</option>
-                </select>
-              </div>
-              <div><label className="text-muted/50 text-xs block mb-1.5">위도</label><input className={inputClass} type="number" step="0.0001" value={(form.lat as string) || ""} onChange={e => set("lat", e.target.value)} /></div>
-              <div><label className="text-muted/50 text-xs block mb-1.5">경도</label><input className={inputClass} type="number" step="0.0001" value={(form.lng as string) || ""} onChange={e => set("lng", e.target.value)} /></div>
+            <div>
+              <label className="text-muted/50 text-xs block mb-1.5">지역 *</label>
+              <select className={inputClass} value={(form.region as string) || "서울"} onChange={e => set("region", e.target.value)}>
+                <option value="서울">서울</option><option value="경기">경기</option><option value="인천">인천</option>
+              </select>
+              <p className="text-muted text-[10px] mt-1.5">주소 입력 시 좌표가 자동 변환됩니다</p>
             </div>
             <div><label className="text-muted/50 text-xs block mb-1.5">태그 (쉼표 구분)</label><input className={inputClass} value={(form.tags as string) || ""} onChange={e => set("tags", e.target.value)} placeholder="토너먼트, 초보환영" /></div>
             <div><label className="text-muted/50 text-xs block mb-1.5">추천 매장</label>
