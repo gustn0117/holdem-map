@@ -7,6 +7,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { createJob } from "@/lib/api";
 import { allAreas } from "@/data/areas";
+import Select from "@/components/Select";
 
 export default function JobWritePage() {
   const router = useRouter();
@@ -73,10 +74,9 @@ export default function JobWritePage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div>
               <label className="text-sub text-sm font-semibold block mb-2">직종 *</label>
-              <select className={inputClass} value={form.role} onChange={e => set("role", e.target.value)}>
-                <option value="딜러">딜러</option>
-                <option value="서빙">서빙</option>
-              </select>
+              <Select value={form.role} onChange={v => set("role", v)} options={[
+                { value: "딜러", label: "딜러" }, { value: "서빙", label: "서빙" },
+              ]} />
             </div>
             <div>
               <label className="text-sub text-sm font-semibold block mb-2">닉네임 *</label>
@@ -138,10 +138,9 @@ export default function JobWritePage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
             <div>
               <label className="text-sub text-sm font-semibold block mb-2">연락 방법 *</label>
-              <select className={inputClass} value={form.contact_type} onChange={e => set("contact_type", e.target.value)}>
-                <option value="카카오톡">카카오톡</option>
-                <option value="텔레그램">텔레그램</option>
-              </select>
+              <Select value={form.contact_type} onChange={v => set("contact_type", v)} options={[
+                { value: "카카오톡", label: "카카오톡" }, { value: "텔레그램", label: "텔레그램" },
+              ]} />
             </div>
             <div className="md:col-span-2">
               <label className="text-sub text-sm font-semibold block mb-2">연락처 (ID) *</label>

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import Header from "@/components/Header";
+import Select from "@/components/Select";
 import Footer from "@/components/Footer";
 
 export default function ContactPage() {
@@ -62,9 +63,9 @@ export default function ContactPage() {
             </div>
             <div>
               <label className="text-sub text-sm font-semibold block mb-2">지역</label>
-              <select className={inputClass} value={form.region} onChange={e => set("region", e.target.value)}>
-                <option value="서울">서울</option><option value="경기">경기</option><option value="인천">인천</option><option value="기타">기타 지역</option>
-              </select>
+              <Select value={form.region} onChange={v => set("region", v)} options={[
+                { value: "서울", label: "서울" }, { value: "경기", label: "경기" }, { value: "인천", label: "인천" }, { value: "기타", label: "기타 지역" },
+              ]} />
             </div>
           </div>
           <div>

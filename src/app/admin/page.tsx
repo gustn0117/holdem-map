@@ -6,6 +6,7 @@ import { useStores, useEvents, useNotices } from "@/hooks/useData";
 import { Store } from "@/types";
 import * as api from "@/lib/api";
 import { geocodeAddress } from "@/lib/geocode";
+import Select from "@/components/Select";
 
 type Tab = "stores" | "events" | "notices";
 const ADMIN_PASSWORD = "1234";
@@ -345,15 +346,15 @@ function AdminModal({ modal, stores, saving, onClose, onSave }: {
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="text-sub text-sm font-medium block mb-2">지역 *</label>
-                <select className={inputClass} value={(form.region as string) || "서울"} onChange={e => set("region", e.target.value)}>
-                  <option value="서울">서울</option><option value="경기">경기</option><option value="인천">인천</option>
-                </select>
+                <Select value={(form.region as string) || "서울"} onChange={v => set("region", v)} options={[
+                  { value: "서울", label: "서울" }, { value: "경기", label: "경기" }, { value: "인천", label: "인천" },
+                ]} />
               </div>
               <div>
                 <label className="text-sub text-sm font-medium block mb-2">추천 매장</label>
-                <select className={inputClass} value={(form.is_recommended as string) || "false"} onChange={e => set("is_recommended", e.target.value)}>
-                  <option value="false">아니오</option><option value="true">예</option>
-                </select>
+                <Select value={(form.is_recommended as string) || "false"} onChange={v => set("is_recommended", v)} options={[
+                  { value: "false", label: "아니오" }, { value: "true", label: "예" },
+                ]} />
               </div>
             </div>
             <div>
@@ -375,10 +376,7 @@ function AdminModal({ modal, stores, saving, onClose, onSave }: {
             </div>
             <div>
               <label className="text-sub text-sm font-medium block mb-2">매장 선택 *</label>
-              <select className={inputClass} value={(form.store_id as string) || ""} onChange={e => set("store_id", e.target.value)}>
-                <option value="">매장을 선택하세요</option>
-                {stores.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
-              </select>
+              <Select value={(form.store_id as string) || ""} onChange={v => set("store_id", v)} placeholder="매장을 선택하세요" options={stores.map(s => ({ value: s.id, label: s.name }))} />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
