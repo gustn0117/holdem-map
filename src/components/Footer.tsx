@@ -3,7 +3,7 @@ import Link from "next/link";
 export default function Footer() {
   return (
     <footer className="bg-white border-t border-border-custom mt-auto">
-      <div className="max-w-7xl mx-auto px-4 py-12">
+      <div className="px-4 md:px-8 py-12">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-10">
           <div className="col-span-2 md:col-span-1">
             <Link href="/" className="text-xl font-black text-accent inline-block mb-4">홀덤맵</Link>

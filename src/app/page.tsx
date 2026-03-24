@@ -27,7 +27,7 @@ export default function Home() {
     <div className="flex flex-col min-h-screen pb-16 md:pb-0 bg-[#f5f5f5]">
       {/* ─── Main Banner Ad ─── */}
       <div className="w-full ad-pattern border-b border-border-custom">
-        <div className="max-w-7xl mx-auto px-4 h-24 md:h-28 flex items-center justify-center">
+        <div className="px-4 md:px-6 h-24 md:h-28 flex items-center justify-center">
           <p className="text-muted text-base">메인 광고 예정</p>
         </div>
       </div>
@@ -35,7 +35,7 @@ export default function Home() {
       <Header />
 
       {/* ─── Map + Side Banners ─── */}
-      <section className="max-w-7xl mx-auto px-4 py-6 w-full">
+      <section className="px-4 md:px-6 py-6 w-full">
         <div className="flex items-center justify-between mb-4">
           <div className="flex gap-1.5">
             {regions.map((r) => (
@@ -69,7 +69,7 @@ export default function Home() {
       </section>
 
       {/* ─── Store List ─── */}
-      <section className="max-w-7xl mx-auto px-4 pb-10 w-full">
+      <section className="px-4 md:px-6 pb-10 w-full">
         <div className="flex items-center justify-between mb-5">
           <h2 className="text-xl font-bold text-surface">매장 목록</h2>
           <Link href="/map" className="text-accent text-sm font-semibold hover:underline">전체보기 →</Link>
@@ -84,10 +84,10 @@ export default function Home() {
         </div>
       </section>
 
-      <div className="max-w-7xl mx-auto px-4"><div className="h-px bg-border-custom" /></div>
+      <div className="px-4 md:px-6"><div className="h-px bg-border-custom" /></div>
 
       {/* ─── 3 Column ─── */}
-      <section className="max-w-7xl mx-auto px-4 py-10 w-full">
+      <section className="px-4 md:px-6 py-10 w-full">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
 
           {/* Recommended */}
@@ -180,10 +180,10 @@ export default function Home() {
         </div>
       </section>
 
-      <div className="max-w-7xl mx-auto px-4"><div className="h-px bg-border-custom" /></div>
+      <div className="px-4 md:px-6"><div className="h-px bg-border-custom" /></div>
 
       {/* ─── Regions ─── */}
-      <section className="max-w-7xl mx-auto px-4 py-10 w-full">
+      <section className="px-4 md:px-6 py-10 w-full">
         <h2 className="text-xl font-bold text-surface mb-6">지역별 매장</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {[
