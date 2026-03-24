@@ -19,10 +19,10 @@ export default function Header() {
       <header className="sticky top-0 z-50 glass border-b border-white/5">
         <div className="max-w-7xl mx-auto px-4 h-14 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2.5">
-            <div className="w-8 h-8 gold-gradient rounded-lg flex items-center justify-center shadow-lg shadow-accent/20">
-              <span className="text-dark font-black text-xs">H</span>
+            <div className="w-8 h-8 gold-shine rounded-lg flex items-center justify-center shadow-lg shadow-accent/30">
+              <span className="text-dark font-black text-xs drop-shadow-sm">H</span>
             </div>
-            <span className="text-base font-bold text-white">홀덤맵</span>
+            <span className="text-base font-bold gold-text-shine">홀덤맵</span>
           </Link>
 
           <nav className="hidden md:flex items-center gap-1 bg-white/5 rounded-full p-1">
@@ -30,8 +30,8 @@ export default function Header() {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`px-5 py-1.5 rounded-full text-[13px] font-medium transition-all ${
-                  pathname === item.href ? "gold-gradient text-dark" : "text-sub hover:text-white"
+                className={`px-5 py-1.5 rounded-full text-[13px] font-semibold transition-all ${
+                  pathname === item.href ? "gold-btn text-dark shadow-md shadow-accent/20" : "text-sub hover:text-white"
                 }`}
               >
                 {item.label}
@@ -41,7 +41,7 @@ export default function Header() {
 
           <div className="hidden md:flex items-center gap-3">
             <Link href="/admin" className="text-muted hover:text-white text-[13px] transition-colors">관리자</Link>
-            <button className="gold-gradient text-dark text-[13px] font-bold px-5 py-2 rounded-full shadow-lg shadow-accent/25 hover:shadow-accent/40 transition-all">
+            <button className="gold-btn text-dark text-[13px] font-bold px-5 py-2 rounded-full shadow-lg shadow-accent/30 hover:shadow-accent/50 transition-all">
               매장 등록
             </button>
           </div>
@@ -60,14 +60,7 @@ export default function Header() {
         {menuOpen && (
           <nav className="md:hidden glass border-t border-white/5 px-4 py-3 space-y-1">
             {navItems.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`block px-4 py-3 rounded-xl text-sm font-medium ${
-                  pathname === item.href ? "text-accent bg-accent/10" : "text-muted"
-                }`}
-                onClick={() => setMenuOpen(false)}
-              >
+              <Link key={item.href} href={item.href} className={`block px-4 py-3 rounded-xl text-sm font-medium ${pathname === item.href ? "text-accent bg-accent/10" : "text-muted"}`} onClick={() => setMenuOpen(false)}>
                 {item.label}
               </Link>
             ))}
@@ -75,7 +68,6 @@ export default function Header() {
         )}
       </header>
 
-      {/* Mobile Bottom Nav */}
       <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 glass border-t border-white/5">
         <div className="flex items-center justify-around py-2 pb-[calc(0.5rem+env(safe-area-inset-bottom))]">
           {[
