@@ -78,10 +78,11 @@ export default function MapView({ stores, onStoreClick, selectedStore }: MapView
       const marker = L.marker([store.lat, store.lng], { icon }).addTo(map);
 
       marker.bindPopup(
-        `<div style="font-family:-apple-system,sans-serif;min-width:170px;padding:2px 0">
-          <div style="font-weight:700;font-size:13px;color:#e8e8f0;margin-bottom:4px">${store.name}${store.is_recommended ? ' <span style="background:rgba(240,192,64,0.15);color:#f0c040;font-size:9px;padding:2px 6px;border-radius:4px;font-weight:700;margin-left:4px">추천</span>' : ''}</div>
-          <div style="font-size:11px;color:#5c5c7a;margin-bottom:2px">${store.hours}</div>
-          <div style="font-size:11px;color:#5c5c7a55">${store.address}</div>
+        `<div style="font-family:-apple-system,sans-serif;min-width:180px;padding:4px 0">
+          <div style="font-weight:700;font-size:14px;color:#ffffff;margin-bottom:6px">${store.name}${store.is_recommended ? ' <span style="background:rgba(201,164,74,0.2);color:#e8c84a;font-size:9px;padding:2px 6px;border-radius:4px;font-weight:700;margin-left:4px">추천</span>' : ''}</div>
+          <div style="font-size:12px;color:#cdcde0;margin-bottom:3px">영업시간: ${store.hours}</div>
+          <div style="font-size:12px;color:#9d9db5">${store.address}</div>
+          <div style="font-size:11px;color:#9d9db5;margin-top:4px">${store.phone}</div>
         </div>`,
         {
           className: "dark-popup",
@@ -114,17 +115,21 @@ export default function MapView({ stores, onStoreClick, selectedStore }: MapView
     <div className="relative w-full h-full rounded-2xl overflow-hidden border border-white/5">
       <style>{`
         .dark-popup .leaflet-popup-content-wrapper {
-          background: rgba(17,17,37,0.95);
-          backdrop-filter: blur(12px);
-          border: 1px solid rgba(255,255,255,0.08);
-          border-radius: 12px;
-          box-shadow: 0 8px 32px rgba(0,0,0,0.4);
-          color: #e8e8f0;
+          background: rgba(22,22,30,0.97);
+          backdrop-filter: blur(16px);
+          border: 1px solid rgba(201,164,74,0.2);
+          border-radius: 14px;
+          box-shadow: 0 8px 32px rgba(0,0,0,0.5), 0 0 20px rgba(201,164,74,0.08);
+          color: #ffffff;
+          padding: 4px;
         }
         .dark-popup .leaflet-popup-tip {
-          background: rgba(17,17,37,0.95);
-          border-right: 1px solid rgba(255,255,255,0.08);
-          border-bottom: 1px solid rgba(255,255,255,0.08);
+          background: rgba(22,22,30,0.97);
+          border-right: 1px solid rgba(201,164,74,0.2);
+          border-bottom: 1px solid rgba(201,164,74,0.2);
+        }
+        .dark-popup .leaflet-popup-content {
+          margin: 10px 14px;
         }
         .leaflet-control-zoom a {
           background: rgba(22,22,32,0.9) !important;
