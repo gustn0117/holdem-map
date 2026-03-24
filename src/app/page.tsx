@@ -60,9 +60,9 @@ export default function Home() {
           </div>
 
           {/* Side Banners */}
-          <div className="hidden lg:flex flex-col gap-4 lg:h-140">
-            {[1, 2, 3].map((n) => (
-              <div key={n} className="flex-1 bg-card rounded-2xl border border-border-custom flex items-center justify-center text-muted text-sm relative overflow-hidden group hover:border-accent/20 transition-all">
+          <div className="hidden lg:flex flex-col gap-4">
+            {[1, 2, 3, 4, 5].map((n) => (
+              <div key={n} className="h-24 bg-card rounded-2xl border border-border-custom flex items-center justify-center text-muted text-sm relative overflow-hidden group hover:border-accent/20 transition-all">
                 <div className="absolute inset-0 felt-gradient opacity-0 group-hover:opacity-5 transition-opacity" />
                 <span className="relative">배너 광고 {n}</span>
               </div>
