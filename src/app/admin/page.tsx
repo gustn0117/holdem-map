@@ -9,7 +9,7 @@ import { geocodeAddress } from "@/lib/geocode";
 
 type Tab = "stores" | "events" | "notices";
 const ADMIN_PASSWORD = "1234";
-const inputClass = "w-full bg-white/[0.04] border border-white/[0.06] rounded-xl px-4 py-2.5 text-sm text-surface focus:outline-none focus:border-accent/40 transition-colors placeholder:text-muted/30";
+const inputClass = "w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-base text-white focus:outline-none focus:border-accent/50 focus:ring-2 focus:ring-accent/10 transition-all placeholder:text-muted";
 
 export default function AdminPage() {
   const [authed, setAuthed] = useState(false);
@@ -109,19 +109,19 @@ export default function AdminPage() {
   if (!authed) {
     return (
       <div className="min-h-screen bg-dark flex items-center justify-center p-4">
-        <div className="w-full max-w-sm">
-          <div className="text-center mb-8">
-            <div className="w-12 h-12 bg-linear-to-br from-accent to-accent-light rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-accent/20">
-              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div className="w-full max-w-md">
+          <div className="text-center mb-10">
+            <div className="w-16 h-16 gold-shine rounded-2xl flex items-center justify-center mx-auto mb-5 shadow-lg shadow-accent/25">
+              <svg className="w-8 h-8 text-dark" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
               </svg>
             </div>
-            <h1 className="text-xl font-bold text-white mb-1">관리자 로그인</h1>
-            <p className="text-muted/40 text-xs">홀덤맵 관리자 페이지에 접속합니다</p>
+            <h1 className="text-2xl font-bold text-white mb-2">관리자 로그인</h1>
+            <p className="text-muted text-base">홀덤맵 관리자 페이지에 접속합니다</p>
           </div>
 
-          <form onSubmit={handleLogin} className="bg-card rounded-2xl p-6 border border-white/[0.04] glow-border">
-            <label className="text-muted/50 text-xs block mb-2">비밀번호</label>
+          <form onSubmit={handleLogin} className="bg-card rounded-3xl p-8 border border-border-custom">
+            <label className="text-sub text-sm font-medium block mb-2">비밀번호</label>
             <input
               type="password"
               value={pw}
@@ -130,17 +130,17 @@ export default function AdminPage() {
               className={`${inputClass} ${pwError ? "border-red/50" : ""}`}
               autoFocus
             />
-            {pwError && <p className="text-red text-xs mt-2">비밀번호가 올바르지 않습니다.</p>}
+            {pwError && <p className="text-red text-sm mt-3">비밀번호가 올바르지 않습니다.</p>}
             <button
               type="submit"
-              className="w-full bg-linear-to-r from-accent to-accent-light text-white py-2.5 rounded-xl text-sm font-semibold shadow-lg shadow-accent/20 mt-4 hover:shadow-accent/30 transition-all"
+              className="w-full gold-btn text-dark py-3.5 rounded-xl text-base font-bold shadow-lg shadow-accent/25 mt-6 hover:shadow-accent/40 transition-all"
             >
               로그인
             </button>
           </form>
 
-          <div className="text-center mt-6">
-            <Link href="/" className="text-muted/30 hover:text-accent text-xs transition-colors">← 홈으로 돌아가기</Link>
+          <div className="text-center mt-8">
+            <Link href="/" className="text-muted hover:text-accent text-sm transition-colors">← 홈으로 돌아가기</Link>
           </div>
         </div>
       </div>
@@ -151,20 +151,15 @@ export default function AdminPage() {
   return (
     <div className="min-h-screen bg-dark">
       {/* Admin Header */}
-      <header className="sticky top-0 z-50 glass border-b border-white/[0.04]">
-        <div className="max-w-7xl mx-auto px-4 h-14 flex items-center justify-between">
+      <header className="sticky top-0 z-50 glass border-b border-white/5">
+        <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 bg-linear-to-br from-accent to-accent-light rounded-xl flex items-center justify-center">
-              <span className="text-white font-black text-xs">H</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="text-base font-bold text-white">홀덤맵</span>
-              <span className="text-[10px] text-white/40 bg-white/[0.06] px-2 py-0.5 rounded font-medium">ADMIN</span>
-            </div>
+            <span className="text-xl font-extrabold gold-text-shine">홀덤맵</span>
+            <span className="text-xs text-muted bg-white/5 px-2.5 py-1 rounded-lg font-semibold">ADMIN</span>
           </div>
-          <div className="flex items-center gap-3">
-            <Link href="/" className="text-muted/40 hover:text-surface text-sm transition-colors">사이트 보기</Link>
-            <button onClick={() => setAuthed(false)} className="text-muted/40 hover:text-red text-sm transition-colors">로그아웃</button>
+          <div className="flex items-center gap-4">
+            <Link href="/" className="text-muted hover:text-white text-sm transition-colors">사이트 보기</Link>
+            <button onClick={() => setAuthed(false)} className="text-muted hover:text-red text-sm transition-colors">로그아웃</button>
           </div>
         </div>
       </header>
@@ -207,26 +202,26 @@ export default function AdminPage() {
               <table className="w-full">
                 <thead>
                   <tr className="border-b border-white/[0.04]">
-                    <th className="text-left text-muted/40 text-xs font-medium px-5 py-3">매장명</th>
-                    <th className="text-left text-muted/40 text-xs font-medium px-5 py-3 hidden md:table-cell">주소</th>
-                    <th className="text-left text-muted/40 text-xs font-medium px-5 py-3">지역</th>
-                    <th className="text-left text-muted/40 text-xs font-medium px-5 py-3 hidden md:table-cell">영업시간</th>
-                    <th className="text-left text-muted/40 text-xs font-medium px-5 py-3">추천</th>
-                    <th className="text-right text-muted/40 text-xs font-medium px-5 py-3">관리</th>
+                    <th className="text-left text-muted text-sm font-medium px-5 py-4">매장명</th>
+                    <th className="text-left text-muted text-sm font-medium px-5 py-4 hidden md:table-cell">주소</th>
+                    <th className="text-left text-muted text-sm font-medium px-5 py-4">지역</th>
+                    <th className="text-left text-muted text-sm font-medium px-5 py-4 hidden md:table-cell">영업시간</th>
+                    <th className="text-left text-muted text-sm font-medium px-5 py-4">추천</th>
+                    <th className="text-right text-muted text-sm font-medium px-5 py-4">관리</th>
                   </tr>
                 </thead>
                 <tbody>
                   {stores.map((store) => (
                     <tr key={store.id} className="border-b border-white/[0.02] hover:bg-white/[0.02] transition-colors">
-                      <td className="px-5 py-3"><p className="text-surface text-sm font-medium">{store.name}</p></td>
-                      <td className="px-5 py-3 hidden md:table-cell"><p className="text-muted/50 text-sm truncate max-w-48">{store.address}</p></td>
+                      <td className="px-5 py-3"><p className="text-white text-base font-semibold">{store.name}</p></td>
+                      <td className="px-5 py-3 hidden md:table-cell"><p className="text-muted text-sm truncate max-w-48">{store.address}</p></td>
                       <td className="px-5 py-3"><span className="bg-accent/10 text-accent-light text-xs px-2 py-0.5 rounded">{store.region}</span></td>
                       <td className="px-5 py-3 hidden md:table-cell"><p className="text-muted/50 text-sm">{store.hours}</p></td>
                       <td className="px-5 py-3">{store.is_recommended ? <span className="text-gold">★</span> : <span className="text-muted/20">-</span>}</td>
                       <td className="px-5 py-3 text-right">
                         <div className="flex items-center justify-end gap-3">
-                          <button onClick={() => setModal({ type: "edit", tab: "stores", data: { ...store, tags: store.tags.join(", "), is_recommended: store.is_recommended ? "true" : "false" } })} className="text-muted/40 hover:text-accent text-xs transition-colors">수정</button>
-                          <button onClick={() => handleDelete("stores", store.id)} className="text-muted/40 hover:text-red text-xs transition-colors">삭제</button>
+                          <button onClick={() => setModal({ type: "edit", tab: "stores", data: { ...store, tags: store.tags.join(", "), is_recommended: store.is_recommended ? "true" : "false" } })} className="text-muted hover:text-accent text-sm transition-colors">수정</button>
+                          <button onClick={() => handleDelete("stores", store.id)} className="text-muted hover:text-red text-sm transition-colors">삭제</button>
                         </div>
                       </td>
                     </tr>
@@ -244,24 +239,24 @@ export default function AdminPage() {
               <table className="w-full">
                 <thead>
                   <tr className="border-b border-white/[0.04]">
-                    <th className="text-left text-muted/40 text-xs font-medium px-5 py-3">제목</th>
-                    <th className="text-left text-muted/40 text-xs font-medium px-5 py-3">매장</th>
-                    <th className="text-left text-muted/40 text-xs font-medium px-5 py-3 hidden md:table-cell">날짜</th>
-                    <th className="text-left text-muted/40 text-xs font-medium px-5 py-3 hidden md:table-cell">상금</th>
-                    <th className="text-right text-muted/40 text-xs font-medium px-5 py-3">관리</th>
+                    <th className="text-left text-muted text-sm font-medium px-5 py-4">제목</th>
+                    <th className="text-left text-muted text-sm font-medium px-5 py-4">매장</th>
+                    <th className="text-left text-muted text-sm font-medium px-5 py-4 hidden md:table-cell">날짜</th>
+                    <th className="text-left text-muted text-sm font-medium px-5 py-4 hidden md:table-cell">상금</th>
+                    <th className="text-right text-muted text-sm font-medium px-5 py-4">관리</th>
                   </tr>
                 </thead>
                 <tbody>
                   {events.map((event) => (
                     <tr key={event.id} className="border-b border-white/[0.02] hover:bg-white/[0.02] transition-colors">
-                      <td className="px-5 py-3"><p className="text-surface text-sm font-medium">{event.title}</p></td>
+                      <td className="px-5 py-3"><p className="text-white text-base font-semibold">{event.title}</p></td>
                       <td className="px-5 py-3"><p className="text-muted/50 text-sm">{event.store_name}</p></td>
                       <td className="px-5 py-3 hidden md:table-cell"><p className="text-muted/50 text-sm">{event.date} {event.time}</p></td>
                       <td className="px-5 py-3 hidden md:table-cell"><span className="text-gold text-sm font-medium">{event.prize || "-"}</span></td>
                       <td className="px-5 py-3 text-right">
                         <div className="flex items-center justify-end gap-3">
-                          <button onClick={() => setModal({ type: "edit", tab: "events", data: event as unknown as Record<string, unknown> })} className="text-muted/40 hover:text-accent text-xs transition-colors">수정</button>
-                          <button onClick={() => handleDelete("events", event.id)} className="text-muted/40 hover:text-red text-xs transition-colors">삭제</button>
+                          <button onClick={() => setModal({ type: "edit", tab: "events", data: event as unknown as Record<string, unknown> })} className="text-muted hover:text-accent text-sm transition-colors">수정</button>
+                          <button onClick={() => handleDelete("events", event.id)} className="text-muted hover:text-red text-sm transition-colors">삭제</button>
                         </div>
                       </td>
                     </tr>
@@ -278,13 +273,13 @@ export default function AdminPage() {
             {notices.map((notice) => (
               <div key={notice.id} className="bg-card rounded-2xl p-5 border border-white/[0.04] flex items-start justify-between">
                 <div>
-                  <h3 className="text-surface font-medium text-sm">{notice.title}</h3>
-                  <p className="text-muted/40 text-xs mt-1">{notice.content}</p>
-                  <p className="text-muted/20 text-[10px] mt-2">{notice.date}</p>
+                  <h3 className="text-white font-semibold text-base">{notice.title}</h3>
+                  <p className="text-muted text-sm mt-1.5">{notice.content}</p>
+                  <p className="text-muted text-xs mt-2">{notice.date}</p>
                 </div>
                 <div className="flex items-center gap-3 shrink-0 ml-4">
-                  <button onClick={() => setModal({ type: "edit", tab: "notices", data: notice as unknown as Record<string, unknown> })} className="text-muted/40 hover:text-accent text-xs transition-colors">수정</button>
-                  <button onClick={() => handleDelete("notices", notice.id)} className="text-muted/40 hover:text-red text-xs transition-colors">삭제</button>
+                  <button onClick={() => setModal({ type: "edit", tab: "notices", data: notice as unknown as Record<string, unknown> })} className="text-muted hover:text-accent text-sm transition-colors">수정</button>
+                  <button onClick={() => handleDelete("notices", notice.id)} className="text-muted hover:text-red text-sm transition-colors">삭제</button>
                 </div>
               </div>
             ))}
@@ -314,68 +309,114 @@ function AdminModal({ modal, stores, saving, onClose, onSave }: {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative bg-card rounded-2xl p-6 border border-white/[0.06] w-full max-w-lg max-h-[80vh] overflow-y-auto glow-border">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-white font-bold text-lg">{modal.type === "create" ? "새로 등록" : "수정"}</h2>
-          <button onClick={onClose} className="text-muted/40 hover:text-surface transition-colors">
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+      <div className="relative bg-card rounded-3xl p-8 border border-border-custom w-full max-w-xl max-h-[85vh] overflow-y-auto">
+        <div className="flex items-center justify-between mb-8">
+          <h2 className="text-white font-bold text-2xl">{modal.type === "create" ? "새로 등록" : "수정"}</h2>
+          <button onClick={onClose} className="text-muted hover:text-white transition-colors p-1">
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
           </button>
         </div>
 
         {modal.tab === "stores" && (
-          <div className="space-y-4">
-            <div><label className="text-muted/50 text-xs block mb-1.5">매장명 *</label><input className={inputClass} value={(form.name as string) || ""} onChange={e => set("name", e.target.value)} placeholder="매장명" /></div>
-            <div><label className="text-muted/50 text-xs block mb-1.5">주소 *</label><input className={inputClass} value={(form.address as string) || ""} onChange={e => set("address", e.target.value)} placeholder="주소" /></div>
-            <div className="grid grid-cols-2 gap-3">
-              <div><label className="text-muted/50 text-xs block mb-1.5">연락처</label><input className={inputClass} value={(form.phone as string) || ""} onChange={e => set("phone", e.target.value)} /></div>
-              <div><label className="text-muted/50 text-xs block mb-1.5">영업시간</label><input className={inputClass} value={(form.hours as string) || ""} onChange={e => set("hours", e.target.value)} /></div>
+          <div className="space-y-5">
+            <div>
+              <label className="text-sub text-sm font-medium block mb-2">매장명 *</label>
+              <input className={inputClass} value={(form.name as string) || ""} onChange={e => set("name", e.target.value)} placeholder="예: 로얄홀덤펍 강남점" />
             </div>
             <div>
-              <label className="text-muted/50 text-xs block mb-1.5">지역 *</label>
-              <select className={inputClass} value={(form.region as string) || "서울"} onChange={e => set("region", e.target.value)}>
-                <option value="서울">서울</option><option value="경기">경기</option><option value="인천">인천</option>
-              </select>
-              <p className="text-muted text-[10px] mt-1.5">주소 입력 시 좌표가 자동 변환됩니다</p>
+              <label className="text-sub text-sm font-medium block mb-2">주소 (도로명) *</label>
+              <input className={inputClass} value={(form.address as string) || ""} onChange={e => set("address", e.target.value)} placeholder="예: 서울 강남구 테헤란로 123" />
+              <p className="text-muted text-xs mt-2">도로명 주소를 입력하면 지도 좌표가 자동으로 변환됩니다</p>
             </div>
-            <div><label className="text-muted/50 text-xs block mb-1.5">태그 (쉼표 구분)</label><input className={inputClass} value={(form.tags as string) || ""} onChange={e => set("tags", e.target.value)} placeholder="토너먼트, 초보환영" /></div>
-            <div><label className="text-muted/50 text-xs block mb-1.5">추천 매장</label>
-              <select className={inputClass} value={(form.is_recommended as string) || "false"} onChange={e => set("is_recommended", e.target.value)}>
-                <option value="false">아니오</option><option value="true">예</option>
-              </select>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="text-sub text-sm font-medium block mb-2">연락처</label>
+                <input className={inputClass} value={(form.phone as string) || ""} onChange={e => set("phone", e.target.value)} placeholder="02-0000-0000" />
+              </div>
+              <div>
+                <label className="text-sub text-sm font-medium block mb-2">영업시간</label>
+                <input className={inputClass} value={(form.hours as string) || ""} onChange={e => set("hours", e.target.value)} placeholder="14:00 ~ 04:00" />
+              </div>
             </div>
-            <div><label className="text-muted/50 text-xs block mb-1.5">소개</label><textarea className={inputClass + " resize-none"} rows={3} value={(form.description as string) || ""} onChange={e => set("description", e.target.value)} /></div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="text-sub text-sm font-medium block mb-2">지역 *</label>
+                <select className={inputClass} value={(form.region as string) || "서울"} onChange={e => set("region", e.target.value)}>
+                  <option value="서울">서울</option><option value="경기">경기</option><option value="인천">인천</option>
+                </select>
+              </div>
+              <div>
+                <label className="text-sub text-sm font-medium block mb-2">추천 매장</label>
+                <select className={inputClass} value={(form.is_recommended as string) || "false"} onChange={e => set("is_recommended", e.target.value)}>
+                  <option value="false">아니오</option><option value="true">예</option>
+                </select>
+              </div>
+            </div>
+            <div>
+              <label className="text-sub text-sm font-medium block mb-2">태그 (쉼표로 구분)</label>
+              <input className={inputClass} value={(form.tags as string) || ""} onChange={e => set("tags", e.target.value)} placeholder="토너먼트, 초보환영, 주차가능" />
+            </div>
+            <div>
+              <label className="text-sub text-sm font-medium block mb-2">매장 소개</label>
+              <textarea className={inputClass + " resize-none"} rows={4} value={(form.description as string) || ""} onChange={e => set("description", e.target.value)} placeholder="매장에 대한 소개를 입력하세요" />
+            </div>
           </div>
         )}
 
         {modal.tab === "events" && (
-          <div className="space-y-4">
-            <div><label className="text-muted/50 text-xs block mb-1.5">제목 *</label><input className={inputClass} value={(form.title as string) || ""} onChange={e => set("title", e.target.value)} /></div>
-            <div><label className="text-muted/50 text-xs block mb-1.5">매장 *</label>
+          <div className="space-y-5">
+            <div>
+              <label className="text-sub text-sm font-medium block mb-2">이벤트 제목 *</label>
+              <input className={inputClass} value={(form.title as string) || ""} onChange={e => set("title", e.target.value)} placeholder="예: 주말 GTD 토너먼트" />
+            </div>
+            <div>
+              <label className="text-sub text-sm font-medium block mb-2">매장 선택 *</label>
               <select className={inputClass} value={(form.store_id as string) || ""} onChange={e => set("store_id", e.target.value)}>
-                <option value="">선택</option>
+                <option value="">매장을 선택하세요</option>
                 {stores.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
               </select>
             </div>
-            <div className="grid grid-cols-2 gap-3">
-              <div><label className="text-muted/50 text-xs block mb-1.5">날짜 *</label><input className={inputClass} type="date" value={(form.date as string) || ""} onChange={e => set("date", e.target.value)} /></div>
-              <div><label className="text-muted/50 text-xs block mb-1.5">시간 *</label><input className={inputClass} type="time" value={(form.time as string) || ""} onChange={e => set("time", e.target.value)} /></div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="text-sub text-sm font-medium block mb-2">날짜 *</label>
+                <input className={inputClass} type="date" value={(form.date as string) || ""} onChange={e => set("date", e.target.value)} />
+              </div>
+              <div>
+                <label className="text-sub text-sm font-medium block mb-2">시간 *</label>
+                <input className={inputClass} type="time" value={(form.time as string) || ""} onChange={e => set("time", e.target.value)} />
+              </div>
             </div>
-            <div><label className="text-muted/50 text-xs block mb-1.5">상금</label><input className={inputClass} value={(form.prize as string) || ""} onChange={e => set("prize", e.target.value)} /></div>
-            <div><label className="text-muted/50 text-xs block mb-1.5">설명</label><textarea className={inputClass + " resize-none"} rows={3} value={(form.description as string) || ""} onChange={e => set("description", e.target.value)} /></div>
+            <div>
+              <label className="text-sub text-sm font-medium block mb-2">상금</label>
+              <input className={inputClass} value={(form.prize as string) || ""} onChange={e => set("prize", e.target.value)} placeholder="예: GTD 300만원" />
+            </div>
+            <div>
+              <label className="text-sub text-sm font-medium block mb-2">설명</label>
+              <textarea className={inputClass + " resize-none"} rows={4} value={(form.description as string) || ""} onChange={e => set("description", e.target.value)} placeholder="이벤트에 대한 설명을 입력하세요" />
+            </div>
           </div>
         )}
 
         {modal.tab === "notices" && (
-          <div className="space-y-4">
-            <div><label className="text-muted/50 text-xs block mb-1.5">제목 *</label><input className={inputClass} value={(form.title as string) || ""} onChange={e => set("title", e.target.value)} /></div>
-            <div><label className="text-muted/50 text-xs block mb-1.5">날짜</label><input className={inputClass} type="date" value={(form.date as string) || new Date().toISOString().slice(0, 10)} onChange={e => set("date", e.target.value)} /></div>
-            <div><label className="text-muted/50 text-xs block mb-1.5">내용 *</label><textarea className={inputClass + " resize-none"} rows={5} value={(form.content as string) || ""} onChange={e => set("content", e.target.value)} /></div>
+          <div className="space-y-5">
+            <div>
+              <label className="text-sub text-sm font-medium block mb-2">제목 *</label>
+              <input className={inputClass} value={(form.title as string) || ""} onChange={e => set("title", e.target.value)} placeholder="공지사항 제목을 입력하세요" />
+            </div>
+            <div>
+              <label className="text-sub text-sm font-medium block mb-2">날짜</label>
+              <input className={inputClass} type="date" value={(form.date as string) || new Date().toISOString().slice(0, 10)} onChange={e => set("date", e.target.value)} />
+            </div>
+            <div>
+              <label className="text-sub text-sm font-medium block mb-2">내용 *</label>
+              <textarea className={inputClass + " resize-none"} rows={6} value={(form.content as string) || ""} onChange={e => set("content", e.target.value)} placeholder="공지사항 내용을 입력하세요" />
+            </div>
           </div>
         )}
 
-        <div className="flex gap-3 mt-6">
-          <button onClick={onClose} className="flex-1 bg-white/[0.04] border border-white/[0.06] text-muted hover:text-surface px-4 py-2.5 rounded-xl text-sm font-medium transition-colors">취소</button>
-          <button onClick={() => onSave(form)} disabled={saving} className="flex-1 bg-linear-to-r from-accent to-accent-light text-white px-4 py-2.5 rounded-xl text-sm font-semibold shadow-lg shadow-accent/20 disabled:opacity-50 transition-all">
+        <div className="flex gap-4 mt-8">
+          <button onClick={onClose} className="flex-1 bg-white/5 border border-border-custom text-muted hover:text-white px-4 py-3 rounded-xl text-base font-medium transition-colors">취소</button>
+          <button onClick={() => onSave(form)} disabled={saving} className="flex-1 gold-btn text-dark px-4 py-3 rounded-xl text-base font-bold shadow-lg shadow-accent/20 disabled:opacity-50 transition-all">
             {saving ? "저장 중..." : modal.type === "create" ? "등록하기" : "수정하기"}
           </button>
         </div>
