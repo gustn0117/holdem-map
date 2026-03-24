@@ -74,12 +74,12 @@ export default function MapView({ stores, onStoreClick, selectedStore }: MapView
     markersRef.current.clear();
 
     stores.forEach((store) => {
-      const icon = store.isRecommended ? goldIcon : accentIcon;
+      const icon = store.is_recommended ? goldIcon : accentIcon;
       const marker = L.marker([store.lat, store.lng], { icon }).addTo(map);
 
       marker.bindPopup(
         `<div style="font-family:-apple-system,sans-serif;min-width:170px;padding:2px 0">
-          <div style="font-weight:700;font-size:13px;color:#e8e8f0;margin-bottom:4px">${store.name}${store.isRecommended ? ' <span style="background:rgba(240,192,64,0.15);color:#f0c040;font-size:9px;padding:2px 6px;border-radius:4px;font-weight:700;margin-left:4px">추천</span>' : ''}</div>
+          <div style="font-weight:700;font-size:13px;color:#e8e8f0;margin-bottom:4px">${store.name}${store.is_recommended ? ' <span style="background:rgba(240,192,64,0.15);color:#f0c040;font-size:9px;padding:2px 6px;border-radius:4px;font-weight:700;margin-left:4px">추천</span>' : ''}</div>
           <div style="font-size:11px;color:#5c5c7a;margin-bottom:2px">${store.hours}</div>
           <div style="font-size:11px;color:#5c5c7a55">${store.address}</div>
         </div>`,
@@ -105,7 +105,7 @@ export default function MapView({ stores, onStoreClick, selectedStore }: MapView
         marker.openPopup();
         mapRef.current?.setView([store.lat, store.lng], 13, { animate: true });
       } else {
-        marker.setIcon(store.isRecommended ? goldIcon : accentIcon);
+        marker.setIcon(store.is_recommended ? goldIcon : accentIcon);
       }
     });
   }, [selectedStore, stores, ready]);

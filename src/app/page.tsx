@@ -7,9 +7,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SearchBar from "@/components/SearchBar";
 import StoreCard from "@/components/StoreCard";
-import { stores } from "@/data/stores";
-import { events } from "@/data/events";
-import { notices } from "@/data/notices";
+import { useStores, useEvents, useNotices } from "@/hooks/useData";
 import { Store } from "@/types";
 
 const MapView = dynamic(() => import("@/components/MapView"), { ssr: false });
@@ -33,13 +31,16 @@ const howItWorks = [
 export default function Home() {
   const [selectedRegion, setSelectedRegion] = useState("전체");
   const [selectedStore, setSelectedStore] = useState<Store | null>(null);
+  const { stores } = useStores();
+  const { events } = useEvents();
+  const { notices } = useNotices();
 
   const filteredStores =
     selectedRegion === "전체"
       ? stores
       : stores.filter((s) => s.region === selectedRegion);
 
-  const recommendedStores = stores.filter((s) => s.isRecommended);
+  const recommendedStores = stores.filter((s) => s.is_recommended);
   const upcomingEvents = events.slice(0, 3);
 
   return (
@@ -282,7 +283,7 @@ export default function Home() {
                     <div className="flex-1 min-w-0">
                       <p className="text-surface text-sm font-semibold truncate">{event.title}</p>
                       <div className="flex items-center gap-1.5 mt-1 text-[11px] text-muted/35">
-                        <span>{event.storeName}</span>
+                        <span>{event.store_name}</span>
                         <span>·</span>
                         <span>{event.time}</span>
                       </div>

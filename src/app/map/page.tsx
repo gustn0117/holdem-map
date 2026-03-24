@@ -6,7 +6,7 @@ import dynamic from "next/dynamic";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import StoreCard from "@/components/StoreCard";
-import { stores } from "@/data/stores";
+import { useStores } from "@/hooks/useData";
 import { Store } from "@/types";
 
 const MapView = dynamic(() => import("@/components/MapView"), { ssr: false });
@@ -33,6 +33,7 @@ function MapPageInner() {
   const [selectedRegion, setSelectedRegion] = useState("전체");
   const [selectedStore, setSelectedStore] = useState<Store | null>(null);
   const [sortBy, setSortBy] = useState("recommended");
+  const { stores } = useStores();
 
   const filteredStores = useMemo(() => {
     let result = stores;
@@ -44,12 +45,12 @@ function MapPageInner() {
       );
     }
     if (sortBy === "recommended") {
-      result = [...result].sort((a, b) => (b.isRecommended ? 1 : 0) - (a.isRecommended ? 1 : 0));
+      result = [...result].sort((a, b) => (b.is_recommended ? 1 : 0) - (a.is_recommended ? 1 : 0));
     } else {
       result = [...result].sort((a, b) => a.name.localeCompare(b.name));
     }
     return result;
-  }, [selectedRegion, query, sortBy]);
+  }, [selectedRegion, query, sortBy, stores]);
 
   return (
     <div className="flex flex-col min-h-screen pb-16 md:pb-0">

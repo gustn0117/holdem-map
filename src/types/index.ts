@@ -10,18 +10,21 @@ export interface Store {
   lng: number;
   region: string;
   tags: string[];
-  isRecommended?: boolean;
+  is_recommended?: boolean;
+  created_at?: string;
+  updated_at?: string;
 }
 
 export interface Event {
   id: string;
-  storeId: string;
-  storeName: string;
+  store_id: string;
+  store_name: string;
   title: string;
   date: string;
   time: string;
   description: string;
   prize?: string;
+  created_at?: string;
 }
 
 export interface Notice {
@@ -29,4 +32,5 @@ export interface Notice {
   title: string;
   content: string;
   date: string;
+  created_at?: string;
 }

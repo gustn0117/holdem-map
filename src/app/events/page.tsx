@@ -3,9 +3,10 @@
 import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { events } from "@/data/events";
+import { useEvents } from "@/hooks/useData";
 
 export default function EventsPage() {
+  const { events } = useEvents();
   const sortedEvents = [...events].sort(
     (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
   );
@@ -66,10 +67,10 @@ export default function EventsPage() {
                       <div>
                         <h2 className="text-white font-bold text-base group-hover:text-accent-light transition-colors">{event.title}</h2>
                         <Link
-                          href={`/store/${event.storeId}`}
+                          href={`/store/${event.store_id}`}
                           className="text-accent/60 text-xs hover:text-accent transition-colors"
                         >
-                          {event.storeName}
+                          {event.store_name}
                         </Link>
                       </div>
                       {event.prize && (
