@@ -57,13 +57,6 @@ export default function Home() {
         </div>
 
         <div className="relative max-w-2xl mx-auto px-4 pt-16 md:pt-24 pb-14 text-center">
-          <div className="inline-flex items-center gap-2.5 glass border border-white/[0.06] rounded-full px-4 py-2 mb-8">
-            <span className="w-1.5 h-1.5 rounded-full bg-green pulse-dot" />
-            <span className="text-white/50 text-xs">서울 · 경기 · 인천</span>
-            <span className="w-px h-3 bg-white/10" />
-            <span className="text-accent-light/80 text-xs font-semibold">12곳 서비스 중</span>
-          </div>
-
           <h1 className="text-4xl md:text-[56px] font-extrabold text-white mb-5 leading-[1.1] tracking-tight">
             홀덤 매장,<br />
             <span className="bg-linear-to-r from-accent-light via-accent to-accent-light bg-clip-text text-transparent bg-[length:200%_auto] animate-[shimmer_3s_linear_infinite]">지도에서 한눈에</span>
