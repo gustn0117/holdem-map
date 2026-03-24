@@ -1,5 +1,5 @@
 import { supabase } from "./supabase";
-import { Store, Event, Notice } from "@/types";
+import { Store, Event, Notice, Job } from "@/types";
 
 export async function getStores(): Promise<Store[]> {
   const { data, error } = await supabase
@@ -112,5 +112,23 @@ export async function updateNotice(id: string, updates: Partial<Notice>) {
 
 export async function deleteNotice(id: string) {
   const { error } = await supabase.from("notices").delete().eq("id", id);
+  if (error) throw error;
+}
+
+// Jobs
+export async function getJobs(): Promise<Job[]> {
+  const { data, error } = await supabase.from("jobs").select("*").order("created_at", { ascending: false });
+  if (error) throw error;
+  return data || [];
+}
+
+export async function createJob(job: Omit<Job, "id" | "created_at">) {
+  const { data, error } = await supabase.from("jobs").insert(job).select().single();
+  if (error) throw error;
+  return data;
+}
+
+export async function deleteJob(id: string) {
+  const { error } = await supabase.from("jobs").delete().eq("id", id);
   if (error) throw error;
 }

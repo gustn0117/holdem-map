@@ -167,13 +167,17 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="bg-accent rounded-2xl p-7 text-white flex-1 flex flex-col justify-between">
-              <div>
-                <h3 className="font-black text-xl mb-2">매장을 등록하세요</h3>
-                <p className="text-white/80 text-sm">전국 유저에게 매장을 홍보하세요</p>
-              </div>
-              <Link href="/contact" className="bg-white text-accent text-sm font-bold px-6 py-3 rounded-lg self-start mt-5 hover:bg-gray-100 transition-all inline-block">
-                등록 문의 →
+            {/* Quick links */}
+            <div className="grid grid-cols-2 gap-3">
+              <Link href="/jobs" className="bg-white rounded-2xl border border-border-custom p-5 hover:border-accent/30 hover:shadow-md transition-all group">
+                <svg className="w-8 h-8 text-accent mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                <h4 className="text-surface font-bold text-sm">구인구직</h4>
+                <p className="text-muted text-xs mt-1">딜러 · 서빙</p>
+              </Link>
+              <Link href="/contact" className="bg-accent rounded-2xl p-5 text-white hover:bg-accent-hover transition-all group">
+                <svg className="w-8 h-8 text-white/80 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>
+                <h4 className="text-white font-bold text-sm">매장 등록</h4>
+                <p className="text-white/70 text-xs mt-1">문의하기</p>
               </Link>
             </div>
           </div>

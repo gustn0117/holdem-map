@@ -31,6 +31,19 @@ export interface Event {
   created_at?: string;
 }
 
+export interface Job {
+  id: string;
+  nickname: string;
+  role: string;
+  experience: string;
+  areas: string[];
+  contact_type: string;
+  contact: string;
+  photo?: string;
+  message?: string;
+  created_at?: string;
+}
+
 export interface Notice {
   id: string;
   title: string;
