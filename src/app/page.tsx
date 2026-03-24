@@ -40,8 +40,8 @@ export default function Home() {
         <SearchBar large />
       </section>
 
-      {/* ─── Map + List ─── */}
-      <section className="max-w-7xl mx-auto px-4 pb-16 w-full">
+      {/* ─── Map + Side Banners ─── */}
+      <section className="max-w-7xl mx-auto px-4 pb-10 w-full">
         <div className="flex items-center justify-between mb-6">
           <div className="flex gap-1.5 bg-card rounded-full p-1.5 border border-border-custom">
             {regions.map((r) => (
@@ -54,22 +54,36 @@ export default function Home() {
           <p className="text-muted text-base"><span className="gold-text-shine font-black text-2xl mr-1">{filteredStores.length}</span>곳</p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-          <div className="lg:col-span-3 h-110 lg:h-160 rounded-3xl overflow-hidden border border-border-custom">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+          <div className="lg:col-span-3 h-110 lg:h-140 rounded-3xl overflow-hidden border border-border-custom">
             <MapView stores={filteredStores} onStoreClick={setSelectedStore} selectedStore={selectedStore} />
           </div>
-          <div className="lg:col-span-2 flex flex-col gap-3 lg:h-160 lg:overflow-y-auto hide-scrollbar">
-            <div className="flex items-center justify-between mb-1">
-              <h2 className="text-xl font-bold text-white">매장 목록</h2>
-              <Link href="/map" className="text-accent hover:text-accent-light text-sm font-semibold transition-colors">전체보기 →</Link>
-            </div>
-            {filteredStores.map((store) => (
-              <div key={store.id} onClick={() => setSelectedStore(store)}
-                className={`rounded-2xl transition-all cursor-pointer ${selectedStore?.id === store.id ? "ring-2 ring-accent/50" : ""}`}>
-                <StoreCard store={store} />
+
+          {/* Side Banners */}
+          <div className="hidden lg:flex flex-col gap-4 lg:h-140">
+            {[1, 2, 3].map((n) => (
+              <div key={n} className="flex-1 bg-card rounded-2xl border border-border-custom flex items-center justify-center text-muted text-sm relative overflow-hidden group hover:border-accent/20 transition-all">
+                <div className="absolute inset-0 felt-gradient opacity-0 group-hover:opacity-5 transition-opacity" />
+                <span className="relative">배너 광고 {n}</span>
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* ─── Store List ─── */}
+      <section className="max-w-7xl mx-auto px-4 pb-16 w-full">
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-2xl font-black text-white">매장 목록</h2>
+          <Link href="/map" className="text-accent hover:text-accent-light text-base font-semibold transition-colors">전체보기 →</Link>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {filteredStores.map((store) => (
+            <div key={store.id} onClick={() => setSelectedStore(store)}
+              className={`rounded-2xl transition-all cursor-pointer ${selectedStore?.id === store.id ? "ring-2 ring-accent/50" : ""}`}>
+              <StoreCard store={store} />
+            </div>
+          ))}
         </div>
       </section>
 
