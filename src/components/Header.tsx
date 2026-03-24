@@ -18,7 +18,7 @@ export default function Header() {
   return (
     <>
       <header className="sticky top-0 z-50 bg-white border-b border-border-custom">
-        <div className="px-4 md:px-6 h-16 flex items-center gap-6">
+        <div className="max-w-[1400px] mx-auto px-4 md:px-8 h-16 flex items-center gap-6">
           <Link href="/" className="text-2xl font-black text-accent tracking-tight shrink-0">홀덤맵</Link>
 
           {/* Search in header - centered */}
