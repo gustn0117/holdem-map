@@ -18,7 +18,10 @@ export default function Header() {
     <>
       <header className="sticky top-0 z-50 glass border-b border-border-custom">
         <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
-          <Link href="/" className="gold-text-shine text-xl font-black tracking-tight">홀덤맵</Link>
+          <Link href="/" className="flex items-center gap-2">
+            <span className="text-red text-base">♠</span>
+            <span className="gold-text-shine text-xl font-black tracking-tight">홀덤맵</span>
+          </Link>
 
           <nav className="hidden md:flex items-center gap-1 bg-card rounded-full p-1.5 border border-border-custom">
             {navItems.map((item) => (

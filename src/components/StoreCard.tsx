@@ -22,6 +22,7 @@ export default function StoreCard({ store, compact }: { store: Store; compact?: 
     <Link href={`/store/${store.id}`}>
       <div className="group bg-card rounded-2xl border border-border-custom hover:border-accent/40 transition-all duration-200 hover:shadow-lg hover:shadow-accent/8 cursor-pointer overflow-hidden">
         {store.is_recommended && <div className="gold-shine h-[2px]" />}
+        <div className="absolute top-3 right-4 text-3xl text-white/[0.02] font-serif select-none">♠</div>
         <div className="p-5 md:p-6">
           <div className="flex items-start gap-4">
             <div className={`w-13 h-13 rounded-xl flex items-center justify-center shrink-0 ${store.is_recommended ? "gold-shine shadow-lg shadow-accent/25" : "bg-card border border-border-custom"}`}>
