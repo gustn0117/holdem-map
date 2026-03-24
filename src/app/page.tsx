@@ -95,16 +95,18 @@ export default function Home() {
         <h2 className="text-3xl font-black text-white text-center mb-12">카테고리로 찾기</h2>
         <div className="grid grid-cols-5 gap-4">
           {[
-            { label: "토너먼트", tag: "토너먼트", emoji: "🏆" },
-            { label: "초보환영", tag: "초보환영", emoji: "👋" },
-            { label: "프리미엄", tag: "프리미엄", emoji: "💎" },
-            { label: "주차가능", tag: "주차가능", emoji: "🅿️" },
-            { label: "야간운영", tag: "야간운영", emoji: "🌙" },
+            { label: "토너먼트", tag: "토너먼트", icon: "M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" },
+            { label: "초보환영", tag: "초보환영", icon: "M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" },
+            { label: "프리미엄", tag: "프리미엄", icon: "M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" },
+            { label: "주차가능", tag: "주차가능", icon: "M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z" },
+            { label: "야간운영", tag: "야간운영", icon: "M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" },
           ].map((cat) => (
             <Link key={cat.label} href={`/map?q=${cat.tag}`} className="group text-center">
               <div className="aspect-square rounded-3xl bg-card border border-border-custom group-hover:border-accent/40 flex items-center justify-center transition-all group-hover:-translate-y-1 group-hover:shadow-xl group-hover:shadow-accent/10 relative overflow-hidden">
                 <div className="absolute inset-0 felt-gradient opacity-0 group-hover:opacity-10 transition-opacity" />
-                <span className="text-3xl md:text-4xl relative">{cat.emoji}</span>
+                <svg className="w-8 h-8 md:w-10 md:h-10 text-accent relative" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d={cat.icon} />
+                </svg>
               </div>
               <p className="text-muted text-sm font-semibold mt-3 group-hover:text-white transition-colors">{cat.label}</p>
             </Link>
