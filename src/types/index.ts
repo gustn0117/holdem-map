@@ -24,6 +24,10 @@ export interface Event {
   time: string;
   description: string;
   prize?: string;
+  image?: string;
+  details?: string;
+  buy_in?: string;
+  location?: string;
   created_at?: string;
 }
 

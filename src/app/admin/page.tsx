@@ -83,6 +83,10 @@ export default function AdminPage() {
           time: formData.time as string,
           description: (formData.description as string) || "",
           prize: (formData.prize as string) || undefined,
+          image: (formData.image as string) || "",
+          details: (formData.details as string) || "",
+          buy_in: (formData.buy_in as string) || "",
+          location: (formData.location as string) || "",
         };
         if (modal.type === "create") await api.createEvent(payload);
         else await api.updateEvent(formData.id as string, payload);
@@ -386,13 +390,36 @@ function AdminModal({ modal, stores, saving, onClose, onSave }: {
                 <input className={inputClass} type="time" value={(form.time as string) || ""} onChange={e => set("time", e.target.value)} />
               </div>
             </div>
-            <div>
-              <label className="text-sub text-sm font-medium block mb-2">상금</label>
-              <input className={inputClass} value={(form.prize as string) || ""} onChange={e => set("prize", e.target.value)} placeholder="예: GTD 300만원" />
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="text-sub text-sm font-medium block mb-2">상금</label>
+                <input className={inputClass} value={(form.prize as string) || ""} onChange={e => set("prize", e.target.value)} placeholder="예: GTD 300만원" />
+              </div>
+              <div>
+                <label className="text-sub text-sm font-medium block mb-2">바이인</label>
+                <input className={inputClass} value={(form.buy_in as string) || ""} onChange={e => set("buy_in", e.target.value)} placeholder="예: 50,000원" />
+              </div>
             </div>
             <div>
-              <label className="text-sub text-sm font-medium block mb-2">설명</label>
-              <textarea className={inputClass + " resize-none"} rows={4} value={(form.description as string) || ""} onChange={e => set("description", e.target.value)} placeholder="이벤트에 대한 설명을 입력하세요" />
+              <label className="text-sub text-sm font-medium block mb-2">대회 이미지 URL</label>
+              <input className={inputClass} value={(form.image as string) || ""} onChange={e => set("image", e.target.value)} placeholder="이미지 URL을 입력하세요 (선택)" />
+              {(form.image as string) && (
+                <div className="mt-3 rounded-xl overflow-hidden border border-border-custom h-32">
+                  <img src={form.image as string} alt="미리보기" className="w-full h-full object-cover" />
+                </div>
+              )}
+            </div>
+            <div>
+              <label className="text-sub text-sm font-medium block mb-2">장소</label>
+              <input className={inputClass} value={(form.location as string) || ""} onChange={e => set("location", e.target.value)} placeholder="대회 장소 (매장과 다를 경우)" />
+            </div>
+            <div>
+              <label className="text-sub text-sm font-medium block mb-2">간단 설명</label>
+              <textarea className={inputClass + " resize-none"} rows={3} value={(form.description as string) || ""} onChange={e => set("description", e.target.value)} placeholder="대회 간략 소개" />
+            </div>
+            <div>
+              <label className="text-sub text-sm font-medium block mb-2">상세 정보</label>
+              <textarea className={inputClass + " resize-none"} rows={5} value={(form.details as string) || ""} onChange={e => set("details", e.target.value)} placeholder="룰, 시간표, 참가 방법 등 상세 내용" />
             </div>
           </div>
         )}
