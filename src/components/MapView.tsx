@@ -31,9 +31,9 @@ function createPinIcon(color: string, glowColor: string, size: number = 30) {
   });
 }
 
-const accentIcon = createPinIcon("#7c6ef0", "rgba(124,110,240,0.4)");
-const goldIcon = createPinIcon("#f0c040", "rgba(240,192,64,0.4)");
-const selectedIcon = createPinIcon("#7c6ef0", "rgba(124,110,240,0.6)", 38);
+const accentIcon = createPinIcon("#d4a843", "rgba(212,168,67,0.4)");
+const goldIcon = createPinIcon("#f0d060", "rgba(240,208,96,0.5)");
+const selectedIcon = createPinIcon("#f0d060", "rgba(240,208,96,0.6)", 38);
 
 export default function MapView({ stores, onStoreClick, selectedStore }: MapViewProps) {
   const mapRef = useRef<L.Map | null>(null);
@@ -127,14 +127,14 @@ export default function MapView({ stores, onStoreClick, selectedStore }: MapView
           border-bottom: 1px solid rgba(255,255,255,0.08);
         }
         .leaflet-control-zoom a {
-          background: rgba(17,17,37,0.9) !important;
+          background: rgba(22,22,32,0.9) !important;
           backdrop-filter: blur(8px);
-          color: #5c5c7a !important;
+          color: #8e8ea0 !important;
           border-color: rgba(255,255,255,0.05) !important;
         }
         .leaflet-control-zoom a:hover {
-          background: rgba(30,30,60,0.95) !important;
-          color: #a8a0f8 !important;
+          background: rgba(30,30,42,0.95) !important;
+          color: #d4a843 !important;
         }
       `}</style>
       <div ref={containerRef} className="w-full h-full" />
@@ -143,12 +143,12 @@ export default function MapView({ stores, onStoreClick, selectedStore }: MapView
       <div className="absolute bottom-12 left-3 glass rounded-xl px-3.5 py-2 border border-white/5 z-1000">
         <div className="flex items-center gap-3 text-[10px]">
           <div className="flex items-center gap-1.5">
-            <div className="w-2 h-2 rounded-full bg-accent shadow-sm shadow-accent/50" />
-            <span className="text-muted/60">매장</span>
+            <div className="w-2 h-2 rounded-full bg-accent" />
+            <span className="text-muted">매장</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <div className="w-2 h-2 rounded-full bg-gold shadow-sm shadow-gold/50" />
-            <span className="text-muted/60">추천</span>
+            <div className="w-2 h-2 rounded-full bg-accent-light" />
+            <span className="text-muted">추천</span>
           </div>
         </div>
       </div>

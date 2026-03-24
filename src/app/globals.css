@@ -1,21 +1,22 @@
 @import "tailwindcss";
 
 @theme inline {
-  --color-primary: #12121f;
-  --color-secondary: #181830;
-  --color-accent: #7c6ef0;
-  --color-accent-hover: #6b5ce0;
-  --color-accent-light: #b0a8ff;
-  --color-gold: #f5cc3a;
-  --color-dark: #0d0d18;
-  --color-card: #16162a;
-  --color-card-hover: #1e1e38;
+  --color-primary: #111118;
+  --color-secondary: #18181f;
+  --color-accent: #d4a843;
+  --color-accent-hover: #c49a38;
+  --color-accent-light: #f0d060;
+  --color-gold: #f0c040;
+  --color-dark: #0c0c12;
+  --color-card: #161620;
+  --color-card-hover: #1e1e2a;
   --color-surface: #ffffff;
-  --color-muted: #9898b8;
-  --color-border-custom: #222244;
+  --color-muted: #8e8ea0;
+  --color-border-custom: #25252f;
   --color-green: #34d399;
   --color-red: #f87171;
-  --color-glass: rgba(18, 18, 34, 0.8);
+  --color-sub: #c0c0d0;
+  --color-glass: rgba(16, 16, 22, 0.85);
 }
 
 * { box-sizing: border-box; }
@@ -29,19 +30,7 @@ body {
 
 ::-webkit-scrollbar { width: 5px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: rgba(124, 110, 240, 0.15); border-radius: 10px; }
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-.anim-in { animation: fadeIn 0.4s ease forwards; }
-
-@keyframes pulseDot {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.4; transform: scale(0.7); }
-}
-.pulse-dot { animation: pulseDot 2s ease-in-out infinite; }
+::-webkit-scrollbar-thumb { background: rgba(212, 168, 67, 0.2); border-radius: 10px; }
 
 .glass {
   background: var(--color-glass);
@@ -49,21 +38,32 @@ body {
   -webkit-backdrop-filter: blur(24px);
 }
 
-.glow-border {
-  position: relative;
+.gold-gradient {
+  background: linear-gradient(135deg, #d4a843, #f0d060);
 }
-.glow-border::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  padding: 1px;
-  background: linear-gradient(135deg, rgba(124,110,240,0.25), transparent 50%);
-  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  mask-composite: exclude;
-  -webkit-mask-composite: xor;
-  pointer-events: none;
+
+.gold-text {
+  background: linear-gradient(135deg, #d4a843, #f0d060);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.gold-glow {
+  box-shadow: 0 0 30px rgba(212, 168, 67, 0.15);
+}
+
+.pulse-dot { animation: pulseDot 2s ease-in-out infinite; }
+@keyframes pulseDot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.7); }
 }
 
 .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 .hide-scrollbar::-webkit-scrollbar { display: none; }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.anim-in { animation: fadeIn 0.4s ease forwards; }
