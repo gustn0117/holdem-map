@@ -201,16 +201,17 @@ export default function Home() {
           {/* Notices + CTA */}
           <div className="flex flex-col gap-5">
             <div className="bg-card rounded-2xl border border-border-custom overflow-hidden">
-              <div className="p-5 border-b border-border-custom">
+              <div className="p-5 border-b border-border-custom flex items-center justify-between">
                 <h3 className="text-white font-bold">공지사항</h3>
+                <Link href="/notices" className="text-accent text-xs font-semibold hover:text-accent-light transition-colors">전체보기</Link>
               </div>
               <div className="p-4">
                 {notices.map((notice) => (
-                  <div key={notice.id} className="flex items-center gap-3 py-3 px-1 group cursor-pointer border-b border-border-custom/50 last:border-0">
+                  <Link key={notice.id} href={`/notices/${notice.id}`} className="flex items-center gap-3 py-3 px-1 group border-b border-border-custom/50 last:border-0">
                     <span className="w-1.5 h-1.5 rounded-full gold-shine shrink-0" />
                     <p className="text-sub text-sm truncate flex-1 group-hover:text-white transition-colors">{notice.title}</p>
                     <span className="text-muted text-[10px] shrink-0">{notice.date.slice(5)}</span>
-                  </div>
+                  </Link>
                 ))}
               </div>
             </div>
@@ -222,9 +223,9 @@ export default function Home() {
                   <h3 className="text-white font-bold text-lg mb-1">매장을 등록하세요</h3>
                   <p className="text-sub text-sm">전국 홀덤 유저에게 매장을 홍보하세요</p>
                 </div>
-                <button className="gold-btn text-dark text-sm font-bold px-6 py-3 rounded-full shadow-lg shadow-accent/25 hover:shadow-accent/40 mt-5 self-start transition-all">
+                <Link href="/contact" className="gold-btn text-dark text-sm font-bold px-6 py-3 rounded-full shadow-lg shadow-accent/25 hover:shadow-accent/40 mt-5 self-start transition-all inline-block">
                   등록 문의
-                </button>
+                </Link>
               </div>
             </div>
           </div>

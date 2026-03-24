@@ -41,9 +41,9 @@ export default function Header() {
 
           <div className="hidden md:flex items-center gap-3">
             <Link href="/admin" className="text-muted hover:text-white text-[13px] transition-colors">관리자</Link>
-            <button className="gold-btn text-dark text-[13px] font-bold px-5 py-2 rounded-full shadow-lg shadow-accent/30 hover:shadow-accent/50 transition-all">
+            <Link href="/contact" className="gold-btn text-dark text-[13px] font-bold px-5 py-2 rounded-full shadow-lg shadow-accent/30 hover:shadow-accent/50 transition-all">
               매장 등록
-            </button>
+            </Link>
           </div>
 
           <button className="md:hidden text-white p-1.5" onClick={() => setMenuOpen(!menuOpen)}>
