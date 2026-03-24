@@ -14,32 +14,28 @@ interface MapViewProps {
 const defaultCenter: [number, number] = [37.5, 126.95];
 const defaultZoom = 11;
 
-function createPinIcon(color: string, size: number = 28) {
+function createPinIcon(color: string, glowColor: string, size: number = 30) {
   return L.divIcon({
     className: "",
-    html: `<svg width="${size}" height="${Math.round(size * 1.3)}" viewBox="0 0 32 42">
-      <filter id="shadow" x="-20%" y="-10%" width="140%" height="140%">
-        <feDropShadow dx="0" dy="1" stdDeviation="2" flood-opacity="0.3"/>
-      </filter>
-      <path d="M16 0C7.163 0 0 7.163 0 16c0 12 16 26 16 26s16-14 16-26C32 7.163 24.837 0 16 0z" fill="${color}" filter="url(#shadow)"/>
-      <circle cx="16" cy="15" r="7" fill="white" opacity="0.95"/>
-      <circle cx="16" cy="15" r="3" fill="${color}" opacity="0.8"/>
-    </svg>`,
+    html: `<div style="position:relative;width:${size}px;height:${Math.round(size * 1.3)}px">
+      <div style="position:absolute;bottom:2px;left:50%;transform:translateX(-50%);width:${size * 0.5}px;height:4px;background:${glowColor};border-radius:50%;filter:blur(3px);opacity:0.5"></div>
+      <svg width="${size}" height="${Math.round(size * 1.3)}" viewBox="0 0 30 40" style="filter:drop-shadow(0 2px 4px rgba(0,0,0,0.3))">
+        <path d="M15 0C6.716 0 0 6.716 0 15c0 11.25 15 25 15 25s15-13.75 15-25C30 6.716 23.284 0 15 0z" fill="${color}"/>
+        <circle cx="15" cy="14" r="6.5" fill="rgba(255,255,255,0.95)"/>
+        <circle cx="15" cy="14" r="3" fill="${color}" opacity="0.7"/>
+      </svg>
+    </div>`,
     iconSize: [size, Math.round(size * 1.3)],
     iconAnchor: [size / 2, Math.round(size * 1.3)],
-    popupAnchor: [0, -Math.round(size * 1.3)],
+    popupAnchor: [0, -Math.round(size * 1.2)],
   });
 }
 
-const accentIcon = createPinIcon("#6c5ce7");
-const goldIcon = createPinIcon("#ffd32a");
-const selectedIcon = createPinIcon("#6c5ce7", 36);
+const accentIcon = createPinIcon("#7c6ef0", "rgba(124,110,240,0.4)");
+const goldIcon = createPinIcon("#f0c040", "rgba(240,192,64,0.4)");
+const selectedIcon = createPinIcon("#7c6ef0", "rgba(124,110,240,0.6)", 38);
 
-export default function MapView({
-  stores,
-  onStoreClick,
-  selectedStore,
-}: MapViewProps) {
+export default function MapView({ stores, onStoreClick, selectedStore }: MapViewProps) {
   const mapRef = useRef<L.Map | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const markersRef = useRef<Map<string, L.Marker>>(new Map());
@@ -74,7 +70,7 @@ export default function MapView({
     if (!mapRef.current || !ready) return;
     const map = mapRef.current;
 
-    markersRef.current.forEach((marker) => marker.remove());
+    markersRef.current.forEach((m) => m.remove());
     markersRef.current.clear();
 
     stores.forEach((store) => {
@@ -82,13 +78,15 @@ export default function MapView({
       const marker = L.marker([store.lat, store.lng], { icon }).addTo(map);
 
       marker.bindPopup(
-        `<div style="font-size:13px;min-width:160px;font-family:-apple-system,sans-serif">
-          <strong style="color:#222">${store.name}</strong>
-          ${store.isRecommended ? '<span style="background:#ffd32a22;color:#e6a800;font-size:10px;padding:1px 5px;border-radius:4px;margin-left:4px">추천</span>' : ''}
-          <br/><span style="color:#888;font-size:11px">${store.hours}</span>
-          <br/><span style="color:#aaa;font-size:11px">${store.address}</span>
+        `<div style="font-family:-apple-system,sans-serif;min-width:170px;padding:2px 0">
+          <div style="font-weight:700;font-size:13px;color:#e8e8f0;margin-bottom:4px">${store.name}${store.isRecommended ? ' <span style="background:rgba(240,192,64,0.15);color:#f0c040;font-size:9px;padding:2px 6px;border-radius:4px;font-weight:700;margin-left:4px">추천</span>' : ''}</div>
+          <div style="font-size:11px;color:#5c5c7a;margin-bottom:2px">${store.hours}</div>
+          <div style="font-size:11px;color:#5c5c7a55">${store.address}</div>
         </div>`,
-        { className: "custom-popup" }
+        {
+          className: "dark-popup",
+          closeButton: false,
+        }
       );
 
       marker.on("click", () => onStoreClick?.(store));
@@ -102,7 +100,6 @@ export default function MapView({
     markersRef.current.forEach((marker, id) => {
       const store = stores.find((s) => s.id === id);
       if (!store) return;
-
       if (selectedStore?.id === id) {
         marker.setIcon(selectedIcon);
         marker.openPopup();
@@ -114,25 +111,52 @@ export default function MapView({
   }, [selectedStore, stores, ready]);
 
   return (
-    <div className="relative w-full h-full rounded-2xl overflow-hidden border border-border-custom/50">
+    <div className="relative w-full h-full rounded-2xl overflow-hidden border border-white/5">
+      <style>{`
+        .dark-popup .leaflet-popup-content-wrapper {
+          background: rgba(17,17,37,0.95);
+          backdrop-filter: blur(12px);
+          border: 1px solid rgba(255,255,255,0.08);
+          border-radius: 12px;
+          box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+          color: #e8e8f0;
+        }
+        .dark-popup .leaflet-popup-tip {
+          background: rgba(17,17,37,0.95);
+          border-right: 1px solid rgba(255,255,255,0.08);
+          border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+        .leaflet-control-zoom a {
+          background: rgba(17,17,37,0.9) !important;
+          backdrop-filter: blur(8px);
+          color: #5c5c7a !important;
+          border-color: rgba(255,255,255,0.05) !important;
+        }
+        .leaflet-control-zoom a:hover {
+          background: rgba(30,30,60,0.95) !important;
+          color: #a8a0f8 !important;
+        }
+      `}</style>
       <div ref={containerRef} className="w-full h-full" />
 
-      <div className="absolute bottom-12 left-3 bg-card/90 backdrop-blur-sm rounded-lg px-3 py-2 border border-border-custom/50 z-1000">
+      {/* Legend */}
+      <div className="absolute bottom-12 left-3 glass rounded-xl px-3.5 py-2 border border-white/5 z-1000">
         <div className="flex items-center gap-3 text-[10px]">
           <div className="flex items-center gap-1.5">
-            <div className="w-2 h-2 rounded-full bg-accent" />
-            <span className="text-muted">매장</span>
+            <div className="w-2 h-2 rounded-full bg-accent shadow-sm shadow-accent/50" />
+            <span className="text-muted/60">매장</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <div className="w-2 h-2 rounded-full bg-gold" />
-            <span className="text-muted">추천</span>
+            <div className="w-2 h-2 rounded-full bg-gold shadow-sm shadow-gold/50" />
+            <span className="text-muted/60">추천</span>
           </div>
         </div>
       </div>
 
-      <div className="absolute top-3 right-3 bg-card/90 backdrop-blur-sm rounded-lg px-3 py-2 border border-border-custom/50 z-1000">
-        <p className="text-muted text-[11px]">
-          매장 <span className="text-accent-light font-semibold">{stores.length}</span>곳
+      {/* Count */}
+      <div className="absolute top-3 right-3 glass rounded-xl px-3.5 py-2 border border-white/5 z-1000">
+        <p className="text-muted/50 text-[11px]">
+          매장 <span className="text-accent-light font-bold">{stores.length}</span>
         </p>
       </div>
     </div>
