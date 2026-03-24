@@ -1,63 +1,80 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 
-const navItems = [
-  { href: "/", label: "홈" },
-  { href: "/map", label: "지도" },
-  { href: "/events", label: "대회" },
-];
-
 export default function Header() {
+  const [query, setQuery] = useState("");
   const [menuOpen, setMenuOpen] = useState(false);
   const pathname = usePathname();
+  const router = useRouter();
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (query.trim()) router.push(`/map?q=${encodeURIComponent(query.trim())}`);
+  };
 
   return (
     <>
       <header className="sticky top-0 z-50 bg-white border-b border-border-custom">
-        <div className="max-w-7xl mx-auto px-4 h-14 flex items-center justify-between">
-          <Link href="/" className="text-xl font-black text-accent tracking-tight">홀덤맵</Link>
+        <div className="max-w-7xl mx-auto px-4 h-14 flex items-center gap-4">
+          <Link href="/" className="text-xl font-black text-accent tracking-tight shrink-0">홀덤맵</Link>
 
-          <nav className="hidden md:flex items-center gap-1">
-            {navItems.map((item) => (
-              <Link key={item.href} href={item.href}
-                className={`px-5 py-2 rounded-lg text-sm font-semibold transition-all ${pathname === item.href ? "bg-accent text-white" : "text-muted hover:text-surface hover:bg-gray-100"}`}>
-                {item.label}
-              </Link>
-            ))}
-          </nav>
+          {/* Search in header */}
+          <form onSubmit={handleSearch} className="flex-1 max-w-xl hidden md:block">
+            <div className="relative">
+              <svg className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+              <input
+                type="text" value={query} onChange={(e) => setQuery(e.target.value)}
+                placeholder="지역명, 매장명 검색"
+                className="w-full bg-gray-100 border border-transparent text-surface rounded-lg pl-10 pr-4 py-2 text-sm focus:outline-none focus:border-accent focus:bg-white focus:ring-1 focus:ring-accent/20 transition-all placeholder:text-muted"
+              />
+            </div>
+          </form>
 
-          <div className="hidden md:flex items-center gap-3">
-            <Link href="/admin" className="text-muted hover:text-surface text-sm transition-colors">관리자</Link>
-            <Link href="/contact" className="bg-accent hover:bg-accent-hover text-white text-sm font-bold px-5 py-2.5 rounded-lg transition-all">
+          <div className="flex items-center gap-2 ml-auto shrink-0">
+            <Link href="/admin" className="text-muted hover:text-surface text-sm transition-colors hidden md:block">관리자</Link>
+            <Link href="/contact" className="bg-accent hover:bg-accent-hover text-white text-sm font-bold px-4 py-2 rounded-lg transition-all hidden md:block">
               매장 등록
             </Link>
+            <button className="md:hidden text-surface p-2" onClick={() => setMenuOpen(!menuOpen)}>
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                {menuOpen
+                  ? <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  : <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />}
+              </svg>
+            </button>
           </div>
-
-          <button className="md:hidden text-surface p-2" onClick={() => setMenuOpen(!menuOpen)}>
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              {menuOpen
-                ? <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                : <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />}
-            </svg>
-          </button>
         </div>
 
+        {/* Mobile menu */}
         {menuOpen && (
-          <nav className="md:hidden bg-white border-t border-border-custom px-4 py-3 space-y-1">
-            {navItems.map((item) => (
-              <Link key={item.href} href={item.href}
-                className={`block px-4 py-3 rounded-lg text-base font-medium ${pathname === item.href ? "text-accent bg-accent/5" : "text-muted"}`}
-                onClick={() => setMenuOpen(false)}>
-                {item.label}
-              </Link>
-            ))}
-          </nav>
+          <div className="md:hidden bg-white border-t border-border-custom px-4 py-3 space-y-3">
+            <form onSubmit={handleSearch}>
+              <div className="relative">
+                <svg className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+                <input
+                  type="text" value={query} onChange={(e) => setQuery(e.target.value)}
+                  placeholder="지역명, 매장명 검색"
+                  className="w-full bg-gray-100 border border-transparent text-surface rounded-lg pl-10 pr-4 py-2.5 text-sm focus:outline-none focus:border-accent focus:bg-white transition-all placeholder:text-muted"
+                />
+              </div>
+            </form>
+            <div className="flex gap-2">
+              <Link href="/map" className="flex-1 text-center py-2.5 rounded-lg text-sm font-medium bg-gray-100 text-surface" onClick={() => setMenuOpen(false)}>지도</Link>
+              <Link href="/events" className="flex-1 text-center py-2.5 rounded-lg text-sm font-medium bg-gray-100 text-surface" onClick={() => setMenuOpen(false)}>대회</Link>
+              <Link href="/contact" className="flex-1 text-center py-2.5 rounded-lg text-sm font-medium bg-accent text-white" onClick={() => setMenuOpen(false)}>매장 등록</Link>
+            </div>
+          </div>
         )}
       </header>
 
+      {/* Mobile Bottom Nav */}
       <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-border-custom">
         <div className="flex items-center justify-around py-2.5 pb-[calc(0.625rem+env(safe-area-inset-bottom))]">
           {[

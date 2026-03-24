@@ -5,7 +5,6 @@ import dynamic from "next/dynamic";
 import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import SearchBar from "@/components/SearchBar";
 import StoreCard from "@/components/StoreCard";
 import { useStores, useEvents, useNotices } from "@/hooks/useData";
 import { Store } from "@/types";
@@ -35,13 +34,6 @@ export default function Home() {
 
       <Header />
 
-      {/* ─── Search ─── */}
-      <section className="bg-white border-b border-border-custom">
-        <div className="max-w-3xl mx-auto px-4 py-6">
-          <SearchBar large />
-        </div>
-      </section>
-
       {/* ─── Map + Side Banners ─── */}
       <section className="max-w-7xl mx-auto px-4 py-6 w-full">
         <div className="flex items-center justify-between mb-4">
@@ -53,7 +45,13 @@ export default function Home() {
               </button>
             ))}
           </div>
-          <p className="text-muted text-sm"><span className="text-accent font-bold text-xl mr-1">{filteredStores.length}</span>곳</p>
+          <div className="flex items-center gap-3">
+            <p className="text-muted text-sm"><span className="text-accent font-bold text-xl mr-1">{filteredStores.length}</span>곳</p>
+            <Link href="/map" className="bg-white border border-border-custom text-surface hover:border-accent hover:text-accent text-sm font-semibold px-4 py-2 rounded-lg transition-all flex items-center gap-1.5">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" /></svg>
+              지도 크게 보기
+            </Link>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
@@ -127,7 +125,7 @@ export default function Home() {
                   <p className="text-muted text-xs">다가오는 토너먼트</p>
                 </div>
               </div>
-              <Link href="/events" className="text-accent text-xs font-semibold hover:underline">전체보기</Link>
+              <Link href="/events" className="bg-white border border-border-custom text-surface hover:border-accent hover:text-accent text-xs font-semibold px-3 py-1.5 rounded-lg transition-all">전체보기 →</Link>
             </div>
             <div className="p-4 space-y-2">
               {upcomingEvents.map((event) => {
