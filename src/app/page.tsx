@@ -69,21 +69,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ─── Marquee ─── */}
-      <section className="border-y border-border-custom py-4 overflow-hidden bg-card/50">
-        <div className="flex whitespace-nowrap marquee">
-          {Array(2).fill(null).map((_, i) => (
-            <div key={i} className="flex items-center gap-6 mr-6 text-sm">
-              <span className="text-muted">TEXAS HOLD&apos;EM</span><span className="suit-red">♦</span>
-              <span className="text-muted">토너먼트</span><span className="text-white/30">♠</span>
-              <span className="text-muted">CASH GAME</span><span className="suit-red">♥</span>
-              <span className="text-muted">매장 검색</span><span className="text-white/30">♣</span>
-              <span className="text-muted">ALL-IN</span><span className="suit-red">♦</span>
-              <span className="text-muted">서울 · 경기 · 인천</span><span className="text-white/30">♠</span>
-            </div>
-          ))}
-        </div>
-      </section>
+      {/* ─── Divider ─── */}
 
       {/* ─── Categories ─── */}
       <section className="max-w-5xl mx-auto px-4 py-20 w-full">
