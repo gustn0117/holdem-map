@@ -46,7 +46,7 @@ export default function Home() {
             홀덤 매장을<br />
             <span className="gold-text-shine">한눈에 찾아보세요</span>
           </h1>
-          <p className="text-sub text-sm md:text-lg mb-10 max-w-md mx-auto leading-relaxed">
+          <p className="text-sub text-base md:text-xl mb-10 max-w-md mx-auto leading-relaxed">
             매장 위치, 영업시간, 대회 일정까지<br className="md:hidden" /> 필요한 정보를 한 곳에서
           </p>
 
@@ -55,9 +55,9 @@ export default function Home() {
           </div>
 
           <div className="flex justify-center items-center gap-2 flex-wrap">
-            <span className="text-muted text-xs">인기</span>
+            <span className="text-muted text-sm">인기</span>
             {["강남", "홍대", "수원", "일산", "잠실"].map((k) => (
-              <Link key={k} href={`/map?q=${k}`} className="text-sub hover:text-accent text-xs bg-white/5 hover:bg-accent/10 border border-white/8 hover:border-accent/30 rounded-full px-4 py-1.5 transition-all">
+              <Link key={k} href={`/map?q=${k}`} className="text-sub hover:text-accent text-sm bg-white/5 hover:bg-accent/10 border border-white/8 hover:border-accent/30 rounded-full px-4 py-2 transition-all">
                 {k}
               </Link>
             ))}
@@ -85,7 +85,7 @@ export default function Home() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d={cat.icon} />
                   </svg>
                 </div>
-                <span className="text-muted text-[11px] font-medium group-hover:text-white transition-colors">{cat.label}</span>
+                <span className="text-muted text-xs font-medium group-hover:text-white transition-colors">{cat.label}</span>
               </Link>
             ))}
           </div>
@@ -97,7 +97,7 @@ export default function Home() {
         <div className="flex items-end justify-between mb-6">
           <div>
             <h2 className="text-2xl font-bold text-white">매장 지도</h2>
-            <p className="text-muted text-sm mt-1">지도에서 가까운 매장을 찾아보세요</p>
+            <p className="text-muted text-base mt-1">지도에서 가까운 매장을 찾아보세요</p>
           </div>
           <div className="flex gap-1 bg-card rounded-xl p-1 border border-border-custom">
             {regions.map((r) => (
@@ -147,7 +147,7 @@ export default function Home() {
               </div>
               <div>
                 <h3 className="text-white font-bold">추천 매장</h3>
-                <p className="text-muted text-[11px]">에디터 추천 매장</p>
+                <p className="text-muted text-xs">에디터 추천 매장</p>
               </div>
             </div>
             <div className="p-4 space-y-2">
@@ -156,7 +156,7 @@ export default function Home() {
                   <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-xs font-black shrink-0 ${i === 0 ? "gold-shine text-dark" : "bg-white/5 text-muted"}`}>{i + 1}</div>
                   <div className="flex-1 min-w-0">
                     <p className="text-white text-sm font-semibold truncate group-hover:text-accent transition-colors">{store.name}</p>
-                    <p className="text-muted text-[11px] mt-0.5">{store.region} · {store.hours}</p>
+                    <p className="text-muted text-sm mt-0.5">{store.region} · {store.hours}</p>
                   </div>
                   <svg className="w-4 h-4 text-border-custom group-hover:text-accent shrink-0 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
                 </Link>
@@ -173,7 +173,7 @@ export default function Home() {
                 </div>
                 <div>
                   <h3 className="text-white font-bold">다가오는 대회</h3>
-                  <p className="text-muted text-[11px]">이번 주 토너먼트</p>
+                  <p className="text-muted text-xs">이번 주 토너먼트</p>
                 </div>
               </div>
               <Link href="/events" className="text-accent text-xs font-semibold hover:text-accent-light transition-colors">전체보기</Link>
@@ -189,7 +189,7 @@ export default function Home() {
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-white text-sm font-semibold truncate">{event.title}</p>
-                      <p className="text-muted text-[11px] mt-1">{event.store_name} · {event.time}</p>
+                      <p className="text-muted text-sm mt-1">{event.store_name} · {event.time}</p>
                     </div>
                     {event.prize && <span className="gold-text-shine text-[10px] font-bold px-2 py-1 rounded-lg shrink-0 self-start bg-accent/8 border border-accent/15">{event.prize}</span>}
                   </div>
@@ -209,8 +209,8 @@ export default function Home() {
                 {notices.map((notice) => (
                   <Link key={notice.id} href={`/notices/${notice.id}`} className="flex items-center gap-3 py-3 px-1 group border-b border-border-custom/50 last:border-0">
                     <span className="w-1.5 h-1.5 rounded-full gold-shine shrink-0" />
-                    <p className="text-sub text-sm truncate flex-1 group-hover:text-white transition-colors">{notice.title}</p>
-                    <span className="text-muted text-[10px] shrink-0">{notice.date.slice(5)}</span>
+                    <p className="text-sub text-[15px] truncate flex-1 group-hover:text-white transition-colors">{notice.title}</p>
+                    <span className="text-muted text-xs shrink-0">{notice.date.slice(5)}</span>
                   </Link>
                 ))}
               </div>
@@ -247,7 +247,7 @@ export default function Home() {
                   <h3 className="text-white font-bold text-xl">{r.region}</h3>
                   <span className="gold-text-shine text-3xl font-bold">{r.count}</span>
                 </div>
-                <p className="text-muted text-sm mb-4">{r.desc}</p>
+                <p className="text-muted text-base mb-4">{r.desc}</p>
                 <span className="text-accent text-sm font-semibold group-hover:text-accent-light transition-colors">매장 보기 →</span>
               </div>
             </Link>
