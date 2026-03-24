@@ -6,11 +6,8 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto px-4 py-12">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-10">
           <div className="col-span-2 md:col-span-1">
-            <Link href="/" className="flex items-center gap-2.5 mb-4">
-              <div className="w-7 h-7 gold-shine rounded-lg flex items-center justify-center">
-                <span className="text-dark font-black text-[10px]">H</span>
-              </div>
-              <span className="text-sm font-bold text-white">홀덤맵</span>
+            <Link href="/" className="inline-block mb-4">
+              <span className="text-lg font-extrabold gold-text-shine">홀덤맵</span>
             </Link>
             <p className="text-muted text-xs leading-relaxed max-w-48">
               전국 홀덤 매장 정보를 한눈에 확인하고, 가까운 매장을 찾아보세요.

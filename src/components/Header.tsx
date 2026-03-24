@@ -18,11 +18,8 @@ export default function Header() {
     <>
       <header className="sticky top-0 z-50 glass border-b border-white/5">
         <div className="max-w-7xl mx-auto px-4 h-14 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2.5">
-            <div className="w-8 h-8 gold-shine rounded-lg flex items-center justify-center shadow-lg shadow-accent/30">
-              <span className="text-dark font-black text-xs drop-shadow-sm">H</span>
-            </div>
-            <span className="text-base font-bold gold-text-shine">홀덤맵</span>
+          <Link href="/" className="flex items-center">
+            <span className="text-lg font-extrabold gold-text-shine">홀덤맵</span>
           </Link>
 
           <nav className="hidden md:flex items-center gap-1 bg-white/5 rounded-full p-1">
