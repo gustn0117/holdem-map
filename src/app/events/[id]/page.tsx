@@ -40,7 +40,7 @@ export default function EventDetailPage() {
         <Header />
         <div className="flex-1 flex items-center justify-center">
           <div className="text-center">
-            <h1 className="text-2xl font-bold text-white mb-3">대회를 찾을 수 없습니다</h1>
+            <h1 className="text-2xl font-bold text-surface mb-3">대회를 찾을 수 없습니다</h1>
             <Link href="/events" className="text-accent hover:text-accent-light text-base transition-colors">목록으로 돌아가기</Link>
           </div>
         </div>
@@ -79,7 +79,7 @@ export default function EventDetailPage() {
               <span className="gold-btn text-dark text-sm font-bold px-4 py-1.5 rounded-full shadow-md shadow-accent/20">{event.prize}</span>
             )}
           </div>
-          <h1 className="text-3xl md:text-4xl font-extrabold text-white mb-4 leading-tight">{event.title}</h1>
+          <h1 className="text-3xl md:text-4xl font-extrabold text-surface mb-4 leading-tight">{event.title}</h1>
           <Link href={`/store/${event.store_id}`} className="text-accent hover:text-accent-light text-lg font-medium transition-colors">
             {event.store_name} →
           </Link>
@@ -89,17 +89,17 @@ export default function EventDetailPage() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
           <div className="bg-card rounded-2xl p-5 border border-border-custom text-center">
             <p className="text-muted text-sm mb-1">날짜</p>
-            <p className="text-white text-lg font-bold">{eventDate.getMonth() + 1}월 {eventDate.getDate()}일</p>
+            <p className="text-surface text-lg font-bold">{eventDate.getMonth() + 1}월 {eventDate.getDate()}일</p>
             <p className="text-muted text-sm">({dayNames[eventDate.getDay()]}요일)</p>
           </div>
           <div className="bg-card rounded-2xl p-5 border border-border-custom text-center">
             <p className="text-muted text-sm mb-1">시간</p>
-            <p className="text-white text-lg font-bold">{event.time}</p>
+            <p className="text-surface text-lg font-bold">{event.time}</p>
           </div>
           {event.buy_in && (
             <div className="bg-card rounded-2xl p-5 border border-border-custom text-center">
               <p className="text-muted text-sm mb-1">바이인</p>
-              <p className="text-white text-lg font-bold">{event.buy_in}</p>
+              <p className="text-surface text-lg font-bold">{event.buy_in}</p>
             </div>
           )}
           {event.prize && (
@@ -112,14 +112,14 @@ export default function EventDetailPage() {
 
         {/* Description */}
         <div className="bg-card rounded-3xl border border-border-custom p-8 mb-8">
-          <h2 className="text-white font-bold text-xl mb-4">대회 안내</h2>
+          <h2 className="text-surface font-bold text-xl mb-4">대회 안내</h2>
           <p className="text-sub text-base leading-relaxed whitespace-pre-wrap">{event.description}</p>
         </div>
 
         {/* Details */}
         {event.details && (
           <div className="bg-card rounded-3xl border border-border-custom p-8 mb-8">
-            <h2 className="text-white font-bold text-xl mb-4">상세 정보</h2>
+            <h2 className="text-surface font-bold text-xl mb-4">상세 정보</h2>
             <p className="text-sub text-base leading-relaxed whitespace-pre-wrap">{event.details}</p>
           </div>
         )}
@@ -127,7 +127,7 @@ export default function EventDetailPage() {
         {/* Location */}
         {event.location && (
           <div className="bg-card rounded-3xl border border-border-custom p-8 mb-8">
-            <h2 className="text-white font-bold text-xl mb-4">장소</h2>
+            <h2 className="text-surface font-bold text-xl mb-4">장소</h2>
             <p className="text-sub text-base">{event.location}</p>
           </div>
         )}
@@ -136,7 +136,7 @@ export default function EventDetailPage() {
         <div className="bg-card rounded-3xl border border-border-custom p-8 mb-10 flex items-center justify-between">
           <div>
             <p className="text-muted text-sm mb-1">주최 매장</p>
-            <p className="text-white text-lg font-bold">{event.store_name}</p>
+            <p className="text-surface text-lg font-bold">{event.store_name}</p>
           </div>
           <Link href={`/store/${event.store_id}`} className="gold-btn text-dark text-sm font-bold px-6 py-3 rounded-full shadow-lg shadow-accent/20 hover:shadow-accent/40 transition-all">
             매장 보기

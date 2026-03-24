@@ -56,10 +56,10 @@ function MapPageInner() {
               <input
                 type="text" value={query} onChange={(e) => setQuery(e.target.value)}
                 placeholder="지역명, 매장명 검색"
-                className="w-full bg-card border border-border-custom text-white rounded-xl pl-12 pr-10 py-3.5 text-base focus:outline-none focus:border-accent/50 transition-all placeholder:text-muted"
+                className="w-full bg-card border border-border-custom text-surface rounded-xl pl-12 pr-10 py-3.5 text-base focus:outline-none focus:border-accent/50 transition-all placeholder:text-muted"
               />
               {query && (
-                <button onClick={() => setQuery("")} className="absolute right-4 top-1/2 -translate-y-1/2 text-muted hover:text-white transition-colors">
+                <button onClick={() => setQuery("")} className="absolute right-4 top-1/2 -translate-y-1/2 text-muted hover:text-surface transition-colors">
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
                 </button>
               )}
@@ -67,7 +67,7 @@ function MapPageInner() {
             <div className="flex gap-1.5 bg-card rounded-xl p-1.5 border border-border-custom">
               {regions.map((r) => (
                 <button key={r} onClick={() => setSelectedRegion(r)}
-                  className={`flex-1 py-2.5 rounded-lg text-sm font-semibold transition-all ${selectedRegion === r ? "gold-btn text-dark shadow-md" : "text-muted hover:text-white"}`}>
+                  className={`flex-1 py-2.5 rounded-lg text-sm font-semibold transition-all ${selectedRegion === r ? "gold-btn text-dark shadow-md" : "text-muted hover:text-surface"}`}>
                   {r}
                 </button>
               ))}
@@ -79,7 +79,7 @@ function MapPageInner() {
             <div className="flex gap-1.5">
               {[{ value: "recommended", label: "추천순" }, { value: "name", label: "이름순" }].map((opt) => (
                 <button key={opt.value} onClick={() => setSortBy(opt.value)}
-                  className={`text-sm px-3 py-1.5 rounded-lg transition-colors ${sortBy === opt.value ? "text-accent bg-accent/10 font-semibold" : "text-muted hover:text-white"}`}>
+                  className={`text-sm px-3 py-1.5 rounded-lg transition-colors ${sortBy === opt.value ? "text-accent bg-accent/10 font-semibold" : "text-muted hover:text-surface"}`}>
                   {opt.label}
                 </button>
               ))}

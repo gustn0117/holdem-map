@@ -18,7 +18,7 @@ export default function EventsPage() {
       <main className="flex-1 max-w-4xl mx-auto px-4 py-10 w-full">
         <div className="flex items-end justify-between mb-10">
           <div>
-            <h1 className="text-3xl font-bold text-white">대회 / 이벤트</h1>
+            <h1 className="text-3xl font-bold text-surface">대회 / 이벤트</h1>
             <p className="text-muted text-base mt-2">다가오는 홀덤 대회 일정을 확인하세요</p>
           </div>
           <span className="text-muted text-base">
@@ -68,7 +68,7 @@ export default function EventsPage() {
                       <div className="flex-1 min-w-0">
                         <div className="flex items-start justify-between gap-3">
                           <div>
-                            <h2 className="text-white font-bold text-xl group-hover:text-accent transition-colors">{event.title}</h2>
+                            <h2 className="text-surface font-bold text-xl group-hover:text-accent transition-colors">{event.title}</h2>
                             <p className="text-accent text-sm mt-1">{event.store_name}</p>
                           </div>
                           {event.prize && (

@@ -12,7 +12,7 @@ export default function NoticesPage() {
     <div className="flex flex-col min-h-screen pb-16 md:pb-0">
       <Header />
       <main className="flex-1 max-w-3xl mx-auto px-4 py-10 w-full">
-        <h1 className="text-3xl font-bold text-white mb-2">공지사항</h1>
+        <h1 className="text-3xl font-bold text-surface mb-2">공지사항</h1>
         <p className="text-muted text-base mb-10">홀덤맵의 새로운 소식을 확인하세요</p>
 
         {loading ? (
@@ -28,7 +28,7 @@ export default function NoticesPage() {
                     </svg>
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h3 className="text-white font-bold text-lg group-hover:text-accent transition-colors truncate">{notice.title}</h3>
+                    <h3 className="text-surface font-bold text-lg group-hover:text-accent transition-colors truncate">{notice.title}</h3>
                     <p className="text-muted text-sm mt-1 truncate">{notice.content}</p>
                   </div>
                   <p className="text-muted text-sm shrink-0">{notice.date}</p>

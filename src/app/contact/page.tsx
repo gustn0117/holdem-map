@@ -12,7 +12,7 @@ export default function ContactPage() {
   const set = (key: string, value: string) => setForm(prev => ({ ...prev, [key]: value }));
   const handleSubmit = (e: React.FormEvent) => { e.preventDefault(); setSubmitted(true); };
 
-  const inputClass = "w-full bg-card border border-border-custom rounded-xl px-5 py-4 text-base text-white focus:outline-none focus:border-accent/50 focus:ring-2 focus:ring-accent/10 transition-all placeholder:text-muted";
+  const inputClass = "w-full bg-card border border-border-custom rounded-xl px-5 py-4 text-base text-surface focus:outline-none focus:border-accent/50 focus:ring-2 focus:ring-accent/10 transition-all placeholder:text-muted";
 
   if (submitted) {
     return (
@@ -23,7 +23,7 @@ export default function ContactPage() {
             <div className="w-20 h-20 gold-shine rounded-3xl flex items-center justify-center mx-auto mb-8 shadow-xl shadow-accent/25">
               <svg className="w-10 h-10 text-dark" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
             </div>
-            <h1 className="text-3xl font-extrabold text-white mb-4">문의가 접수되었습니다</h1>
+            <h1 className="text-3xl font-extrabold text-surface mb-4">문의가 접수되었습니다</h1>
             <p className="text-sub text-lg mb-10 leading-relaxed">입력하신 연락처로 빠른 시일 내에<br />연락드리겠습니다. 감사합니다.</p>
             <Link href="/" className="gold-btn text-dark font-bold text-base px-10 py-4 rounded-full inline-block shadow-lg shadow-accent/25">홈으로 돌아가기</Link>
           </div>
@@ -41,7 +41,7 @@ export default function ContactPage() {
           <div className="w-18 h-18 gold-shine rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-xl shadow-accent/25">
             <svg className="w-9 h-9 text-dark" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>
           </div>
-          <h1 className="text-3xl font-extrabold text-white mb-3">매장 등록 문의</h1>
+          <h1 className="text-3xl font-extrabold text-surface mb-3">매장 등록 문의</h1>
           <p className="text-sub text-lg">홀덤맵에 매장을 등록하고 전국 유저에게 홍보하세요</p>
         </div>
 

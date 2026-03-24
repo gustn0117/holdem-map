@@ -93,7 +93,7 @@ export default function Home() {
           {/* Recommended */}
           <div className="bg-white rounded-2xl border border-border-custom overflow-hidden">
             <div className="p-5 border-b border-border-custom flex items-center gap-3">
-              <div className="w-9 h-9 rounded-lg bg-accent flex items-center justify-center text-white font-bold">★</div>
+              <div className="w-9 h-9 rounded-lg bg-accent flex items-center justify-center text-surface font-bold">★</div>
               <div>
                 <h3 className="text-surface font-bold text-base">추천 매장</h3>
                 <p className="text-muted text-xs">에디터 추천</p>
@@ -174,9 +174,9 @@ export default function Home() {
                 <h4 className="text-surface font-bold text-sm">구인구직</h4>
                 <p className="text-muted text-xs mt-1">딜러 · 서빙</p>
               </Link>
-              <Link href="/contact" className="bg-accent rounded-2xl p-5 text-white hover:bg-accent-hover transition-all group">
+              <Link href="/contact" className="bg-accent rounded-2xl p-5 text-surface hover:bg-accent-hover transition-all group">
                 <svg className="w-8 h-8 text-white/80 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>
-                <h4 className="text-white font-bold text-sm">매장 등록</h4>
+                <h4 className="text-surface font-bold text-sm">매장 등록</h4>
                 <p className="text-white/70 text-xs mt-1">문의하기</p>
               </Link>
             </div>

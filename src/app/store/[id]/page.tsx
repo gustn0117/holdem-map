@@ -25,7 +25,7 @@ export default function StorePage() {
   }, [id]);
 
   if (loading) return <div className="flex flex-col min-h-screen pb-16 md:pb-0"><Header /><div className="flex-1 flex items-center justify-center"><div className="w-8 h-8 border-2 border-accent/30 border-t-accent rounded-full animate-spin" /></div></div>;
-  if (!store) return <div className="flex flex-col min-h-screen pb-16 md:pb-0"><Header /><div className="flex-1 flex items-center justify-center text-center"><div><h1 className="text-2xl font-bold text-white mb-3">매장을 찾을 수 없습니다</h1><Link href="/" className="text-accent text-base">홈으로 돌아가기</Link></div></div><Footer /></div>;
+  if (!store) return <div className="flex flex-col min-h-screen pb-16 md:pb-0"><Header /><div className="flex-1 flex items-center justify-center text-center"><div><h1 className="text-2xl font-bold text-surface mb-3">매장을 찾을 수 없습니다</h1><Link href="/" className="text-accent text-base">홈으로 돌아가기</Link></div></div><Footer /></div>;
 
   return (
     <div className="flex flex-col min-h-screen pb-16 md:pb-0">
@@ -47,7 +47,7 @@ export default function StorePage() {
             <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-5">
               <div>
                 <div className="flex items-center gap-3 mb-3">
-                  <h1 className="text-3xl md:text-4xl font-extrabold text-white tracking-tight">{store.name}</h1>
+                  <h1 className="text-3xl md:text-4xl font-extrabold text-surface tracking-tight">{store.name}</h1>
                   {store.is_recommended && <span className="gold-btn text-dark text-xs font-bold px-3 py-1 rounded-full shadow-md">추천</span>}
                 </div>
                 <p className="text-muted text-base mb-4">{store.address}</p>
@@ -72,7 +72,7 @@ export default function StorePage() {
         {/* Info + Map */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
           <div className="bg-card rounded-3xl p-8 border border-border-custom">
-            <h2 className="text-white font-bold text-xl mb-6">기본 정보</h2>
+            <h2 className="text-surface font-bold text-xl mb-6">기본 정보</h2>
             <div className="space-y-6">
               {[
                 { label: "주소", value: store.address, icon: "M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" },
@@ -85,7 +85,7 @@ export default function StorePage() {
                   </div>
                   <div>
                     <p className="text-muted text-sm mb-1">{item.label}</p>
-                    <p className="text-white text-base font-medium">{item.value}</p>
+                    <p className="text-surface text-base font-medium">{item.value}</p>
                   </div>
                 </div>
               ))}
@@ -93,7 +93,7 @@ export default function StorePage() {
           </div>
 
           <div className="bg-card rounded-3xl p-8 border border-border-custom">
-            <h2 className="text-white font-bold text-xl mb-6">위치</h2>
+            <h2 className="text-surface font-bold text-xl mb-6">위치</h2>
             <div className="h-64 rounded-2xl overflow-hidden border border-border-custom">
               <StoreMap store={store} />
             </div>
@@ -102,20 +102,20 @@ export default function StorePage() {
 
         {/* Description */}
         <div className="bg-card rounded-3xl p-8 border border-border-custom mb-8">
-          <h2 className="text-white font-bold text-xl mb-4">매장 소개</h2>
+          <h2 className="text-surface font-bold text-xl mb-4">매장 소개</h2>
           <p className="text-sub text-base leading-relaxed">{store.description}</p>
         </div>
 
         {/* Events */}
         {storeEvents.length > 0 && (
           <div className="bg-card rounded-3xl p-8 border border-border-custom mb-10">
-            <h2 className="text-white font-bold text-xl mb-6">대회 / 이벤트</h2>
+            <h2 className="text-surface font-bold text-xl mb-6">대회 / 이벤트</h2>
             <div className="space-y-4">
               {storeEvents.map((event) => (
                 <Link key={event.id} href={`/events/${event.id}`} className="block group">
                   <div className="p-5 rounded-2xl bg-white/3 border border-border-custom hover:border-accent/30 transition-all">
                     <div className="flex items-center justify-between mb-2">
-                      <h3 className="text-white font-bold text-lg group-hover:text-accent transition-colors">{event.title}</h3>
+                      <h3 className="text-surface font-bold text-lg group-hover:text-accent transition-colors">{event.title}</h3>
                       {event.prize && <span className="gold-btn text-dark text-sm font-bold px-3 py-1 rounded-lg shadow-sm">{event.prize}</span>}
                     </div>
                     <p className="text-muted text-sm">{event.date} · {event.time}</p>

@@ -23,7 +23,7 @@ export default function NoticeDetailPage() {
   }, [id]);
 
   if (loading) return <div className="flex flex-col min-h-screen pb-16 md:pb-0"><Header /><div className="flex-1 flex items-center justify-center"><div className="w-8 h-8 border-2 border-accent/30 border-t-accent rounded-full animate-spin" /></div></div>;
-  if (!notice) return <div className="flex flex-col min-h-screen pb-16 md:pb-0"><Header /><div className="flex-1 flex items-center justify-center text-center"><div><h1 className="text-2xl font-bold text-white mb-3">공지사항을 찾을 수 없습니다</h1><Link href="/notices" className="text-accent text-base">목록으로 돌아가기</Link></div></div><Footer /></div>;
+  if (!notice) return <div className="flex flex-col min-h-screen pb-16 md:pb-0"><Header /><div className="flex-1 flex items-center justify-center text-center"><div><h1 className="text-2xl font-bold text-surface mb-3">공지사항을 찾을 수 없습니다</h1><Link href="/notices" className="text-accent text-base">목록으로 돌아가기</Link></div></div><Footer /></div>;
 
   return (
     <div className="flex flex-col min-h-screen pb-16 md:pb-0">
@@ -39,7 +39,7 @@ export default function NoticeDetailPage() {
 
         <div className="bg-card rounded-3xl border border-border-custom overflow-hidden">
           <div className="p-8 md:p-10 border-b border-border-custom">
-            <h1 className="text-2xl md:text-3xl font-extrabold text-white mb-4">{notice.title}</h1>
+            <h1 className="text-2xl md:text-3xl font-extrabold text-surface mb-4">{notice.title}</h1>
             <p className="text-muted text-base">{notice.date}</p>
           </div>
           <div className="p-8 md:p-10">
