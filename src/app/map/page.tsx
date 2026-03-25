@@ -67,7 +67,7 @@ function MapPageInner() {
             <div className="flex gap-1.5 bg-card rounded-xl p-1.5 border border-border-custom">
               {regions.map((r) => (
                 <button key={r} onClick={() => setSelectedRegion(r)}
-                  className={`flex-1 py-2.5 rounded-lg text-sm font-semibold transition-all ${selectedRegion === r ? "gold-btn text-dark shadow-md" : "text-muted hover:text-surface"}`}>
+                  className={`flex-1 py-2.5 rounded-lg text-sm font-semibold transition-all ${selectedRegion === r ? "bg-accent text-dark shadow-md" : "text-muted hover:text-surface"}`}>
                   {r}
                 </button>
               ))}
@@ -75,7 +75,7 @@ function MapPageInner() {
           </div>
 
           <div className="flex items-center justify-between px-5 py-4 border-b border-border-custom">
-            <p className="text-muted text-base"><span className="gold-text-shine font-bold text-xl mr-1">{filteredStores.length}</span>곳</p>
+            <p className="text-muted text-base"><span className="text-accent font-bold text-xl mr-1">{filteredStores.length}</span>곳</p>
             <div className="flex gap-1.5">
               {[{ value: "recommended", label: "추천순" }, { value: "name", label: "이름순" }].map((opt) => (
                 <button key={opt.value} onClick={() => setSortBy(opt.value)}
@@ -94,7 +94,7 @@ function MapPageInner() {
               </div>
             ) : filteredStores.map((store) => (
               <div key={store.id} onClick={() => setSelectedStore(store)}
-                className={`rounded-2xl transition-all cursor-pointer ${selectedStore?.id === store.id ? "ring-2 ring-accent/50" : ""}`}>
+                className={`rounded-xl transition-all cursor-pointer ${selectedStore?.id === store.id ? "ring-2 ring-accent/50" : ""}`}>
                 <StoreCard store={store} />
               </div>
             ))}

@@ -13,7 +13,7 @@ export default function PrivacyPage() {
           <span className="text-sub">개인정보처리방침</span>
         </div>
 
-        <div className="bg-card rounded-3xl border border-border-custom p-8 md:p-10">
+        <div className="bg-card rounded-xl border border-border-custom p-8 md:p-10">
           <h1 className="text-3xl font-extrabold text-surface mb-8">개인정보처리방침</h1>
           <div className="space-y-8 text-sub text-base leading-relaxed">
             <section><h2 className="text-surface font-bold text-lg mb-3">1. 수집하는 개인정보</h2><p>홀덤맵은 매장 등록 문의 시 다음 정보를 수집할 수 있습니다: 담당자명, 연락처, 매장명, 매장 주소. 서비스 이용 시 별도의 회원가입이나 개인정보 수집은 하지 않습니다.</p></section>

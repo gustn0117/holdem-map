@@ -112,7 +112,7 @@ export default function MapView({ stores, onStoreClick, selectedStore }: MapView
   }, [selectedStore, stores, ready]);
 
   return (
-    <div className="relative w-full h-full rounded-2xl overflow-hidden border border-border-custom z-0">
+    <div className="relative w-full h-full rounded-xl overflow-hidden border border-border-custom z-0">
       <style>{`
         .dark-popup .leaflet-popup-content-wrapper {
           background: #ffffff;

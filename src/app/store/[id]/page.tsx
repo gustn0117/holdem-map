@@ -41,14 +41,14 @@ export default function StorePage() {
         </div>
 
         {/* Store Header */}
-        <div className="bg-card rounded-3xl p-8 md:p-10 border border-border-custom mb-8 relative overflow-hidden">
+        <div className="bg-card rounded-xl p-8 md:p-10 border border-border-custom mb-8 relative overflow-hidden">
           <div className="absolute inset-0 bg-linear-to-br from-accent/5 to-transparent" />
           <div className="relative">
             <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-5">
               <div>
                 <div className="flex items-center gap-3 mb-3">
                   <h1 className="text-3xl md:text-4xl font-extrabold text-surface tracking-tight">{store.name}</h1>
-                  {store.is_recommended && <span className="gold-btn text-dark text-xs font-bold px-3 py-1 rounded-full shadow-md">추천</span>}
+                  {store.is_recommended && <span className="bg-accent text-dark text-xs font-bold px-3 py-1 rounded-full shadow-md">추천</span>}
                 </div>
                 <p className="text-muted text-base mb-4">{store.address}</p>
                 <div className="flex items-center gap-3 text-base">
@@ -59,7 +59,7 @@ export default function StorePage() {
                   <span className="text-sub">{store.hours}</span>
                 </div>
               </div>
-              <span className="gold-btn text-dark px-5 py-2.5 rounded-xl text-base font-bold shadow-lg shadow-accent/20 shrink-0">{store.region}</span>
+              <span className="bg-accent text-dark px-5 py-2.5 rounded-xl text-base font-bold shadow-lg shadow-accent/20 shrink-0">{store.region}</span>
             </div>
             <div className="flex flex-wrap gap-2 mt-6">
               {store.tags.map((tag) => (
@@ -71,7 +71,7 @@ export default function StorePage() {
 
         {/* Info + Map */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-          <div className="bg-card rounded-3xl p-8 border border-border-custom">
+          <div className="bg-card rounded-xl p-8 border border-border-custom">
             <h2 className="text-surface font-bold text-xl mb-6">기본 정보</h2>
             <div className="space-y-6">
               {[
@@ -92,31 +92,31 @@ export default function StorePage() {
             </div>
           </div>
 
-          <div className="bg-card rounded-3xl p-8 border border-border-custom">
+          <div className="bg-card rounded-xl p-8 border border-border-custom">
             <h2 className="text-surface font-bold text-xl mb-6">위치</h2>
-            <div className="h-64 rounded-2xl overflow-hidden border border-border-custom">
+            <div className="h-64 rounded-xl overflow-hidden border border-border-custom">
               <StoreMap store={store} />
             </div>
           </div>
         </div>
 
         {/* Description */}
-        <div className="bg-card rounded-3xl p-8 border border-border-custom mb-8">
+        <div className="bg-card rounded-xl p-8 border border-border-custom mb-8">
           <h2 className="text-surface font-bold text-xl mb-4">매장 소개</h2>
           <p className="text-sub text-base leading-relaxed">{store.description}</p>
         </div>
 
         {/* Events */}
         {storeEvents.length > 0 && (
-          <div className="bg-card rounded-3xl p-8 border border-border-custom mb-10">
+          <div className="bg-card rounded-xl p-8 border border-border-custom mb-10">
             <h2 className="text-surface font-bold text-xl mb-6">대회 / 이벤트</h2>
             <div className="space-y-4">
               {storeEvents.map((event) => (
                 <Link key={event.id} href={`/events/${event.id}`} className="block group">
-                  <div className="p-5 rounded-2xl bg-white/3 border border-border-custom hover:border-accent/30 transition-all">
+                  <div className="p-5 rounded-xl bg-white/3 border border-border-custom hover:border-accent/30 transition-all">
                     <div className="flex items-center justify-between mb-2">
                       <h3 className="text-surface font-bold text-lg group-hover:text-accent transition-colors">{event.title}</h3>
-                      {event.prize && <span className="gold-btn text-dark text-sm font-bold px-3 py-1 rounded-lg shadow-sm">{event.prize}</span>}
+                      {event.prize && <span className="bg-accent text-dark text-sm font-bold px-3 py-1 rounded-lg shadow-sm">{event.prize}</span>}
                     </div>
                     <p className="text-muted text-sm">{event.date} · {event.time}</p>
                     <p className="text-sub text-base mt-2 leading-relaxed">{event.description}</p>

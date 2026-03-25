@@ -22,7 +22,7 @@ export default function EventsPage() {
             <p className="text-muted text-base mt-2">다가오는 홀덤 대회 일정을 확인하세요</p>
           </div>
           <span className="text-muted text-base">
-            총 <span className="gold-text-shine font-bold text-xl">{sortedEvents.length}</span>개
+            총 <span className="text-accent font-bold text-xl">{sortedEvents.length}</span>개
           </span>
         </div>
 
@@ -42,7 +42,7 @@ export default function EventsPage() {
 
               return (
                 <Link key={event.id} href={`/events/${event.id}`} className="block group anim-in" style={{ animationDelay: `${i * 0.05}s` }}>
-                  <div className="bg-card rounded-3xl border border-border-custom hover:border-accent/30 transition-all overflow-hidden">
+                  <div className="bg-card rounded-xl border border-border-custom hover:border-accent/30 transition-all overflow-hidden">
                     {/* Image banner if exists */}
                     {event.image && (
                       <div className="h-48 overflow-hidden">
@@ -54,11 +54,11 @@ export default function EventsPage() {
                       {/* Date block */}
                       <div className="flex md:flex-col items-center gap-3 md:gap-2 md:w-20 shrink-0">
                         <div className="bg-accent/10 border border-accent/15 rounded-xl p-3 md:w-full text-center">
-                          <p className="gold-text-shine text-3xl font-bold leading-none">{eventDate.getDate()}</p>
+                          <p className="text-accent text-3xl font-bold leading-none">{eventDate.getDate()}</p>
                           <p className="text-muted text-xs mt-1">{eventDate.getMonth() + 1}월</p>
                         </div>
                         {isUpcoming && (
-                          <span className="gold-btn text-dark text-xs font-bold px-3 py-1 rounded-lg shadow-sm">
+                          <span className="bg-accent text-dark text-xs font-bold px-3 py-1 rounded-lg shadow-sm">
                             {daysUntil === 0 ? "TODAY" : `D-${daysUntil}`}
                           </span>
                         )}
@@ -72,7 +72,7 @@ export default function EventsPage() {
                             <p className="text-accent text-sm mt-1">{event.store_name}</p>
                           </div>
                           {event.prize && (
-                            <span className="gold-btn text-dark px-4 py-2 rounded-xl text-sm font-bold shrink-0 shadow-md shadow-accent/15">{event.prize}</span>
+                            <span className="bg-accent text-dark px-4 py-2 rounded-xl text-sm font-bold shrink-0 shadow-md shadow-accent/15">{event.prize}</span>
                           )}
                         </div>
 

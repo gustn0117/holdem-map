@@ -19,7 +19,7 @@ export default function JobsPage() {
   const filtered = filterRole === "전체" ? jobs : jobs.filter(j => j.role === filterRole);
 
   return (
-    <div className="flex flex-col min-h-screen pb-16 md:pb-0 bg-[#f5f5f5]">
+    <div className="flex flex-col min-h-screen pb-16 md:pb-0 bg-bg">
       <Header />
       <main className="max-w-[1400px] mx-auto px-4 md:px-8 py-8 w-full">
         {/* Header */}
@@ -48,7 +48,7 @@ export default function JobsPage() {
             <div className="w-8 h-8 border-2 border-accent/30 border-t-accent rounded-full animate-spin" />
           </div>
         ) : filtered.length === 0 ? (
-          <div className="text-center py-20 bg-white rounded-2xl border border-border-custom">
+          <div className="text-center py-20 bg-white rounded-xl border border-border-custom">
             <svg className="w-16 h-16 text-gray-200 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
             </svg>
@@ -61,7 +61,7 @@ export default function JobsPage() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {filtered.map((job) => (
-              <div key={job.id} className="bg-white rounded-2xl border border-border-custom overflow-hidden hover:shadow-lg hover:border-accent/30 transition-all">
+              <div key={job.id} className="bg-white rounded-xl border border-border-custom overflow-hidden hover:shadow-lg hover:border-accent/30 transition-all">
                 {/* Photo */}
                 {job.photo ? (
                   <div className="h-48 bg-gray-100 overflow-hidden">

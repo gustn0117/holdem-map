@@ -57,7 +57,7 @@ export default function JobWritePage() {
   const inputClass = "w-full bg-white border border-border-custom rounded-xl px-4 py-3 text-base text-surface focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/10 transition-all placeholder:text-muted";
 
   return (
-    <div className="flex flex-col min-h-screen pb-16 md:pb-0 bg-[#f5f5f5]">
+    <div className="flex flex-col min-h-screen pb-16 md:pb-0 bg-bg">
       <Header />
       <main className="max-w-2xl mx-auto px-4 md:px-8 py-10 w-full">
         <div className="flex items-center gap-2 text-sm mb-8">
@@ -69,7 +69,7 @@ export default function JobWritePage() {
         <h1 className="text-2xl font-black text-surface mb-2">구직글 작성</h1>
         <p className="text-muted text-sm mb-8">매장에서 직접 연락드립니다. 정확한 정보를 입력해주세요.</p>
 
-        <form onSubmit={handleSubmit} className="bg-white rounded-2xl border border-border-custom p-6 md:p-8 space-y-6">
+        <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-border-custom p-6 md:p-8 space-y-6">
           {/* Role + Nickname */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             <div>

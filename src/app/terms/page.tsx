@@ -13,7 +13,7 @@ export default function TermsPage() {
           <span className="text-sub">이용약관</span>
         </div>
 
-        <div className="bg-card rounded-3xl border border-border-custom p-8 md:p-10">
+        <div className="bg-card rounded-xl border border-border-custom p-8 md:p-10">
           <h1 className="text-3xl font-extrabold text-surface mb-8">이용약관</h1>
           <div className="space-y-8 text-sub text-base leading-relaxed">
             <section><h2 className="text-surface font-bold text-lg mb-3">제1조 (목적)</h2><p>본 약관은 홀덤맵(이하 &quot;서비스&quot;)의 이용조건 및 절차, 이용자와 서비스 제공자의 권리, 의무 및 책임사항을 규정함을 목적으로 합니다.</p></section>

@@ -37,7 +37,7 @@ export default function NoticeDetailPage() {
           <span className="text-sub truncate">{notice.title}</span>
         </div>
 
-        <div className="bg-card rounded-3xl border border-border-custom overflow-hidden">
+        <div className="bg-card rounded-xl border border-border-custom overflow-hidden">
           <div className="p-8 md:p-10 border-b border-border-custom">
             <h1 className="text-2xl md:text-3xl font-extrabold text-surface mb-4">{notice.title}</h1>
             <p className="text-muted text-base">{notice.date}</p>
