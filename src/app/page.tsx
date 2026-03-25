@@ -50,17 +50,7 @@ export default function Home() {
       <section className="section-alt border-b border-border-custom">
         <div className="max-w-350 mx-auto px-5 md:px-10 py-6">
           <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-2.5">
-              <h2 className="text-[17px] font-bold text-surface">매장 지도</h2>
-              <div className="flex bg-white rounded-lg p-0.5 border border-border-custom">
-                {regions.map((r) => (
-                  <button key={r} onClick={() => setSelectedRegion(r)}
-                    className={`px-3 py-1.5 rounded-md text-[13px] font-semibold transition-all ${selectedRegion === r ? "bg-accent text-white" : "text-muted hover:text-surface"}`}>
-                    {r}
-                  </button>
-                ))}
-              </div>
-            </div>
+            <h2 className="text-[17px] font-bold text-surface">매장 지도</h2>
             <div className="flex items-center gap-2.5">
               <span className="text-muted text-[13px]"><span className="text-accent font-bold">{filteredStores.length}</span>곳</span>
               <Link href="/map" className="hidden md:flex items-center gap-1 text-[13px] text-sub hover:text-accent font-medium transition-colors">
