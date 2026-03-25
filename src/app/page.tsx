@@ -32,18 +32,6 @@ export default function Home() {
 
   return (
     <div className="flex flex-col min-h-screen pb-16 md:pb-0">
-      {/* Main Banner */}
-      <div className="bg-white">
-        <div className="max-w-350 mx-auto px-5 md:px-10 py-2">
-          {mainBanner?.image ? (
-            mainBanner.link ? <a href={mainBanner.link} target="_blank" rel="noopener noreferrer"><img src={mainBanner.image} alt="" className="w-full h-14 md:h-18 object-cover rounded-xl" /></a>
-              : <img src={mainBanner.image} alt="" className="w-full h-14 md:h-18 object-cover rounded-xl" />
-          ) : (
-            <div className="ad-pattern h-14 md:h-18 flex items-center justify-center rounded-xl"><p className="text-muted text-[13px]">광고 영역</p></div>
-          )}
-        </div>
-      </div>
-
       <Header />
 
       {/* Map */}

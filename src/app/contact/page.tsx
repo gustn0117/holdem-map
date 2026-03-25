@@ -7,7 +7,7 @@ import Select from "@/components/Select";
 import Footer from "@/components/Footer";
 
 export default function ContactPage() {
-  const [form, setForm] = useState({ name: "", phone: "", storeName: "", region: "서울", message: "" });
+  const [form, setForm] = useState({ name: "", phone: "", storeName: "", storeAddress: "", region: "서울", message: "" });
   const [submitted, setSubmitted] = useState(false);
   const set = (key: string, value: string) => setForm(prev => ({ ...prev, [key]: value }));
   const handleSubmit = (e: React.FormEvent) => { e.preventDefault(); setSubmitted(true); };
@@ -67,6 +67,10 @@ export default function ContactPage() {
                 { value: "서울", label: "서울" }, { value: "경기", label: "경기" }, { value: "인천", label: "인천" }, { value: "기타", label: "기타 지역" },
               ]} />
             </div>
+          </div>
+          <div>
+            <label className="text-sub text-sm font-semibold block mb-2">매장 주소 *</label>
+            <input className={inputClass} value={form.storeAddress} onChange={e => set("storeAddress", e.target.value)} placeholder="예: 서울 강남구 테헤란로 123" required />
           </div>
           <div>
             <label className="text-sub text-sm font-semibold block mb-2">문의 내용</label>

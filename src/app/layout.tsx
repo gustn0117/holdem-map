@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import TopBanner from "@/components/TopBanner";
 
 export const metadata: Metadata = {
   title: "홀덤맵 - 전국 홀덤 매장 지도·정보 플랫폼",
@@ -14,7 +15,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko" className="h-full antialiased">
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full">
+        <TopBanner />
+        {children}
+      </body>
     </html>
   );
 }
