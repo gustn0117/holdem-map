@@ -7,8 +7,8 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import StoreCard from "@/components/StoreCard";
 import { useStores, useEvents, useNotices } from "@/hooks/useData";
-import { getBanners, getShorts } from "@/lib/api";
-import { Store, Banner, Short } from "@/types";
+import { getBanners, getShorts, getJobs } from "@/lib/api";
+import { Store, Banner, Short, Job } from "@/types";
 
 const MapView = dynamic(() => import("@/components/MapView"), { ssr: false });
 const regions = ["전체", "서울", "경기", "인천"];
@@ -21,8 +21,9 @@ export default function Home() {
   const { notices } = useNotices();
   const [banners, setBanners] = useState<Banner[]>([]);
   const [shorts, setShorts] = useState<Short[]>([]);
+  const [jobs, setJobs] = useState<Job[]>([]);
 
-  useEffect(() => { getBanners().then(setBanners); getShorts().then(setShorts); }, []);
+  useEffect(() => { getBanners().then(setBanners); getShorts().then(setShorts); getJobs().then(setJobs); }, []);
 
   const mainBanner = banners.find(b => b.position === "main");
   const sideBanners = banners.filter(b => b.position.startsWith("side")).sort((a, b) => a.position.localeCompare(b.position));
@@ -116,7 +117,7 @@ export default function Home() {
       {/* Bottom Grid */}
       <section>
         <div className="max-w-350 mx-auto px-5 md:px-10 py-8">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
 
             {/* Recommended */}
             <div className="rounded-2xl overflow-hidden card-shadow bg-white">
@@ -180,27 +181,36 @@ export default function Home() {
                 ))}
               </div>
             </div>
-          </div>
-        </div>
-      </section>
 
-      {/* 구인구직 */}
-      <section className="section-alt w-full border-t border-border-custom">
-        <div className="container-main py-8">
-          <Link href="/jobs" className="block rounded-2xl card-shadow bg-white hover:card-shadow-hover transition-all p-6 md:p-8 group">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-xl bg-accent-light flex items-center justify-center shrink-0">
-                  <svg className="w-6 h-6 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
-                </div>
-                <div>
-                  <h3 className="text-surface font-bold text-[17px] group-hover:text-accent transition-colors">구인구직</h3>
-                  <p className="text-muted text-[14px] mt-0.5">딜러 · 서빙 구직자를 찾아보세요</p>
-                </div>
+            {/* 구인구직 */}
+            <div className="rounded-2xl overflow-hidden card-shadow bg-white">
+              <div className="px-5 py-4 border-b border-border-custom flex justify-between items-center">
+                <h3 className="text-surface font-bold text-[15px]">구인구직</h3>
+                <Link href="/jobs" className="text-accent text-[12px] font-semibold hover:underline">더보기 →</Link>
               </div>
-              <svg className="w-5 h-5 text-[#ddd] group-hover:text-accent shrink-0 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+              <div className="p-2">
+                {jobs.length === 0 ? (
+                  <div className="px-3 py-6 text-center">
+                    <p className="text-muted text-[13px]">등록된 구직글이 없습니다</p>
+                    <Link href="/jobs/write" className="text-accent text-[12px] font-semibold mt-1 inline-block hover:underline">구직글 작성하기 →</Link>
+                  </div>
+                ) : (
+                  jobs.slice(0, 4).map((job) => (
+                    <Link key={job.id} href="/jobs" className="flex items-center gap-3 px-3 py-3 rounded-xl hover:bg-bg transition group">
+                      <span className={`w-6 h-6 rounded flex items-center justify-center text-[10px] font-bold shrink-0 ${job.role === "딜러" ? "bg-accent-light text-accent" : "bg-blue-50 text-blue-500"}`}>
+                        {job.role === "딜러" ? "D" : "S"}
+                      </span>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-surface text-[14px] font-bold truncate group-hover:text-accent transition-colors">{job.nickname}</p>
+                        <p className="text-muted text-[12px]">{job.role} · {job.areas.slice(0, 2).join(", ")}</p>
+                      </div>
+                      <span className="text-[#ccc] text-[11px] shrink-0">{job.created_at?.slice(5, 10)}</span>
+                    </Link>
+                  ))
+                )}
+              </div>
             </div>
-          </Link>
+          </div>
         </div>
       </section>
 
