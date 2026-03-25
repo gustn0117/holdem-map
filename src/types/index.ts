@@ -33,6 +33,7 @@ export interface Event {
 
 export interface Job {
   id: string;
+  type: string;
   nickname: string;
   role: string;
   experience: string;
@@ -41,6 +42,7 @@ export interface Job {
   contact: string;
   photo?: string;
   message?: string;
+  store_name?: string;
   created_at?: string;
 }
 
