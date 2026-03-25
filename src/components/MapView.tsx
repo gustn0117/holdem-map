@@ -79,7 +79,7 @@ export default function MapView({ stores, onStoreClick, selectedStore }: MapView
 
       marker.bindPopup(
         `<div style="font-family:-apple-system,sans-serif;min-width:180px;padding:4px 0">
-          <div style="font-weight:700;font-size:14px;color:#1a1a1a;margin-bottom:6px">${store.name}${store.is_recommended ? ' <span style="background:#e6f7ee;color:#03c75a;font-size:9px;padding:2px 6px;border-radius:4px;font-weight:700;margin-left:4px">추천</span>' : ''}</div>
+          <a href="/store/${store.id}" style="font-weight:700;font-size:14px;color:#03c75a;text-decoration:none;display:block;margin-bottom:6px;cursor:pointer">${store.name}${store.is_recommended ? ' <span style="background:#e6f7ee;color:#03c75a;font-size:9px;padding:2px 6px;border-radius:4px;font-weight:700;margin-left:4px">추천</span>' : ''} <span style="font-size:11px;color:#999">→</span></a>
           <div style="font-size:12px;color:#555;margin-bottom:3px">영업시간: ${store.hours}</div>
           <div style="font-size:12px;color:#777">${store.address}</div>
           <div style="font-size:11px;color:#777;margin-top:4px">${store.phone}</div>
