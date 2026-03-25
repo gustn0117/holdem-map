@@ -20,7 +20,7 @@
   --color-bg: #f5f6f8;
 }
 
-* { box-sizing: border-box; margin: 0; }
+* { box-sizing: border-box; }
 
 body {
   background: #fff;
