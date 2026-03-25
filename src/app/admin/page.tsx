@@ -7,6 +7,7 @@ import { Store } from "@/types";
 import * as api from "@/lib/api";
 import { geocodeAddress } from "@/lib/geocode";
 import Select from "@/components/Select";
+import ImageUpload from "@/components/ImageUpload";
 
 type Tab = "stores" | "events" | "notices" | "banners" | "shorts";
 const ADMIN_PASSWORD = "1234";
@@ -467,15 +468,7 @@ function AdminModal({ modal, stores, saving, onClose, onSave }: {
                 <input className={inputClass} value={(form.buy_in as string) || ""} onChange={e => set("buy_in", e.target.value)} placeholder="예: 50,000원" />
               </div>
             </div>
-            <div>
-              <label className="text-sub text-sm font-medium block mb-2">대회 이미지 URL</label>
-              <input className={inputClass} value={(form.image as string) || ""} onChange={e => set("image", e.target.value)} placeholder="이미지 URL을 입력하세요 (선택)" />
-              {(form.image as string) && (
-                <div className="mt-3 rounded-xl overflow-hidden border border-border-custom h-32">
-                  <img src={form.image as string} alt="미리보기" className="w-full h-full object-cover" />
-                </div>
-              )}
-            </div>
+            <ImageUpload value={(form.image as string) || ""} onChange={v => set("image", v)} folder="events" label="대회 이미지" hint="선택" />
             <div>
               <label className="text-sub text-sm font-medium block mb-2">장소</label>
               <input className={inputClass} value={(form.location as string) || ""} onChange={e => set("location", e.target.value)} placeholder="대회 장소 (매장과 다를 경우)" />
@@ -545,16 +538,7 @@ function BannerEditor({ banner, label, size, saving, onSave }: {
       </div>
 
       <div className="space-y-4">
-        <div>
-          <label className="text-sub text-sm font-medium block mb-2">이미지 URL</label>
-          <input className={inputClass} value={image} onChange={e => setImage(e.target.value)} placeholder="배너 이미지 URL을 입력하세요" />
-        </div>
-
-        {image && (
-          <div className="rounded-xl overflow-hidden border border-border-custom bg-gray-50">
-            <img src={image} alt={label} className="w-full object-contain max-h-40" />
-          </div>
-        )}
+        <ImageUpload value={image} onChange={setImage} folder="banners" label="배너 이미지" aspect="aspect-[4/1]" hint={size} />
 
         <div>
           <label className="text-sub text-sm font-medium block mb-2">클릭 시 이동 URL <span className="text-muted font-normal">(선택)</span></label>
@@ -593,25 +577,13 @@ function ShortsEditor({ onSave }: { onSave: (data: Omit<import("@/types").Short,
         </div>
       </div>
       <div className="space-y-4 mb-4">
-        <div>
-          <label className="text-sub text-sm font-medium block mb-2">영상 URL * <span className="text-muted font-normal">(mp4 직접 링크)</span></label>
-          <input className={inputClass} value={form.video_url} onChange={e => setForm(p => ({ ...p, video_url: e.target.value }))} placeholder="https://example.com/video.mp4" />
-        </div>
-        <div>
-          <label className="text-sub text-sm font-medium block mb-2">썸네일 URL <span className="text-muted font-normal">(선택, 9:16 비율 권장)</span></label>
-          <input className={inputClass} value={form.thumbnail} onChange={e => setForm(p => ({ ...p, thumbnail: e.target.value }))} placeholder="https://example.com/thumb.jpg" />
-        </div>
+        <ImageUpload value={form.video_url} onChange={v => setForm(p => ({ ...p, video_url: v }))} folder="shorts" label="영상 파일 *" aspect="aspect-9/16 max-w-[180px]" hint="MP4, 9:16 비율" />
+        <ImageUpload value={form.thumbnail} onChange={v => setForm(p => ({ ...p, thumbnail: v }))} folder="shorts-thumb" label="썸네일" aspect="aspect-9/16 max-w-[180px]" hint="선택, 9:16 비율" />
         <div>
           <label className="text-sub text-sm font-medium block mb-2">설명 <span className="text-muted font-normal">(선택)</span></label>
           <input className={inputClass} value={form.description} onChange={e => setForm(p => ({ ...p, description: e.target.value }))} placeholder="영상 설명" />
         </div>
       </div>
-
-      {form.video_url && (
-        <div className="mb-4 w-40 aspect-9/16 rounded-xl overflow-hidden border border-border-custom bg-bg">
-          <video src={form.video_url} className="w-full h-full object-cover" muted />
-        </div>
-      )}
 
       <button onClick={handleSubmit} disabled={saving} className="bg-accent hover:bg-accent-hover text-white font-bold px-6 py-2.5 rounded-lg transition-all disabled:opacity-50">
         {saving ? "등록 중..." : "숏츠 등록"}

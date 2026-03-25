@@ -8,6 +8,7 @@ import Footer from "@/components/Footer";
 import { createJob } from "@/lib/api";
 import { allAreas } from "@/data/areas";
 import Select from "@/components/Select";
+import ImageUpload from "@/components/ImageUpload";
 
 export default function JobWritePage() {
   const router = useRouter();
@@ -149,15 +150,7 @@ export default function JobWritePage() {
           </div>
 
           {/* Photo */}
-          <div>
-            <label className="text-sub text-sm font-semibold block mb-2">사진 URL <span className="text-muted font-normal">(선택)</span></label>
-            <input className={inputClass} value={form.photo} onChange={e => set("photo", e.target.value)} placeholder="프로필 사진 URL (선택사항)" />
-            {form.photo && (
-              <div className="mt-3 w-32 h-32 rounded-xl overflow-hidden border border-border-custom">
-                <img src={form.photo} alt="미리보기" className="w-full h-full object-cover" />
-              </div>
-            )}
-          </div>
+          <ImageUpload value={form.photo} onChange={v => set("photo", v)} folder="jobs" label="프로필 사진" aspect="aspect-square max-w-[160px]" hint="선택" />
 
           {/* Message */}
           <div>
