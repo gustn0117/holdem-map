@@ -1,5 +1,5 @@
 import { supabase } from "./supabase";
-import { Store, Event, Notice, Job } from "@/types";
+import { Store, Event, Notice, Job, Banner } from "@/types";
 
 export async function getStores(): Promise<Store[]> {
   const { data, error } = await supabase
@@ -131,4 +131,17 @@ export async function createJob(job: Omit<Job, "id" | "created_at">) {
 export async function deleteJob(id: string) {
   const { error } = await supabase.from("jobs").delete().eq("id", id);
   if (error) throw error;
+}
+
+// Banners
+export async function getBanners(): Promise<Banner[]> {
+  const { data, error } = await supabase.from("banners").select("*").order("position");
+  if (error) throw error;
+  return data || [];
+}
+
+export async function updateBanner(id: string, updates: Partial<Banner>) {
+  const { data, error } = await supabase.from("banners").update({ ...updates, updated_at: new Date().toISOString() }).eq("id", id).select().single();
+  if (error) throw error;
+  return data;
 }

@@ -44,6 +44,15 @@ export interface Job {
   created_at?: string;
 }
 
+export interface Banner {
+  id: string;
+  position: string;
+  image: string;
+  link: string;
+  active: boolean;
+  updated_at?: string;
+}
+
 export interface Notice {
   id: string;
   title: string;

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useStores, useEvents, useNotices } from "@/hooks/useData";
 import { Store } from "@/types";
@@ -8,7 +8,7 @@ import * as api from "@/lib/api";
 import { geocodeAddress } from "@/lib/geocode";
 import Select from "@/components/Select";
 
-type Tab = "stores" | "events" | "notices";
+type Tab = "stores" | "events" | "notices" | "banners";
 const ADMIN_PASSWORD = "1234";
 const inputClass = "w-full bg-white border border-border-custom rounded-xl px-4 py-3 text-base text-surface focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/10 transition-all placeholder:text-muted";
 
@@ -22,11 +22,24 @@ export default function AdminPage() {
   const { stores, refresh: refreshStores } = useStores();
   const { events, refresh: refreshEvents } = useEvents();
   const { notices, refresh: refreshNotices } = useNotices();
+  const [banners, setBanners] = useState<import("@/types").Banner[]>([]);
+  const [bannerSaving, setBannerSaving] = useState<string | null>(null);
+
+  useEffect(() => { api.getBanners().then(setBanners); }, []);
+
+  const refreshBanners = () => api.getBanners().then(setBanners);
+
+  const handleBannerSave = async (id: string, image: string, link: string) => {
+    setBannerSaving(id);
+    try { await api.updateBanner(id, { image, link }); await refreshBanners(); } catch { alert("저장 실패"); }
+    setBannerSaving(null);
+  };
 
   const tabs: { key: Tab; label: string; count: number }[] = [
     { key: "stores", label: "매장", count: stores.length },
     { key: "events", label: "이벤트", count: events.length },
     { key: "notices", label: "공지", count: notices.length },
+    { key: "banners", label: "배너 광고", count: banners.filter(b => b.image).length },
   ];
 
   const handleLogin = (e: React.FormEvent) => {
@@ -291,6 +304,23 @@ export default function AdminPage() {
           </div>
         )}
 
+        {/* Banner Management */}
+        {activeTab === "banners" && (
+          <div className="space-y-6">
+            {/* Main Banner */}
+            {banners.filter(b => b.position === "main").map(banner => (
+              <BannerEditor key={banner.id} banner={banner} label="메인 배너" size="1400 x 120px (권장)" saving={bannerSaving === banner.id} onSave={handleBannerSave} />
+            ))}
+
+            <h3 className="text-surface font-bold text-lg pt-4">사이드 배너</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {banners.filter(b => b.position.startsWith("side")).map((banner, i) => (
+                <BannerEditor key={banner.id} banner={banner} label={`사이드 배너 ${i + 1}`} size="300 x 96px (권장)" saving={bannerSaving === banner.id} onSave={handleBannerSave} />
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* Modal */}
         {modal && (
           <AdminModal modal={modal} stores={stores} saving={saving} onClose={() => setModal(null)} onSave={handleSave} />
@@ -444,6 +474,52 @@ function AdminModal({ modal, stores, saving, onClose, onSave }: {
           <button onClick={() => onSave(form)} disabled={saving} className="flex-1 bg-accent hover:bg-accent-hover text-white px-4 py-3 rounded-xl text-base font-bold shadow-lg shadow-accent/20 disabled:opacity-50 transition-all">
             {saving ? "저장 중..." : modal.type === "create" ? "등록하기" : "수정하기"}
           </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── Banner Editor ───
+function BannerEditor({ banner, label, size, saving, onSave }: {
+  banner: import("@/types").Banner;
+  label: string;
+  size: string;
+  saving: boolean;
+  onSave: (id: string, image: string, link: string) => void;
+}) {
+  const [image, setImage] = useState(banner.image || "");
+  const [link, setLink] = useState(banner.link || "");
+  const inputClass = "w-full bg-white border border-border-custom rounded-xl px-4 py-3 text-base text-surface focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/10 transition-all placeholder:text-muted";
+
+  return (
+    <div className="bg-white rounded-2xl border border-border-custom p-6">
+      <div className="flex items-center justify-between mb-4">
+        <div>
+          <h4 className="text-surface font-bold text-base">{label}</h4>
+          <p className="text-muted text-sm mt-0.5">권장 사이즈: <span className="text-accent font-semibold">{size}</span></p>
+        </div>
+        <button onClick={() => onSave(banner.id, image, link)} disabled={saving}
+          className="bg-accent hover:bg-accent-hover text-white text-sm font-bold px-5 py-2 rounded-lg transition-all disabled:opacity-50">
+          {saving ? "저장 중..." : "저장"}
+        </button>
+      </div>
+
+      <div className="space-y-4">
+        <div>
+          <label className="text-sub text-sm font-medium block mb-2">이미지 URL</label>
+          <input className={inputClass} value={image} onChange={e => setImage(e.target.value)} placeholder="배너 이미지 URL을 입력하세요" />
+        </div>
+
+        {image && (
+          <div className="rounded-xl overflow-hidden border border-border-custom bg-gray-50">
+            <img src={image} alt={label} className="w-full object-contain max-h-40" />
+          </div>
+        )}
+
+        <div>
+          <label className="text-sub text-sm font-medium block mb-2">클릭 시 이동 URL <span className="text-muted font-normal">(선택)</span></label>
+          <input className={inputClass} value={link} onChange={e => setLink(e.target.value)} placeholder="https://example.com" />
         </div>
       </div>
     </div>

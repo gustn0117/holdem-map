@@ -1,13 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import StoreCard from "@/components/StoreCard";
 import { useStores, useEvents, useNotices } from "@/hooks/useData";
-import { Store } from "@/types";
+import { getBanners } from "@/lib/api";
+import { Store, Banner } from "@/types";
 
 const MapView = dynamic(() => import("@/components/MapView"), { ssr: false });
 const regions = ["전체", "서울", "경기", "인천"];
@@ -18,6 +19,12 @@ export default function Home() {
   const { stores } = useStores();
   const { events } = useEvents();
   const { notices } = useNotices();
+  const [banners, setBanners] = useState<Banner[]>([]);
+
+  useEffect(() => { getBanners().then(setBanners); }, []);
+
+  const mainBanner = banners.find(b => b.position === "main");
+  const sideBanners = banners.filter(b => b.position.startsWith("side")).sort((a, b) => a.position.localeCompare(b.position));
 
   const filteredStores = selectedRegion === "전체" ? stores : stores.filter((s) => s.region === selectedRegion);
   const recommendedStores = stores.filter((s) => s.is_recommended);
@@ -26,9 +33,21 @@ export default function Home() {
   return (
     <div className="flex flex-col min-h-screen pb-16 md:pb-0 bg-[#f5f5f5]">
       {/* ─── Main Banner Ad ─── */}
-      <div className="w-full ad-pattern border-b border-border-custom">
-        <div className="max-w-[1400px] mx-auto px-4 md:px-8 h-24 md:h-28 flex items-center justify-center">
-          <p className="text-muted text-base">메인 광고 예정</p>
+      <div className="w-full border-b border-border-custom">
+        <div className="max-w-[1400px] mx-auto px-4 md:px-8">
+          {mainBanner?.image ? (
+            mainBanner.link ? (
+              <a href={mainBanner.link} target="_blank" rel="noopener noreferrer" className="block">
+                <img src={mainBanner.image} alt="메인 배너" className="w-full h-24 md:h-28 object-cover rounded-none" />
+              </a>
+            ) : (
+              <img src={mainBanner.image} alt="메인 배너" className="w-full h-24 md:h-28 object-cover" />
+            )
+          ) : (
+            <div className="ad-pattern h-24 md:h-28 flex items-center justify-center rounded-none">
+              <p className="text-muted text-base">메인 광고 예정</p>
+            </div>
+          )}
         </div>
       </div>
 
@@ -59,11 +78,26 @@ export default function Home() {
             <MapView stores={filteredStores} onStoreClick={setSelectedStore} selectedStore={selectedStore} />
           </div>
           <div className="hidden lg:flex flex-col gap-3">
-            {[1, 2, 3, 4, 5].map((n) => (
-              <div key={n} className="h-24 ad-pattern rounded-xl border border-border-custom flex items-center justify-center text-muted text-sm hover:border-accent/30 transition-all">
-                배너 광고 {n}
-              </div>
-            ))}
+            {[0, 1, 2, 3, 4].map((i) => {
+              const banner = sideBanners[i];
+              return (
+                <div key={i} className="h-24 rounded-xl border border-border-custom overflow-hidden hover:border-accent/30 transition-all">
+                  {banner?.image ? (
+                    banner.link ? (
+                      <a href={banner.link} target="_blank" rel="noopener noreferrer" className="block h-full">
+                        <img src={banner.image} alt={`배너 ${i + 1}`} className="w-full h-full object-cover" />
+                      </a>
+                    ) : (
+                      <img src={banner.image} alt={`배너 ${i + 1}`} className="w-full h-full object-cover" />
+                    )
+                  ) : (
+                    <div className="ad-pattern h-full flex items-center justify-center text-muted text-sm">
+                      배너 광고 {i + 1}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
         </div>
       </section>
