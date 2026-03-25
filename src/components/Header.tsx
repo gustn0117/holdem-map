@@ -2,17 +2,22 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useRef } from "react";
 
 export default function Header() {
   const [query, setQuery] = useState("");
+  const [focused, setFocused] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    if (query.trim()) router.push(`/map?q=${encodeURIComponent(query.trim())}`);
+    if (query.trim()) {
+      router.push(`/map?q=${encodeURIComponent(query.trim())}`);
+      inputRef.current?.blur();
+    }
   };
 
   const navLinks = [
@@ -24,27 +29,43 @@ export default function Header() {
   return (
     <>
       <header className="sticky top-0 z-50 bg-white border-b border-border-custom">
-        <div className="max-w-[1400px] mx-auto px-5 md:px-10 h-[56px] flex items-center gap-5">
-          <Link href="/" className="text-[21px] font-black text-accent shrink-0">홀덤맵</Link>
+        <div className="container-main h-14 flex items-center justify-between relative">
+          {/* Left: Logo */}
+          <Link href="/" className="text-[21px] font-black text-accent shrink-0 relative z-10">홀덤맵</Link>
 
-          <form onSubmit={handleSearch} className="flex-1 hidden md:flex justify-center">
-            <div className="relative w-full max-w-[440px]">
-              <svg className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
-              <input type="text" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="매장명, 지역 검색"
-                className="w-full bg-bg rounded-lg pl-10 pr-3 py-2 text-[14px] border border-transparent focus:outline-none focus:border-accent focus:bg-white focus:shadow-sm transition-all placeholder:text-[#bbb]" />
-            </div>
-          </form>
+          {/* Center: Search - absolute center */}
+          <div className="hidden md:block absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-[520px] px-[140px] lg:px-0">
+            <form onSubmit={handleSearch}>
+              <div className={`relative rounded-full border transition-all ${focused ? "border-accent shadow-[0_0_0_3px_rgba(3,199,90,0.1)] bg-white" : "border-border-custom bg-[#f5f6f8]"}`}>
+                <svg className="absolute left-4 top-1/2 -translate-y-1/2 w-[18px] h-[18px] text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+                <input
+                  ref={inputRef}
+                  type="text"
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  onFocus={() => setFocused(true)}
+                  onBlur={() => setFocused(false)}
+                  placeholder="매장명, 지역으로 검색하세요"
+                  className="w-full bg-transparent rounded-full pl-11 pr-20 py-2.5 text-[14px] focus:outline-none placeholder:text-[#bbb]"
+                />
+                <button type="submit" className="absolute right-1.5 top-1/2 -translate-y-1/2 bg-accent hover:bg-accent-hover text-white text-[13px] font-bold px-4 py-1.5 rounded-full transition-all">
+                  검색
+                </button>
+              </div>
+            </form>
+          </div>
 
-          <div className="flex items-center gap-0.5 ml-auto shrink-0">
+          {/* Right: Nav */}
+          <div className="flex items-center gap-1 shrink-0 relative z-10">
             {navLinks.map(l => (
               <Link key={l.href} href={l.href}
-                className={`hidden md:block text-[13px] font-medium px-3 py-1.5 rounded-md transition-all ${pathname === l.href ? "text-accent bg-accent-light" : "text-sub hover:text-accent hover:bg-bg"}`}>
+                className={`hidden md:block text-[13px] font-medium px-3 py-1.5 rounded-md transition-all ${pathname === l.href ? "text-accent bg-accent-light" : "text-sub hover:text-accent hover:bg-[#f5f6f8]"}`}>
                 {l.label}
               </Link>
             ))}
-            <Link href="/contact" className="hidden md:block bg-accent hover:bg-accent-hover text-white text-[13px] font-bold px-4 py-[7px] rounded-lg transition-all ml-1.5">매장 등록</Link>
+            <Link href="/contact" className="hidden md:block bg-accent hover:bg-accent-hover text-white text-[13px] font-bold px-4 py-[7px] rounded-lg transition-all ml-1">매장 등록</Link>
             <button className="md:hidden text-surface p-1.5" onClick={() => setMenuOpen(!menuOpen)}>
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 {menuOpen ? <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -54,16 +75,22 @@ export default function Header() {
           </div>
         </div>
 
+        {/* Mobile dropdown */}
         {menuOpen && (
           <div className="md:hidden bg-white border-t border-border-custom px-5 py-4 space-y-3">
             <form onSubmit={handleSearch}>
-              <input type="text" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="매장명, 지역 검색"
-                className="w-full bg-bg rounded-lg pl-4 pr-4 py-3 text-[15px] focus:outline-none focus:border-accent border border-transparent transition-all placeholder:text-muted" />
+              <div className="relative">
+                <svg className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+                <input type="text" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="매장명, 지역으로 검색하세요"
+                  className="w-full bg-[#f5f6f8] border border-border-custom rounded-full pl-10 pr-4 py-3 text-[15px] focus:outline-none focus:border-accent transition-all placeholder:text-[#bbb]" />
+              </div>
             </form>
             <div className="grid grid-cols-4 gap-2">
               {[...navLinks, { href: "/contact", label: "매장 등록" }].map((item, i) => (
                 <Link key={item.href} href={item.href}
-                  className={`text-center py-2.5 rounded-lg text-[13px] font-medium ${i === 3 ? "bg-accent text-white" : "bg-bg text-sub"}`}
+                  className={`text-center py-2.5 rounded-lg text-[13px] font-medium ${i === 3 ? "bg-accent text-white" : "bg-[#f5f6f8] text-sub"}`}
                   onClick={() => setMenuOpen(false)}>{item.label}</Link>
               ))}
             </div>
@@ -71,6 +98,7 @@ export default function Header() {
         )}
       </header>
 
+      {/* Mobile bottom nav */}
       <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-border-custom">
         <div className="flex items-center justify-around py-1.5 pb-[calc(0.375rem+env(safe-area-inset-bottom))]">
           {[
