@@ -59,7 +59,7 @@ export default function StorePage() {
                   <span className="text-sub">{store.hours}</span>
                 </div>
               </div>
-              <span className="bg-accent text-dark px-5 py-2.5 rounded-xl text-base font-bold shadow-lg shadow-accent/20 shrink-0">{store.region}</span>
+              <span className="bg-accent text-dark px-5 py-2.5 rounded-xl text-base font-bold shadow-lg shadow-accent/20 shrink-0 self-start">{store.region}</span>
             </div>
             <div className="flex flex-wrap gap-2 mt-6">
               {store.tags.map((tag) => (
