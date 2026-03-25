@@ -8,7 +8,7 @@ import * as api from "@/lib/api";
 import { geocodeAddress } from "@/lib/geocode";
 import Select from "@/components/Select";
 
-type Tab = "stores" | "events" | "notices" | "banners";
+type Tab = "stores" | "events" | "notices" | "banners" | "shorts";
 const ADMIN_PASSWORD = "1234";
 const inputClass = "w-full bg-white border border-border-custom rounded-xl px-4 py-3 text-base text-surface focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/10 transition-all placeholder:text-muted";
 
@@ -24,8 +24,9 @@ export default function AdminPage() {
   const { notices, refresh: refreshNotices } = useNotices();
   const [banners, setBanners] = useState<import("@/types").Banner[]>([]);
   const [bannerSaving, setBannerSaving] = useState<string | null>(null);
+  const [shorts, setShorts] = useState<import("@/types").Short[]>([]);
 
-  useEffect(() => { api.getBanners().then(setBanners); }, []);
+  useEffect(() => { api.getBanners().then(setBanners); api.getAllShorts().then(setShorts); }, []);
 
   const refreshBanners = () => api.getBanners().then(setBanners);
 
@@ -40,7 +41,15 @@ export default function AdminPage() {
     { key: "events", label: "이벤트", count: events.length },
     { key: "notices", label: "공지", count: notices.length },
     { key: "banners", label: "배너 광고", count: banners.filter(b => b.image).length },
+    { key: "shorts", label: "숏츠", count: shorts.length },
   ];
+
+  const refreshShorts = () => api.getAllShorts().then(setShorts);
+
+  const handleShortDelete = async (id: string) => {
+    if (!confirm("삭제하시겠습니까?")) return;
+    await api.deleteShort(id); refreshShorts();
+  };
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -321,6 +330,36 @@ export default function AdminPage() {
           </div>
         )}
 
+        {/* Shorts Management */}
+        {activeTab === "shorts" && (
+          <div className="space-y-4">
+            <ShortsEditor onSave={async (data) => { await api.createShort(data); refreshShorts(); }} />
+            <h3 className="text-surface font-bold text-lg pt-2">등록된 숏츠 ({shorts.length}개)</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {shorts.map((s) => (
+                <div key={s.id} className="bg-white rounded-xl border border-border-custom overflow-hidden">
+                  <div className="aspect-[9/16] max-h-64 bg-bg">
+                    <video src={s.video_url} className="w-full h-full object-cover" muted />
+                  </div>
+                  <div className="p-4">
+                    <h4 className="text-surface font-bold text-sm truncate">{s.title}</h4>
+                    {s.description && <p className="text-muted text-xs mt-1 truncate">{s.description}</p>}
+                    <div className="flex items-center justify-between mt-3">
+                      <span className={`text-xs font-medium px-2 py-0.5 rounded ${s.active ? "bg-accent-light text-accent" : "bg-bg text-muted"}`}>
+                        {s.active ? "활성" : "비활성"}
+                      </span>
+                      <div className="flex gap-2">
+                        <button onClick={async () => { await api.updateShort(s.id, { active: !s.active }); refreshShorts(); }} className="text-muted hover:text-accent text-xs">{s.active ? "비활성화" : "활성화"}</button>
+                        <button onClick={() => handleShortDelete(s.id)} className="text-muted hover:text-red text-xs">삭제</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* Modal */}
         {modal && (
           <AdminModal modal={modal} stores={stores} saving={saving} onClose={() => setModal(null)} onSave={handleSave} />
@@ -522,6 +561,61 @@ function BannerEditor({ banner, label, size, saving, onSave }: {
           <input className={inputClass} value={link} onChange={e => setLink(e.target.value)} placeholder="https://example.com" />
         </div>
       </div>
+    </div>
+  );
+}
+
+// ─── Shorts Editor ───
+function ShortsEditor({ onSave }: { onSave: (data: Omit<import("@/types").Short, "id" | "created_at">) => Promise<void> }) {
+  const [form, setForm] = useState({ title: "", video_url: "", thumbnail: "", description: "", sort_order: 0, active: true });
+  const [saving, setSaving] = useState(false);
+  const inputClass = "w-full bg-white border border-border-custom rounded-xl px-4 py-3 text-base text-surface focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/10 transition-all placeholder:text-muted";
+
+  const handleSubmit = async () => {
+    if (!form.title || !form.video_url) { alert("제목과 영상 URL을 입력해주세요."); return; }
+    setSaving(true);
+    await onSave(form);
+    setForm({ title: "", video_url: "", thumbnail: "", description: "", sort_order: 0, active: true });
+    setSaving(false);
+  };
+
+  return (
+    <div className="bg-white rounded-xl border border-border-custom p-6">
+      <h3 className="text-surface font-bold text-lg mb-4">새 숏츠 등록</h3>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+        <div>
+          <label className="text-sub text-sm font-medium block mb-2">제목 *</label>
+          <input className={inputClass} value={form.title} onChange={e => setForm(p => ({ ...p, title: e.target.value }))} placeholder="숏츠 제목" />
+        </div>
+        <div>
+          <label className="text-sub text-sm font-medium block mb-2">정렬 순서</label>
+          <input className={inputClass} type="number" value={form.sort_order} onChange={e => setForm(p => ({ ...p, sort_order: parseInt(e.target.value) || 0 }))} placeholder="0" />
+        </div>
+      </div>
+      <div className="space-y-4 mb-4">
+        <div>
+          <label className="text-sub text-sm font-medium block mb-2">영상 URL * <span className="text-muted font-normal">(mp4 직접 링크)</span></label>
+          <input className={inputClass} value={form.video_url} onChange={e => setForm(p => ({ ...p, video_url: e.target.value }))} placeholder="https://example.com/video.mp4" />
+        </div>
+        <div>
+          <label className="text-sub text-sm font-medium block mb-2">썸네일 URL <span className="text-muted font-normal">(선택, 9:16 비율 권장)</span></label>
+          <input className={inputClass} value={form.thumbnail} onChange={e => setForm(p => ({ ...p, thumbnail: e.target.value }))} placeholder="https://example.com/thumb.jpg" />
+        </div>
+        <div>
+          <label className="text-sub text-sm font-medium block mb-2">설명 <span className="text-muted font-normal">(선택)</span></label>
+          <input className={inputClass} value={form.description} onChange={e => setForm(p => ({ ...p, description: e.target.value }))} placeholder="영상 설명" />
+        </div>
+      </div>
+
+      {form.video_url && (
+        <div className="mb-4 w-40 aspect-9/16 rounded-xl overflow-hidden border border-border-custom bg-bg">
+          <video src={form.video_url} className="w-full h-full object-cover" muted />
+        </div>
+      )}
+
+      <button onClick={handleSubmit} disabled={saving} className="bg-accent hover:bg-accent-hover text-white font-bold px-6 py-2.5 rounded-lg transition-all disabled:opacity-50">
+        {saving ? "등록 중..." : "숏츠 등록"}
+      </button>
     </div>
   );
 }

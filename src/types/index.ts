@@ -44,6 +44,17 @@ export interface Job {
   created_at?: string;
 }
 
+export interface Short {
+  id: string;
+  title: string;
+  video_url: string;
+  thumbnail: string;
+  description: string;
+  sort_order: number;
+  active: boolean;
+  created_at?: string;
+}
+
 export interface Banner {
   id: string;
   position: string;

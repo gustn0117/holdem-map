@@ -1,5 +1,5 @@
 import { supabase } from "./supabase";
-import { Store, Event, Notice, Job, Banner } from "@/types";
+import { Store, Event, Notice, Job, Banner, Short } from "@/types";
 
 export async function getStores(): Promise<Store[]> {
   const { data, error } = await supabase
@@ -144,4 +144,34 @@ export async function updateBanner(id: string, updates: Partial<Banner>) {
   const { data, error } = await supabase.from("banners").update({ ...updates, updated_at: new Date().toISOString() }).eq("id", id).select().single();
   if (error) throw error;
   return data;
+}
+
+// Shorts
+export async function getShorts(): Promise<Short[]> {
+  const { data, error } = await supabase.from("shorts").select("*").eq("active", true).order("sort_order");
+  if (error) throw error;
+  return data || [];
+}
+
+export async function getAllShorts(): Promise<Short[]> {
+  const { data, error } = await supabase.from("shorts").select("*").order("sort_order");
+  if (error) throw error;
+  return data || [];
+}
+
+export async function createShort(short: Omit<Short, "id" | "created_at">) {
+  const { data, error } = await supabase.from("shorts").insert(short).select().single();
+  if (error) throw error;
+  return data;
+}
+
+export async function updateShort(id: string, updates: Partial<Short>) {
+  const { data, error } = await supabase.from("shorts").update(updates).eq("id", id).select().single();
+  if (error) throw error;
+  return data;
+}
+
+export async function deleteShort(id: string) {
+  const { error } = await supabase.from("shorts").delete().eq("id", id);
+  if (error) throw error;
 }

@@ -7,8 +7,8 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import StoreCard from "@/components/StoreCard";
 import { useStores, useEvents, useNotices } from "@/hooks/useData";
-import { getBanners } from "@/lib/api";
-import { Store, Banner } from "@/types";
+import { getBanners, getShorts } from "@/lib/api";
+import { Store, Banner, Short } from "@/types";
 
 const MapView = dynamic(() => import("@/components/MapView"), { ssr: false });
 const regions = ["전체", "서울", "경기", "인천"];
@@ -20,8 +20,9 @@ export default function Home() {
   const { events } = useEvents();
   const { notices } = useNotices();
   const [banners, setBanners] = useState<Banner[]>([]);
+  const [shorts, setShorts] = useState<Short[]>([]);
 
-  useEffect(() => { getBanners().then(setBanners); }, []);
+  useEffect(() => { getBanners().then(setBanners); getShorts().then(setShorts); }, []);
 
   const mainBanner = banners.find(b => b.position === "main");
   const sideBanners = banners.filter(b => b.position.startsWith("side")).sort((a, b) => a.position.localeCompare(b.position));
@@ -102,6 +103,46 @@ export default function Home() {
           ))}
         </div>
       </section>
+
+      {/* Shorts */}
+      {shorts.length > 0 && (
+        <section className="max-w-[1400px] mx-auto px-4 md:px-8 pb-8 w-full">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-bold text-surface">숏츠</h2>
+            <Link href="/shorts" className="text-accent text-sm font-medium hover:underline">전체보기 →</Link>
+          </div>
+          <div className="flex gap-3 overflow-x-auto hide-scrollbar pb-2">
+            {shorts.slice(0, 8).map((short, i) => (
+              <div key={short.id} className="shrink-0 w-32 md:w-36">
+                <div className="aspect-9/16 rounded-xl overflow-hidden border border-border-custom bg-bg relative group cursor-pointer">
+                  <video
+                    src={short.video_url}
+                    poster={short.thumbnail || undefined}
+                    className="w-full h-full object-cover"
+                    muted
+                    loop
+                    playsInline
+                    autoPlay={i === 0}
+                  />
+                  {i !== 0 && (
+                    <div className="absolute inset-0 bg-black/10 group-hover:bg-black/20 transition-colors flex items-center justify-center">
+                      <div className="w-8 h-8 bg-white/80 rounded-full flex items-center justify-center">
+                        <svg className="w-3.5 h-3.5 text-surface ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg>
+                      </div>
+                    </div>
+                  )}
+                  {i === 0 && (
+                    <div className="absolute top-2 left-2 bg-accent text-white text-[9px] font-bold px-1.5 py-0.5 rounded flex items-center gap-1">
+                      <span className="w-1 h-1 bg-white rounded-full pulse-dot" />LIVE
+                    </div>
+                  )}
+                </div>
+                <p className="text-surface text-xs font-medium mt-1.5 truncate">{short.title}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
 
       <div className="max-w-[1400px] mx-auto px-4 md:px-8"><hr className="border-border-custom" /></div>
 
