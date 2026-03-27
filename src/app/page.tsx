@@ -72,6 +72,38 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Jobs - PC only, above store list */}
+      <section className="hidden md:block border-b border-border-custom">
+        <div className="max-w-350 mx-auto px-5 md:px-10 py-8">
+          <div className="flex items-center justify-between mb-5">
+            <h2 className="text-[17px] font-bold text-surface">구인구직</h2>
+            <Link href="/jobs" className="text-accent text-[13px] font-semibold hover:underline">전체보기 →</Link>
+          </div>
+          {jobs.length === 0 ? (
+            <div className="rounded-2xl card-shadow bg-white px-5 py-8 text-center">
+              <p className="text-muted text-[13px]">등록된 구직글이 없습니다</p>
+              <Link href="/jobs/write" className="text-accent text-[12px] font-semibold mt-1 inline-block hover:underline">구직글 작성하기 →</Link>
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+              {jobs.slice(0, 8).map((job) => (
+                <Link key={job.id} href="/jobs" className="rounded-2xl card-shadow bg-white p-4 hover:bg-bg transition group">
+                  <div className="flex items-center gap-2.5 mb-2">
+                    <span className={`w-7 h-7 rounded-lg flex items-center justify-center text-[11px] font-bold shrink-0 ${job.type === "구인" ? "bg-blue-50 text-blue-500" : "bg-accent-light text-accent"}`}>
+                      {job.type === "구인" ? "구인" : "구직"}
+                    </span>
+                    <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${job.role === "딜러" ? "bg-accent-light text-accent" : "bg-blue-50 text-blue-500"}`}>{job.role}</span>
+                  </div>
+                  <p className="text-surface text-[14px] font-bold truncate group-hover:text-accent transition-colors">{job.nickname}</p>
+                  <p className="text-muted text-[12px] mt-0.5 truncate">{job.areas.slice(0, 2).join(", ")}</p>
+                  {job.store_name && <p className="text-muted text-[11px] mt-0.5 truncate">{job.store_name}</p>}
+                </Link>
+              ))}
+            </div>
+          )}
+        </div>
+      </section>
+
       {/* Store List */}
       <section>
         <div className="max-w-350 mx-auto px-5 md:px-10 py-8">
@@ -182,8 +214,8 @@ export default function Home() {
               </div>
             </div>
 
-            {/* 구인구직 */}
-            <div className="rounded-2xl overflow-hidden card-shadow bg-white">
+            {/* 구인구직 - mobile only (PC is shown above store list) */}
+            <div className="md:hidden rounded-2xl overflow-hidden card-shadow bg-white">
               <div className="px-5 py-4 border-b border-border-custom flex justify-between items-center">
                 <h3 className="text-surface font-bold text-[15px]">구인구직</h3>
                 <Link href="/jobs" className="text-accent text-[12px] font-semibold hover:underline">더보기 →</Link>

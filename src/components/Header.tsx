@@ -77,16 +77,7 @@ export default function Header() {
 
         {/* Mobile dropdown */}
         {menuOpen && (
-          <div className="md:hidden bg-white border-t border-border-custom px-5 py-4 space-y-3">
-            <form onSubmit={handleSearch}>
-              <div className="relative">
-                <svg className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
-                <input type="text" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="매장명, 지역으로 검색하세요"
-                  className="w-full bg-[#f5f6f8] border border-border-custom rounded-full pl-10 pr-4 py-3 text-[15px] focus:outline-none focus:border-accent transition-all placeholder:text-[#bbb]" />
-              </div>
-            </form>
+          <div className="md:hidden bg-white border-t border-border-custom px-5 py-4">
             <div className="grid grid-cols-4 gap-2">
               {[...navLinks, { href: "/contact", label: "매장 등록" }].map((item, i) => (
                 <Link key={item.href} href={item.href}
@@ -96,6 +87,29 @@ export default function Header() {
             </div>
           </div>
         )}
+        {/* Mobile search bar - always visible below header */}
+        <div className="md:hidden border-t border-border-custom px-4 py-2.5 bg-white">
+          <form onSubmit={handleSearch}>
+            <div className={`relative rounded-full border transition-all ${focused ? "border-accent shadow-[0_0_0_3px_rgba(3,199,90,0.1)] bg-white" : "border-border-custom bg-[#f5f6f8]"}`}>
+              <svg className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+              <input
+                ref={inputRef}
+                type="text"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                onFocus={() => setFocused(true)}
+                onBlur={() => setFocused(false)}
+                placeholder="매장명, 지역으로 검색하세요"
+                className="w-full bg-transparent rounded-full pl-10 pr-16 py-2.5 text-[14px] focus:outline-none placeholder:text-[#bbb]"
+              />
+              <button type="submit" className="absolute right-1.5 top-1/2 -translate-y-1/2 bg-accent hover:bg-accent-hover text-white text-[12px] font-bold px-3.5 py-1.5 rounded-full transition-all">
+                검색
+              </button>
+            </div>
+          </form>
+        </div>
       </header>
 
       {/* Mobile bottom nav */}
