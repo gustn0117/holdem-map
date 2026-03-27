@@ -49,12 +49,39 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-3">
-            <div className="lg:col-span-3 h-72 lg:h-125 rounded-2xl overflow-hidden card-shadow">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+            <div className="h-72 lg:h-110 rounded-2xl overflow-hidden card-shadow">
               <MapView stores={filteredStores} onStoreClick={setSelectedStore} selectedStore={selectedStore} />
             </div>
             <div className="hidden lg:flex flex-col gap-2.5">
-              {[0, 1, 2, 3, 4].map((i) => {
+              {/* Community board link */}
+              <a href="https://cafe.naver.com/incheonholdem" target="_blank" rel="noopener noreferrer"
+                className="flex-1 rounded-xl overflow-hidden card-shadow bg-linear-to-br from-[#0d0d0d] to-[#1a1a2e] relative group cursor-pointer">
+                <div className="absolute inset-0 bg-linear-to-br from-accent/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                <div className="h-full flex items-center gap-4 px-5 relative z-10">
+                  <div className="flex gap-2.5 shrink-0">
+                    <div className="w-10 h-10 rounded-xl bg-accent/15 flex items-center justify-center group-hover:bg-accent/25 transition-colors">
+                      <svg className="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
+                      </svg>
+                    </div>
+                    <div className="w-10 h-10 rounded-xl bg-blue-500/15 flex items-center justify-center group-hover:bg-blue-500/25 transition-colors">
+                      <svg className="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a2 2 0 01-2-2v-1m0-3V6a2 2 0 012-2h8a2 2 0 012 2v3" />
+                      </svg>
+                    </div>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-white text-[14px] font-bold leading-tight">자유게시판 · 토론게시판</p>
+                    <p className="text-[#888] text-[11px] mt-0.5">네이버 카페에서 소통하기</p>
+                  </div>
+                  <svg className="w-4 h-4 text-sub group-hover:text-accent group-hover:translate-x-0.5 transition-all shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                  </svg>
+                </div>
+              </a>
+              {/* Ad banners */}
+              {[0, 1, 2, 3].map((i) => {
                 const banner = sideBanners[i];
                 return (
                   <div key={i} className="flex-1 rounded-xl overflow-hidden card-shadow">
