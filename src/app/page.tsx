@@ -56,28 +56,34 @@ export default function Home() {
             <div className="hidden lg:flex flex-col gap-2.5">
               {/* Community board link */}
               <a href="https://cafe.naver.com/incheonholdem" target="_blank" rel="noopener noreferrer"
-                className="flex-1 rounded-xl overflow-hidden card-shadow bg-linear-to-br from-[#0d0d0d] to-[#1a1a2e] relative group cursor-pointer">
-                <div className="absolute inset-0 bg-linear-to-br from-accent/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                <div className="h-full flex items-center gap-4 px-5 relative z-10">
-                  <div className="flex gap-2.5 shrink-0">
-                    <div className="w-10 h-10 rounded-xl bg-accent/15 flex items-center justify-center group-hover:bg-accent/25 transition-colors">
-                      <svg className="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
+                className="flex-1 rounded-xl overflow-hidden card-shadow bg-white border border-border-custom relative group cursor-pointer hover:border-accent/30 hover:shadow-md transition-all">
+                <div className="absolute top-0 left-0 right-0 h-1 bg-linear-to-r from-accent to-emerald-300 rounded-t-xl" />
+                <div className="h-full flex items-center gap-4 px-5 relative">
+                  <div className="flex flex-col gap-1.5 shrink-0">
+                    <div className="w-9 h-9 rounded-lg bg-accent/10 flex items-center justify-center group-hover:bg-accent/20 transition-colors">
+                      <svg className="w-4.5 h-4.5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
                       </svg>
                     </div>
-                    <div className="w-10 h-10 rounded-xl bg-blue-500/15 flex items-center justify-center group-hover:bg-blue-500/25 transition-colors">
-                      <svg className="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a2 2 0 01-2-2v-1m0-3V6a2 2 0 012-2h8a2 2 0 012 2v3" />
+                    <div className="w-9 h-9 rounded-lg bg-blue-50 flex items-center justify-center group-hover:bg-blue-100 transition-colors">
+                      <svg className="w-4.5 h-4.5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                       </svg>
                     </div>
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-white text-[14px] font-bold leading-tight">자유게시판 · 토론게시판</p>
-                    <p className="text-[#888] text-[11px] mt-0.5">네이버 카페에서 소통하기</p>
+                    <div className="flex items-center gap-1.5 mb-0.5">
+                      <p className="text-surface text-[15px] font-extrabold">자유게시판</p>
+                      <span className="text-muted text-[13px] font-medium">·</span>
+                      <p className="text-surface text-[15px] font-extrabold">토론게시판</p>
+                    </div>
+                    <p className="text-muted text-[11px]">네이버 카페에서 자유롭게 소통해보세요</p>
                   </div>
-                  <svg className="w-4 h-4 text-sub group-hover:text-accent group-hover:translate-x-0.5 transition-all shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                  </svg>
+                  <div className="w-7 h-7 rounded-full bg-accent/10 flex items-center justify-center group-hover:bg-accent group-hover:scale-105 transition-all shrink-0">
+                    <svg className="w-3.5 h-3.5 text-accent group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </div>
                 </div>
               </a>
               {/* Ad banners */}
