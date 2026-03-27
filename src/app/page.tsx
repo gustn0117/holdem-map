@@ -56,7 +56,7 @@ export default function Home() {
             <div className="hidden lg:flex flex-col gap-2.5">
               {/* Community board link */}
               <a href="https://cafe.naver.com/incheonholdem" target="_blank" rel="noopener noreferrer"
-                className="flex-2 rounded-xl overflow-hidden card-shadow bg-white border border-border-custom relative group cursor-pointer hover:border-accent/40 hover:shadow-lg transition-all">
+                className="flex-1 rounded-xl overflow-hidden card-shadow bg-white border border-border-custom relative group cursor-pointer hover:border-accent/40 hover:shadow-lg transition-all">
                 <div className="h-full flex flex-col justify-center px-6 py-4">
                   <p className="text-muted text-[10px] font-semibold tracking-widest uppercase mb-2.5">Community</p>
                   <div className="flex gap-2 mb-3">
