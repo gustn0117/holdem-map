@@ -279,8 +279,8 @@ export default function Home() {
               </div>
             </div>
 
-            {/* 구인구직 - mobile only (PC is shown above store list) */}
-            <div className="md:hidden rounded-2xl overflow-hidden card-shadow bg-white">
+            {/* 구인구직 - PC only (mobile uses real-time ticker above) */}
+            <div className="hidden md:block rounded-2xl overflow-hidden card-shadow bg-white">
               <div className="px-5 py-4 border-b border-border-custom flex justify-between items-center">
                 <h3 className="text-surface font-bold text-[15px]">구인구직</h3>
                 <Link href="/jobs" className="text-accent text-[12px] font-semibold hover:underline">더보기 →</Link>
