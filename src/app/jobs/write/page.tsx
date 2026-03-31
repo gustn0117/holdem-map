@@ -9,11 +9,28 @@ import { createJob } from "@/lib/api";
 import { allAreas } from "@/data/areas";
 import Select from "@/components/Select";
 import ImageUpload from "@/components/ImageUpload";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function JobWritePage() {
   const router = useRouter();
+  const { user, profile } = useAuth();
   const [saving, setSaving] = useState(false);
   const [areaSearch, setAreaSearch] = useState("");
+
+  if (!user) {
+    return (
+      <div className="flex flex-col min-h-screen pb-16 md:pb-0">
+        <Header />
+        <div className="flex-1 flex items-center justify-center">
+          <div className="text-center">
+            <p className="text-surface text-lg font-bold mb-3">로그인이 필요합니다</p>
+            <Link href="/login" className="text-accent font-semibold hover:underline">로그인하기</Link>
+          </div>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
   const [form, setForm] = useState({
     type: "구직",
     nickname: "",

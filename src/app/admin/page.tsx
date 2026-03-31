@@ -9,9 +9,20 @@ import { geocodeAddress } from "@/lib/geocode";
 import Select from "@/components/Select";
 import ImageUpload from "@/components/ImageUpload";
 
-type Tab = "stores" | "events" | "notices" | "banners" | "shorts";
+import { supabase } from "@/lib/supabase";
+
+type Tab = "stores" | "events" | "notices" | "banners" | "shorts" | "users";
 const ADMIN_PASSWORD = "1234";
 const inputClass = "w-full bg-white border border-border-custom rounded-xl px-4 py-3 text-base text-surface focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/10 transition-all placeholder:text-muted";
+
+interface Profile {
+  id: string;
+  email: string;
+  nickname: string;
+  role: string;
+  is_blocked: boolean;
+  created_at: string;
+}
 
 export default function AdminPage() {
   const [authed, setAuthed] = useState(false);
@@ -26,8 +37,25 @@ export default function AdminPage() {
   const [banners, setBanners] = useState<import("@/types").Banner[]>([]);
   const [bannerSaving, setBannerSaving] = useState<string | null>(null);
   const [shorts, setShorts] = useState<import("@/types").Short[]>([]);
+  const [users, setUsers] = useState<Profile[]>([]);
 
-  useEffect(() => { api.getBanners().then(setBanners); api.getAllShorts().then(setShorts); }, []);
+  useEffect(() => { api.getBanners().then(setBanners); api.getAllShorts().then(setShorts); refreshUsers(); }, []);
+
+  const refreshUsers = async () => {
+    const { data } = await supabase.from("profiles").select("*").order("created_at", { ascending: false });
+    setUsers(data || []);
+  };
+
+  const handleBlockUser = async (userId: string, blocked: boolean) => {
+    await supabase.from("profiles").update({ is_blocked: blocked }).eq("id", userId);
+    refreshUsers();
+  };
+
+  const handleDeleteUser = async (userId: string) => {
+    if (!confirm("이 회원을 삭제하시겠습니까? 작성한 글도 모두 삭제됩니다.")) return;
+    await supabase.from("profiles").delete().eq("id", userId);
+    refreshUsers();
+  };
 
   const refreshBanners = () => api.getBanners().then(setBanners);
 
@@ -43,6 +71,7 @@ export default function AdminPage() {
     { key: "notices", label: "공지", count: notices.length },
     { key: "banners", label: "배너 광고", count: banners.filter(b => b.image).length },
     { key: "shorts", label: "숏츠", count: shorts.length },
+    { key: "users", label: "회원", count: users.length },
   ];
 
   const refreshShorts = () => api.getAllShorts().then(setShorts);
@@ -197,7 +226,7 @@ export default function AdminPage() {
 
       <main className="max-w-6xl mx-auto px-4 py-8">
         {/* Stats */}
-        <div className="grid grid-cols-3 gap-4 mb-8">
+        <div className="grid grid-cols-3 md:grid-cols-6 gap-4 mb-8">
           {tabs.map(tab => (
             <button
               key={tab.key}
@@ -361,6 +390,48 @@ export default function AdminPage() {
                 </div>
               ))}
             </div>
+          </div>
+        )}
+
+        {/* Users management */}
+        {activeTab === "users" && (
+          <div className="bg-white rounded-2xl border border-border-custom overflow-hidden">
+            <div className="hidden md:grid grid-cols-12 gap-4 px-5 py-3 bg-[#f9f9f9] border-b border-border-custom text-[12px] text-muted font-semibold">
+              <div className="col-span-3">닉네임</div>
+              <div className="col-span-4">이메일</div>
+              <div className="col-span-2">가입일</div>
+              <div className="col-span-1">상태</div>
+              <div className="col-span-2 text-right">관리</div>
+            </div>
+            {users.length === 0 ? (
+              <div className="text-center py-12 text-muted text-sm">등록된 회원이 없습니다</div>
+            ) : (
+              users.map(u => (
+                <div key={u.id} className="grid grid-cols-1 md:grid-cols-12 gap-2 md:gap-4 px-5 py-4 border-b border-border-custom last:border-b-0 items-center">
+                  <div className="md:col-span-3">
+                    <p className="text-surface text-[14px] font-bold">{u.nickname}</p>
+                    <p className="md:hidden text-muted text-[12px]">{u.email}</p>
+                  </div>
+                  <div className="hidden md:block md:col-span-4 text-sub text-[13px]">{u.email}</div>
+                  <div className="hidden md:block md:col-span-2 text-muted text-[13px]">{u.created_at?.slice(0, 10)}</div>
+                  <div className="md:col-span-1">
+                    <span className={`text-[11px] font-bold px-2 py-0.5 rounded ${u.is_blocked ? "bg-red-50 text-red-500" : "bg-accent-light text-accent"}`}>
+                      {u.is_blocked ? "차단" : "정상"}
+                    </span>
+                  </div>
+                  <div className="md:col-span-2 flex gap-2 justify-end">
+                    <button onClick={() => handleBlockUser(u.id, !u.is_blocked)}
+                      className={`text-[12px] font-semibold px-3 py-1.5 rounded-lg transition-all ${u.is_blocked ? "bg-accent-light text-accent hover:bg-accent/20" : "bg-red-50 text-red-500 hover:bg-red-100"}`}>
+                      {u.is_blocked ? "차단 해제" : "차단"}
+                    </button>
+                    <button onClick={() => handleDeleteUser(u.id)}
+                      className="text-[12px] font-semibold px-3 py-1.5 rounded-lg bg-[#f5f6f8] text-muted hover:bg-red-50 hover:text-red-500 transition-all">
+                      삭제
+                    </button>
+                  </div>
+                </div>
+              ))
+            )}
           </div>
         )}
 

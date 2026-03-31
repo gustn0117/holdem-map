@@ -3,14 +3,17 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState, useRef } from "react";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function Header() {
   const [query, setQuery] = useState("");
   const [focused, setFocused] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
+  const { user, profile, signOut } = useAuth();
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -23,6 +26,7 @@ export default function Header() {
   const navLinks = [
     { href: "/events", label: "대회" },
     { href: "/jobs", label: "구인구직" },
+    { href: "/board", label: "게시판" },
     { href: "/shorts", label: "숏츠" },
   ];
 
@@ -72,6 +76,26 @@ export default function Header() {
               </Link>
             ))}
             <Link href="/contact" className="hidden md:block bg-accent hover:bg-accent-hover text-white text-[13px] font-bold px-4 py-[7px] rounded-lg transition-all ml-1">매장 등록</Link>
+            {user ? (
+              <div className="hidden md:block relative ml-1">
+                <button onClick={() => setUserMenuOpen(!userMenuOpen)}
+                  className="w-8 h-8 rounded-full bg-accent/10 flex items-center justify-center text-accent text-[13px] font-bold hover:bg-accent/20 transition-colors">
+                  {profile?.nickname?.charAt(0) || "U"}
+                </button>
+                {userMenuOpen && (
+                  <div className="absolute right-0 top-10 w-48 bg-white rounded-xl card-shadow border border-border-custom py-2 z-50">
+                    <div className="px-4 py-2 border-b border-border-custom">
+                      <p className="text-surface text-[13px] font-bold">{profile?.nickname}</p>
+                      <p className="text-muted text-[11px]">{profile?.email}</p>
+                    </div>
+                    <button onClick={() => { signOut(); setUserMenuOpen(false); }}
+                      className="w-full text-left px-4 py-2.5 text-[13px] text-red-500 hover:bg-red-50 transition-colors">로그아웃</button>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <Link href="/login" className="hidden md:block text-[13px] font-medium text-sub hover:text-accent px-3 py-1.5 rounded-md transition-all ml-1">로그인</Link>
+            )}
             <button className="md:hidden text-surface p-1.5" onClick={() => setMenuOpen(!menuOpen)}>
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 {menuOpen ? <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -83,14 +107,29 @@ export default function Header() {
 
         {/* Mobile dropdown */}
         {menuOpen && (
-          <div className="md:hidden bg-white border-t border-border-custom px-5 py-4">
-            <div className="grid grid-cols-4 gap-2">
-              {[...navLinks, { href: "/contact", label: "매장 등록" }].map((item, i) => (
+          <div className="md:hidden bg-white border-t border-border-custom px-5 py-4 space-y-3">
+            <div className="grid grid-cols-5 gap-2">
+              {[...navLinks, { href: "/contact", label: "매장 등록" }].map((item) => (
                 <Link key={item.href} href={item.href}
-                  className={`text-center py-2.5 rounded-lg text-[13px] font-medium ${i === 3 ? "bg-accent text-white" : "bg-[#f5f6f8] text-sub"}`}
+                  className={`text-center py-2.5 rounded-lg text-[12px] font-medium ${pathname === item.href ? "bg-accent text-white" : "bg-[#f5f6f8] text-sub"}`}
                   onClick={() => setMenuOpen(false)}>{item.label}</Link>
               ))}
             </div>
+            {user ? (
+              <div className="flex items-center justify-between bg-[#f5f6f8] rounded-lg px-4 py-2.5">
+                <div>
+                  <p className="text-surface text-[13px] font-bold">{profile?.nickname}</p>
+                  <p className="text-muted text-[11px]">{profile?.email}</p>
+                </div>
+                <button onClick={() => { signOut(); setMenuOpen(false); }}
+                  className="text-red-400 text-[12px] font-semibold">로그아웃</button>
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 gap-2">
+                <Link href="/login" className="text-center py-2.5 rounded-lg text-[13px] font-semibold bg-[#f5f6f8] text-sub" onClick={() => setMenuOpen(false)}>로그인</Link>
+                <Link href="/register" className="text-center py-2.5 rounded-lg text-[13px] font-semibold bg-accent text-white" onClick={() => setMenuOpen(false)}>회원가입</Link>
+              </div>
+            )}
           </div>
         )}
         {/* Mobile search bar - always visible below header */}
