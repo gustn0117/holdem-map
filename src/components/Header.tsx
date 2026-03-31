@@ -174,11 +174,11 @@ export default function Header() {
               { href: "/map", label: "매장정보", icon: "M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" },
             ].map((item) => (
               <Link key={item.href} href={item.href}
-                className="flex-1 flex items-center justify-center gap-1 bg-[#f5f6f8] hover:bg-accent/10 text-sub hover:text-accent rounded-lg py-1.5 transition-all">
+                className="flex-1 flex items-center justify-center gap-1 bg-accent text-white rounded-lg py-2 transition-all hover:bg-accent-hover">
                 <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={item.icon} />
                 </svg>
-                <span className="text-[11px] font-semibold">{item.label}</span>
+                <span className="text-[11px] font-bold">{item.label}</span>
               </Link>
             ))}
           </div>
