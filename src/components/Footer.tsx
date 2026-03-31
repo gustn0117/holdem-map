@@ -7,7 +7,13 @@ export default function Footer() {
         <div className="grid grid-cols-2 md:grid-cols-12 gap-8 md:gap-6">
           {/* Brand */}
           <div className="col-span-2 md:col-span-4">
-            <Link href="/" className="text-xl font-black text-accent">홀덤맵</Link>
+            <Link href="/" className="flex items-center gap-1.5">
+              <svg className="w-7 h-7" viewBox="0 0 36 36" fill="none">
+                <rect width="36" height="36" rx="8" fill="#03C75A" />
+                <path d="M10 10h4v6.5l8-6.5h4v16h-4v-6.5l-8 6.5h-4V10z" fill="white" />
+              </svg>
+              <span className="text-[17px] font-black text-surface">홀덤맵코리아</span>
+            </Link>
             <p className="text-muted text-[13px] mt-3 leading-relaxed max-w-[280px]">전국 홀덤 매장 정보를 한눈에 확인하고, 가까운 매장을 찾아보세요.</p>
           </div>
 
@@ -50,7 +56,7 @@ export default function Footer() {
         </div>
 
         <div className="border-t border-border-custom mt-8 pt-5">
-          <p className="text-[#ccc] text-[12px]">&copy; 2026 홀덤맵. All rights reserved.</p>
+          <p className="text-[#ccc] text-[12px]">&copy; 2026 홀덤맵코리아. All rights reserved.</p>
         </div>
       </div>
     </footer>

@@ -182,7 +182,10 @@ export default function AdminPage() {
       <header className="sticky top-0 z-50 bg-white border-b border-border-custom">
         <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <span className="text-xl font-extrabold gold-text-shine">홀덤맵</span>
+            <div className="flex items-center gap-1.5">
+              <svg className="w-7 h-7" viewBox="0 0 36 36" fill="none"><rect width="36" height="36" rx="8" fill="#03C75A" /><path d="M10 10h4v6.5l8-6.5h4v16h-4v-6.5l-8 6.5h-4V10z" fill="white" /></svg>
+              <span className="text-lg font-black text-surface">홀덤맵코리아</span>
+            </div>
             <span className="text-xs text-muted bg-gray-100 px-2.5 py-1 rounded-lg font-semibold">ADMIN</span>
           </div>
           <div className="flex items-center gap-4">

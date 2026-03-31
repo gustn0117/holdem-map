@@ -31,7 +31,13 @@ export default function Header() {
       <header className="sticky top-0 z-50 bg-white border-b border-border-custom">
         <div className="container-main h-14 flex items-center justify-between relative">
           {/* Left: Logo */}
-          <Link href="/" className="text-[21px] font-black text-accent shrink-0 relative z-10">홀덤맵</Link>
+          <Link href="/" className="flex items-center gap-1.5 shrink-0 relative z-10 group">
+            <svg className="w-8 h-8" viewBox="0 0 36 36" fill="none">
+              <rect width="36" height="36" rx="8" fill="#03C75A" />
+              <path d="M10 10h4v6.5l8-6.5h4v16h-4v-6.5l-8 6.5h-4V10z" fill="white" />
+            </svg>
+            <span className="text-[18px] font-black text-surface hidden sm:block">홀덤맵코리아</span>
+          </Link>
 
           {/* Center: Search - absolute center */}
           <div className="hidden md:block absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-[520px] px-[140px] lg:px-0">
