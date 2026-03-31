@@ -31,6 +31,32 @@ body {
   line-height: 1.5;
 }
 
+/* Dark mode - PC only (md+) */
+@media (min-width: 768px) {
+  html.dark body { background: #111113; color: #e4e4e7; }
+  html.dark { --color-primary: #111113; --color-secondary: #18181b; --color-surface: #e4e4e7; --color-muted: #71717a; --color-sub: #a1a1aa; --color-border-custom: #27272a; --color-bg: #18181b; --color-card: #1c1c1f; --color-card-hover: #222225; --color-accent-light: #052e16; --color-glass: rgba(17,17,19,0.92); }
+  html.dark .bg-white, html.dark .bg-\[\\#fafafa\], html.dark .bg-\[\\#f9f9f9\], html.dark .bg-\[\\#f5f6f8\] { background-color: #1c1c1f !important; }
+  html.dark .border-border-custom { border-color: #27272a !important; }
+  html.dark .text-surface { color: #e4e4e7 !important; }
+  html.dark .text-sub { color: #a1a1aa !important; }
+  html.dark .text-muted { color: #71717a !important; }
+  html.dark .text-\[\\#ccc\] { color: #52525b !important; }
+  html.dark .text-\[\\#ddd\] { color: #3f3f46 !important; }
+  html.dark .bg-bg { background-color: #18181b !important; }
+  html.dark .section-alt { background: #18181b; }
+  html.dark .card-shadow { box-shadow: 0 1px 3px rgba(0,0,0,0.3), 0 1px 2px rgba(0,0,0,0.2); }
+  html.dark .card-shadow-hover { box-shadow: 0 4px 16px rgba(0,0,0,0.4), 0 1px 3px rgba(0,0,0,0.3); }
+  html.dark .ad-pattern { background: repeating-linear-gradient(-45deg, #1c1c1f, #1c1c1f 6px, #222225 6px, #222225 7px); }
+  html.dark input, html.dark textarea, html.dark select { background-color: #18181b !important; border-color: #27272a !important; color: #e4e4e7 !important; }
+  html.dark input::placeholder, html.dark textarea::placeholder { color: #52525b !important; }
+  html.dark .bg-accent\/5 { background-color: rgba(3,199,90,0.08) !important; }
+  html.dark .bg-accent\/8 { background-color: rgba(3,199,90,0.12) !important; }
+  html.dark .bg-blue-50 { background-color: rgba(59,130,246,0.1) !important; }
+  html.dark .bg-red-50 { background-color: rgba(239,68,68,0.1) !important; }
+  html.dark .bg-accent-light { background-color: #052e16 !important; }
+  html.dark ::-webkit-scrollbar-thumb { background: #3f3f46; }
+}
+
 ::selection { background: var(--color-accent-light); color: var(--color-accent); }
 
 ::-webkit-scrollbar { width: 6px; }
