@@ -47,7 +47,7 @@ export default function Header() {
                   onChange={(e) => setQuery(e.target.value)}
                   onFocus={() => setFocused(true)}
                   onBlur={() => setFocused(false)}
-                  placeholder="매장명, 지역으로 검색하세요"
+                  placeholder="매장명, 지역, 구인구직으로 검색하세요"
                   className="w-full bg-transparent rounded-full pl-11 pr-20 py-2.5 text-[14px] focus:outline-none placeholder:text-[#bbb]"
                 />
                 <button type="submit" className="absolute right-1.5 top-1/2 -translate-y-1/2 bg-accent hover:bg-accent-hover text-white text-[13px] font-bold px-4 py-1.5 rounded-full transition-all">
@@ -101,7 +101,7 @@ export default function Header() {
                 onChange={(e) => setQuery(e.target.value)}
                 onFocus={() => setFocused(true)}
                 onBlur={() => setFocused(false)}
-                placeholder="매장명, 지역으로 검색하세요"
+                placeholder="매장명, 지역, 구인구직으로 검색하세요"
                 className="w-full bg-transparent rounded-full pl-10 pr-16 py-2.5 text-[14px] focus:outline-none placeholder:text-[#bbb]"
               />
               <button type="submit" className="absolute right-1.5 top-1/2 -translate-y-1/2 bg-accent hover:bg-accent-hover text-white text-[12px] font-bold px-3.5 py-1.5 rounded-full transition-all">
