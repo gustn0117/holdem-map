@@ -81,6 +81,28 @@ export default function Home() {
         </section>
       )}
 
+      {/* Mobile: Side banner 1 */}
+      {(() => {
+        const side1 = sideBanners[0];
+        return side1?.image ? (
+          <div className="md:hidden border-b border-border-custom px-4 py-3 bg-white">
+            {side1.link ? (
+              <a href={side1.link} target="_blank" rel="noopener noreferrer" className="block rounded-xl overflow-hidden card-shadow">
+                <img src={side1.image} alt="" className="w-full h-auto object-cover" />
+              </a>
+            ) : (
+              <div className="rounded-xl overflow-hidden card-shadow">
+                <img src={side1.image} alt="" className="w-full h-auto object-cover" />
+              </div>
+            )}
+          </div>
+        ) : (
+          <div className="md:hidden border-b border-border-custom px-4 py-3 bg-white">
+            <div className="ad-pattern rounded-xl h-16 flex items-center justify-center text-[#ccc] text-[11px]">AD</div>
+          </div>
+        );
+      })()}
+
       {/* Map */}
       <section className="section-alt border-b border-border-custom">
         <div className="max-w-350 mx-auto px-5 md:px-10 py-6">
