@@ -66,6 +66,20 @@ body {
 
 .glow-line { height: 1px; background: var(--color-border-custom); }
 
+/* Real-time ticker */
+@keyframes tickerScroll {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-50%); }
+}
+.ticker-scroll { animation: tickerScroll 20s linear infinite; }
+.ticker-scroll:hover { animation-play-state: paused; }
+
+@keyframes livePulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(1.15); }
+}
+.live-pulse { animation: livePulse 1.5s ease-in-out infinite; }
+
 .container-main {
   max-width: 1400px;
   margin-left: auto;
