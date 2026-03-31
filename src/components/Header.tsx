@@ -43,30 +43,6 @@ export default function Header() {
             <span className="text-[18px] font-black text-surface">홀덤맵코리아</span>
           </Link>
 
-          {/* Center: Search - absolute center */}
-          <div className="hidden md:block absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-[520px] px-[140px] lg:px-0">
-            <form onSubmit={handleSearch}>
-              <div className={`relative rounded-full border transition-all ${focused ? "border-accent shadow-[0_0_0_3px_rgba(3,199,90,0.1)] bg-white" : "border-border-custom bg-[#f5f6f8]"}`}>
-                <svg className="absolute left-4 top-1/2 -translate-y-1/2 w-[18px] h-[18px] text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
-                <input
-                  ref={inputRef}
-                  type="text"
-                  value={query}
-                  onChange={(e) => setQuery(e.target.value)}
-                  onFocus={() => setFocused(true)}
-                  onBlur={() => setFocused(false)}
-                  placeholder="매장명, 지역, 구인구직으로 검색하세요"
-                  className="w-full bg-transparent rounded-full pl-11 pr-20 py-2.5 text-[14px] focus:outline-none placeholder:text-[#bbb]"
-                />
-                <button type="submit" className="absolute right-1.5 top-1/2 -translate-y-1/2 bg-accent hover:bg-accent-hover text-white text-[13px] font-bold px-4 py-1.5 rounded-full transition-all">
-                  검색
-                </button>
-              </div>
-            </form>
-          </div>
-
           {/* Right: Nav */}
           <div className="flex items-center gap-1 shrink-0 relative z-10">
             {navLinks.map(l => (
@@ -132,9 +108,9 @@ export default function Header() {
             )}
           </div>
         )}
-        {/* Mobile search bar - always visible below header */}
-        <div className="md:hidden border-t border-border-custom px-4 py-2.5 bg-white">
-          <form onSubmit={handleSearch}>
+        {/* Search bar - always visible below header (PC + Mobile) */}
+        <div className="border-t border-border-custom px-4 py-2.5 bg-white">
+          <form onSubmit={handleSearch} className="max-w-[600px] mx-auto">
             <div className={`relative rounded-full border transition-all ${focused ? "border-accent shadow-[0_0_0_3px_rgba(3,199,90,0.1)] bg-white" : "border-border-custom bg-[#f5f6f8]"}`}>
               <svg className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -154,7 +130,7 @@ export default function Header() {
               </button>
             </div>
           </form>
-          <div className="flex items-center gap-2 mt-2">
+          <div className="md:hidden flex items-center gap-2 mt-2">
             {[
               { href: "/jobs", label: "구인구직", icon: "M21 13.255A23.193 23.193 0 0112 15c-3.183 0-6.22-.64-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m8 0H8m8 0h2a2 2 0 012 2v6M8 6H6a2 2 0 00-2 2v6" },
               { href: "/events", label: "대회", icon: "M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" },
