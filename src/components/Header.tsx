@@ -36,7 +36,7 @@ export default function Header() {
               <rect width="36" height="36" rx="8" fill="#03C75A" />
               <path d="M10 10h4v6.5l8-6.5h4v16h-4v-6.5l-8 6.5h-4V10z" fill="white" />
             </svg>
-            <span className="text-[18px] font-black text-surface hidden sm:block">홀덤맵코리아</span>
+            <span className="text-[18px] font-black text-surface">홀덤맵코리아</span>
           </Link>
 
           {/* Center: Search - absolute center */}
