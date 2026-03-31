@@ -58,7 +58,7 @@ export default function Home() {
             <div className="absolute bottom-0 left-0 right-0 h-4 bg-linear-to-t from-white to-transparent z-10 pointer-events-none" />
             <div className="ticker-scroll px-4">
               {[...jobs, ...jobs].map((job, i) => (
-                <Link key={`${job.id}-${i}`} href="/jobs" className="flex items-center gap-3 py-2 group">
+                <Link key={`${job.id}-${i}`} href={`/jobs/${job.id}`} className="flex items-center gap-3 py-2 group">
                   <span className={`w-9 h-9 rounded-lg flex items-center justify-center text-[10px] font-extrabold shrink-0 ${
                     job.type === "구인" ? "bg-blue-50 text-blue-500 border border-blue-100" : "bg-accent/8 text-accent border border-accent/15"
                   }`}>
@@ -152,7 +152,7 @@ export default function Home() {
           ) : (
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
               {jobs.slice(0, 8).map((job) => (
-                <Link key={job.id} href="/jobs" className="rounded-2xl card-shadow bg-white p-4 hover:bg-bg transition group">
+                <Link key={job.id} href={`/jobs/${job.id}`} className="rounded-2xl card-shadow bg-white p-4 hover:bg-bg transition group">
                   <div className="flex items-center gap-2.5 mb-2">
                     <span className={`w-7 h-7 rounded-lg flex items-center justify-center text-[11px] font-bold shrink-0 ${job.type === "구인" ? "bg-blue-50 text-blue-500" : "bg-accent-light text-accent"}`}>
                       {job.type === "구인" ? "구인" : "구직"}
@@ -293,7 +293,7 @@ export default function Home() {
                   </div>
                 ) : (
                   jobs.slice(0, 4).map((job) => (
-                    <Link key={job.id} href="/jobs" className="flex items-center gap-3 px-3 py-3 rounded-xl hover:bg-bg transition group">
+                    <Link key={job.id} href={`/jobs/${job.id}`} className="flex items-center gap-3 px-3 py-3 rounded-xl hover:bg-bg transition group">
                       <span className={`w-6 h-6 rounded flex items-center justify-center text-[10px] font-bold shrink-0 ${job.role === "딜러" ? "bg-accent-light text-accent" : "bg-blue-50 text-blue-500"}`}>
                         {job.role === "딜러" ? "D" : "S"}
                       </span>

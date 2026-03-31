@@ -73,7 +73,7 @@ export default function JobsPage() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {filtered.map((job) => (
-              <div key={job.id} className="bg-white rounded-2xl card-shadow overflow-hidden hover:card-shadow-hover transition-all">
+              <Link href={`/jobs/${job.id}`} key={job.id} className="bg-white rounded-2xl card-shadow overflow-hidden hover:card-shadow-hover transition-all block">
                 {job.photo ? (
                   <div className="h-48 bg-bg overflow-hidden">
                     <img src={job.photo} alt={job.nickname} className="w-full h-full object-cover" />
@@ -125,7 +125,7 @@ export default function JobsPage() {
 
                   <p className="text-[#ccc] text-[11px] mt-3">{job.created_at?.slice(0, 10)}</p>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         )}
