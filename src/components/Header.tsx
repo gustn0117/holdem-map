@@ -11,6 +11,8 @@ export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [dark, setDark] = useState(false);
+  const [installPrompt, setInstallPrompt] = useState<Event | null>(null);
+  const [showInstallGuide, setShowInstallGuide] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
@@ -19,7 +21,20 @@ export default function Header() {
   useEffect(() => {
     const saved = localStorage.getItem("theme");
     if (saved === "dark") { setDark(true); document.documentElement.classList.add("dark"); }
+
+    const handler = (e: Event) => { e.preventDefault(); setInstallPrompt(e); };
+    window.addEventListener("beforeinstallprompt", handler);
+    return () => window.removeEventListener("beforeinstallprompt", handler);
   }, []);
+
+  const handleInstall = async () => {
+    if (installPrompt && "prompt" in (installPrompt as any)) {
+      (installPrompt as any).prompt();
+      setInstallPrompt(null);
+    } else {
+      setShowInstallGuide(true);
+    }
+  };
 
   const toggleDark = () => {
     const next = !dark;
@@ -186,8 +201,50 @@ export default function Header() {
               <span className={`text-[10px] ${pathname === item.href ? "text-accent font-bold" : "text-[#bbb] font-medium"}`}>{item.label}</span>
             </Link>
           ))}
+          <button onClick={handleInstall} className="flex flex-col items-center gap-0.5 min-w-14">
+            <svg className="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+            </svg>
+            <span className="text-[10px] text-accent font-bold">앱 설치</span>
+          </button>
         </div>
       </nav>
+
+      {/* Install guide modal (iOS Safari) */}
+      {showInstallGuide && (
+        <div className="md:hidden fixed inset-0 z-[100] flex items-end justify-center">
+          <div className="absolute inset-0 bg-black/50" onClick={() => setShowInstallGuide(false)} />
+          <div className="relative bg-white rounded-t-2xl w-full max-w-md p-6 pb-10 safe-area-bottom">
+            <button onClick={() => setShowInstallGuide(false)} className="absolute top-4 right-4 text-muted">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+            </button>
+            <div className="text-center mb-5">
+              <svg className="w-12 h-12 mx-auto mb-3" viewBox="0 0 36 36" fill="none">
+                <rect width="36" height="36" rx="8" fill="#03C75A" />
+                <path d="M10 10h4v6.5l8-6.5h4v16h-4v-6.5l-8 6.5h-4V10z" fill="white" />
+              </svg>
+              <h3 className="text-surface text-lg font-black">홀덤맵코리아 앱 설치</h3>
+              <p className="text-muted text-sm mt-1">홈 화면에 추가하여 앱처럼 사용하세요</p>
+            </div>
+            <div className="space-y-4">
+              <div className="flex items-start gap-3">
+                <span className="w-7 h-7 rounded-full bg-accent text-white text-[13px] font-bold flex items-center justify-center shrink-0">1</span>
+                <p className="text-sub text-[14px]">하단 브라우저 메뉴에서 <span className="inline-flex items-center">
+                  <svg className="w-4 h-4 text-blue-500 mx-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>
+                </span> <strong>공유</strong> 버튼을 눌러주세요</p>
+              </div>
+              <div className="flex items-start gap-3">
+                <span className="w-7 h-7 rounded-full bg-accent text-white text-[13px] font-bold flex items-center justify-center shrink-0">2</span>
+                <p className="text-sub text-[14px]"><strong>홈 화면에 추가</strong>를 선택하세요</p>
+              </div>
+              <div className="flex items-start gap-3">
+                <span className="w-7 h-7 rounded-full bg-accent text-white text-[13px] font-bold flex items-center justify-center shrink-0">3</span>
+                <p className="text-sub text-[14px]">우측 상단 <strong>추가</strong>를 눌러 완료하세요</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }
