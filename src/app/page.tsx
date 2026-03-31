@@ -156,7 +156,7 @@ export default function Home() {
                 <Link href="/jobs" className="text-accent text-[11px] font-semibold">전체보기 →</Link>
               </div>
             </div>
-            <div className="relative h-[180px] overflow-hidden">
+            <div className="relative h-25 overflow-hidden">
               <div className="absolute top-0 left-0 right-0 h-4 bg-linear-to-b from-white to-transparent z-10 pointer-events-none" />
               <div className="absolute bottom-0 left-0 right-0 h-4 bg-linear-to-t from-white to-transparent z-10 pointer-events-none" />
               <div className="ticker-scroll px-4">
@@ -182,7 +182,13 @@ export default function Home() {
           </section>
         )}
 
-        {/* 2. 배너 */}
+        {/* 2. 자유게시판 */}
+        <section className="px-4 py-5"><BoardSection /></section>
+
+        {/* 3. 진행중인 대회 */}
+        <section className="px-4 pb-5"><EventsSection /></section>
+
+        {/* 4. 배너 */}
         {(() => {
           const side1 = sideBanners[0];
           return side1?.image ? (
@@ -201,12 +207,6 @@ export default function Home() {
             </div>
           );
         })()}
-
-        {/* 3. 자유게시판 */}
-        <section className="px-4 py-5"><BoardSection /></section>
-
-        {/* 4. 진행중인 대회 */}
-        <section className="px-4 pb-5"><EventsSection /></section>
 
         {/* 5. 지도 */}
         <section className="section-alt border-y border-border-custom px-4 py-5">
