@@ -65,8 +65,8 @@ export default function Header() {
           {/* Left: Logo */}
           <Link href="/" className="flex items-center gap-1.5 shrink-0 relative z-10 group">
             <svg className="w-8 h-8" viewBox="0 0 36 36" fill="none">
-              <rect width="36" height="36" rx="8" fill="#03C75A" />
-              <path d="M10 10h4v6.5l8-6.5h4v16h-4v-6.5l-8 6.5h-4V10z" fill="white" />
+              <rect x="1.25" y="1.25" width="33.5" height="33.5" rx="7" fill="white" stroke="#D4A017" strokeWidth="2.5" />
+              <path d="M10 10h4v6.5l8-6.5h4v16h-4v-6.5l-8 6.5h-4V10z" fill="#DC2626" />
             </svg>
             <span className="text-[18px] font-black text-surface">홀덤맵코리아</span>
           </Link>
@@ -168,13 +168,13 @@ export default function Header() {
           </form>
           <div className="md:hidden flex items-center gap-2 mt-2">
             {[
-              { href: "/jobs", label: "구인구직", icon: "M21 13.255A23.193 23.193 0 0112 15c-3.183 0-6.22-.64-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m8 0H8m8 0h2a2 2 0 012 2v6M8 6H6a2 2 0 00-2 2v6" },
-              { href: "/events", label: "대회", icon: "M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" },
-              { href: "/shorts", label: "숏츠", icon: "M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664zM21 12a9 9 0 11-18 0 9 9 0 0118 0z" },
-              { href: "/map", label: "매장정보", icon: "M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" },
+              { href: "/jobs", label: "구인구직", icon: "M21 13.255A23.193 23.193 0 0112 15c-3.183 0-6.22-.64-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m8 0H8m8 0h2a2 2 0 012 2v6M8 6H6a2 2 0 00-2 2v6", bg: "bg-[#DC2626] hover:bg-[#b91c1c]" },
+              { href: "/events", label: "대회", icon: "M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z", bg: "bg-[#2563eb] hover:bg-[#1d4ed8]" },
+              { href: "/shorts", label: "숏츠", icon: "M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664zM21 12a9 9 0 11-18 0 9 9 0 0118 0z", bg: "bg-[#d97706] hover:bg-[#b45309]" },
+              { href: "/map", label: "매장정보", icon: "M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z", bg: "bg-[#7c3aed] hover:bg-[#6d28d9]" },
             ].map((item) => (
               <Link key={item.href} href={item.href}
-                className="flex-1 flex items-center justify-center gap-1 bg-accent text-white rounded-lg py-2 transition-all hover:bg-accent-hover">
+                className={`flex-1 flex items-center justify-center gap-1 text-white rounded-lg py-2 transition-all ${item.bg}`}>
                 <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={item.icon} />
                 </svg>
@@ -220,8 +220,8 @@ export default function Header() {
             </button>
             <div className="text-center mb-5">
               <svg className="w-12 h-12 mx-auto mb-3" viewBox="0 0 36 36" fill="none">
-                <rect width="36" height="36" rx="8" fill="#03C75A" />
-                <path d="M10 10h4v6.5l8-6.5h4v16h-4v-6.5l-8 6.5h-4V10z" fill="white" />
+                <rect x="1.25" y="1.25" width="33.5" height="33.5" rx="7" fill="white" stroke="#D4A017" strokeWidth="2.5" />
+                <path d="M10 10h4v6.5l8-6.5h4v16h-4v-6.5l-8 6.5h-4V10z" fill="#DC2626" />
               </svg>
               <h3 className="text-surface text-lg font-black">홀덤맵코리아 앱 설치</h3>
               <p className="text-muted text-sm mt-1">홈 화면에 추가하여 앱처럼 사용하세요</p>
