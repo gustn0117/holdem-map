@@ -21,7 +21,7 @@ export default function BoardWritePage() {
         <div className="flex-1 flex items-center justify-center">
           <div className="text-center">
             <p className="text-surface text-lg font-bold mb-3">로그인이 필요합니다</p>
-            <Link href="/login" className="text-accent font-semibold hover:underline">로그인하기</Link>
+            <Link href="/register" className="text-accent font-semibold hover:underline">회원가입하기</Link>
           </div>
         </div>
       </div>

@@ -138,41 +138,32 @@ export default function Home() {
            MOBILE LAYOUT
          ════════════════════════════════════════════ */}
       <div className="md:hidden">
-        {/* 1. 실시간 구인구직 */}
+        {/* 1. 구인구직 (티커) */}
         {jobs.length > 0 && (
           <section className="border-b border-border-custom bg-white">
             <div className="px-4 pt-3 pb-1">
-              <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-2">
-                  <div className="flex items-center gap-1.5">
-                    <span className="relative flex h-2 w-2">
-                      <span className="live-pulse absolute inline-flex h-full w-full rounded-full bg-red-500 opacity-75" />
-                      <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500" />
-                    </span>
-                    <span className="text-red-500 text-[12px] font-extrabold tracking-tight">실시간</span>
-                  </div>
-                  <h3 className="text-surface text-[14px] font-bold">구인구직</h3>
-                </div>
-                <Link href="/jobs" className="text-accent text-[11px] font-semibold">전체보기 →</Link>
+              <div className="flex items-center justify-between mb-1">
+                <h3 className="text-surface text-[15px] font-extrabold">구인구직</h3>
+                <Link href="/jobs" className="text-accent text-[12px] font-semibold">전체보기 →</Link>
               </div>
             </div>
             <div className="relative h-25 overflow-hidden">
-              <div className="absolute top-0 left-0 right-0 h-4 bg-linear-to-b from-white to-transparent z-10 pointer-events-none" />
-              <div className="absolute bottom-0 left-0 right-0 h-4 bg-linear-to-t from-white to-transparent z-10 pointer-events-none" />
+              <div className="absolute top-0 left-0 right-0 h-3 bg-linear-to-b from-white to-transparent z-10 pointer-events-none" />
+              <div className="absolute bottom-0 left-0 right-0 h-3 bg-linear-to-t from-white to-transparent z-10 pointer-events-none" />
               <div className="ticker-scroll px-4">
                 {[...jobs, ...jobs].map((job, i) => (
-                  <Link key={`${job.id}-${i}`} href={`/jobs/${job.id}`} className="flex items-center gap-3 py-2 group">
-                    <span className={`w-9 h-9 rounded-lg flex items-center justify-center text-[10px] font-extrabold shrink-0 ${
-                      job.type === "구인" ? "bg-blue-50 text-blue-500 border border-blue-100" : "bg-accent/8 text-accent border border-accent/15"
+                  <Link key={`${job.id}-${i}`} href={`/jobs/${job.id}`} className="flex items-center gap-3 py-2.5 group">
+                    <span className={`w-10 h-10 rounded-lg flex items-center justify-center text-[11px] font-extrabold shrink-0 ${
+                      job.type === "구인" ? "bg-blue-100 text-blue-600 border border-blue-200" : "bg-emerald-100 text-emerald-700 border border-emerald-200"
                     }`}>{job.type}</span>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-1.5">
-                        <p className="text-surface text-[13px] font-bold truncate group-hover:text-accent transition-colors">{job.nickname}</p>
-                        <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${job.role === "딜러" ? "bg-accent/8 text-accent" : "bg-blue-50 text-blue-500"}`}>{job.role}</span>
+                        <p className="text-surface text-[14px] font-bold truncate">{job.nickname}</p>
+                        <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${job.role === "딜러" ? "bg-emerald-100 text-emerald-700" : "bg-blue-100 text-blue-600"}`}>{job.role}</span>
                       </div>
-                      <p className="text-muted text-[11px] truncate">{job.areas.slice(0, 2).join(", ")}{job.store_name ? ` · ${job.store_name}` : ""}</p>
+                      <p className="text-sub text-[12px] truncate">{job.areas.slice(0, 2).join(", ")}{job.store_name ? ` · ${job.store_name}` : ""}</p>
                     </div>
-                    <svg className="w-3 h-3 text-[#ddd] group-hover:text-accent shrink-0 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-4 h-4 text-[#ccc] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                     </svg>
                   </Link>
@@ -182,31 +173,44 @@ export default function Home() {
           </section>
         )}
 
-        {/* 2. 자유게시판 */}
-        <section className="px-4 py-5"><BoardSection /></section>
-
-        {/* 3. 진행중인 대회 */}
-        <section className="px-4 pb-5"><EventsSection /></section>
-
-        {/* 4. 배너 */}
-        {(() => {
-          const side1 = sideBanners[0];
-          return side1?.image ? (
-            <div className="border-b border-border-custom px-4 py-3 bg-white">
-              {side1.link ? (
-                <a href={side1.link} target="_blank" rel="noopener noreferrer" className="block rounded-xl overflow-hidden card-shadow">
-                  <img src={side1.image} alt="" className="w-full h-auto object-cover" />
-                </a>
-              ) : (
-                <div className="rounded-xl overflow-hidden card-shadow"><img src={side1.image} alt="" className="w-full h-auto object-cover" /></div>
-              )}
+        {/* 2. 자유게시판 (티커) */}
+        <section className="border-b border-border-custom bg-white">
+          <div className="px-4 pt-3 pb-1">
+            <div className="flex items-center justify-between mb-1">
+              <h3 className="text-surface text-[15px] font-extrabold">자유게시판</h3>
+              <Link href="/board" className="text-accent text-[12px] font-semibold">더보기 →</Link>
+            </div>
+          </div>
+          {posts.length === 0 ? (
+            <div className="px-4 pb-4 text-center">
+              <p className="text-muted text-[13px] py-4">아직 게시글이 없습니다</p>
             </div>
           ) : (
-            <div className="border-b border-border-custom px-4 py-3 bg-white">
-              <div className="ad-pattern rounded-xl h-16 flex items-center justify-center text-[#ccc] text-[11px]">AD</div>
+            <div className="relative h-25 overflow-hidden">
+              <div className="absolute top-0 left-0 right-0 h-3 bg-linear-to-b from-white to-transparent z-10 pointer-events-none" />
+              <div className="absolute bottom-0 left-0 right-0 h-3 bg-linear-to-t from-white to-transparent z-10 pointer-events-none" />
+              <div className="ticker-scroll px-4" style={{ animationDuration: "15s" }}>
+                {[...posts, ...posts].map((post, i) => (
+                  <Link key={`${post.id}-${i}`} href={`/board/${post.id}`} className="flex items-center gap-3 py-2.5 group">
+                    <span className="w-10 h-10 rounded-lg bg-gray-100 border border-gray-200 flex items-center justify-center shrink-0">
+                      <svg className="w-4.5 h-4.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" /></svg>
+                    </span>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-surface text-[14px] font-bold truncate">{post.title}</p>
+                      <p className="text-sub text-[12px]">{post.nickname} · 조회 {post.views}</p>
+                    </div>
+                    <svg className="w-4 h-4 text-[#ccc] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </Link>
+                ))}
+              </div>
             </div>
-          );
-        })()}
+          )}
+        </section>
+
+        {/* 3. 진행중인 대회 */}
+        <section className="px-4 py-5"><EventsSection /></section>
 
         {/* 5. 지도 */}
         <section className="section-alt border-y border-border-custom px-4 py-5">
@@ -259,42 +263,8 @@ export default function Home() {
                 </Link>
               </div>
             </div>
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
-              <div className="h-72 lg:h-110 rounded-2xl overflow-hidden card-shadow">
-                <MapView stores={filteredStores} onStoreClick={setSelectedStore} selectedStore={selectedStore} />
-              </div>
-              <div className="hidden lg:flex flex-col gap-2.5">
-                <a href="https://cafe.naver.com/incheonholdem" target="_blank" rel="noopener noreferrer"
-                  className="flex-1 rounded-xl overflow-hidden card-shadow bg-accent/5 border border-accent/15 relative group cursor-pointer hover:bg-accent/10 hover:border-accent/30 transition-all">
-                  <div className="h-full flex items-center gap-3 px-4">
-                    <div className="w-8 h-8 rounded-lg bg-accent/15 flex items-center justify-center shrink-0 group-hover:bg-accent/25 transition-colors">
-                      <svg className="w-4 h-4 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
-                      </svg>
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-surface text-[13px] font-bold truncate">자유게시판 · 토론게시판</p>
-                      <p className="text-muted text-[10px] truncate">네이버 카페 바로가기</p>
-                    </div>
-                    <svg className="w-3.5 h-3.5 text-accent/40 group-hover:text-accent shrink-0 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                    </svg>
-                  </div>
-                </a>
-                {[0, 1, 2, 3].map((i) => {
-                  const banner = sideBanners[i];
-                  return (
-                    <div key={i} className="flex-1 rounded-xl overflow-hidden card-shadow">
-                      {banner?.image ? (
-                        banner.link ? <a href={banner.link} target="_blank" rel="noopener noreferrer" className="block h-full"><img src={banner.image} alt="" className="w-full h-full object-cover" /></a>
-                          : <img src={banner.image} alt="" className="w-full h-full object-cover" />
-                      ) : (
-                        <div className="ad-pattern h-full flex items-center justify-center text-[#ccc] text-[11px]">AD</div>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
+            <div className="h-80 lg:h-110 rounded-2xl overflow-hidden card-shadow">
+              <MapView stores={filteredStores} onStoreClick={setSelectedStore} selectedStore={selectedStore} />
             </div>
           </div>
         </section>

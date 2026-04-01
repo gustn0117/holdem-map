@@ -212,7 +212,7 @@ export default function AdminPage() {
         <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-1.5">
-              <svg className="w-7 h-7" viewBox="0 0 36 36" fill="none"><rect x="1.25" y="1.25" width="33.5" height="33.5" rx="7" fill="white" stroke="#D4A017" strokeWidth="2.5" /><path d="M10 10h4v6.5l8-6.5h4v16h-4v-6.5l-8 6.5h-4V10z" fill="#DC2626" /></svg>
+              <svg className="w-7 h-7" viewBox="0 0 36 36" fill="none"><rect x="1.25" y="1.25" width="33.5" height="33.5" rx="7" fill="white" stroke="#03C75A" strokeWidth="2.5" /><path d="M10 10h4v6.5l8-6.5h4v16h-4v-6.5l-8 6.5h-4V10z" fill="#DC2626" /></svg>
               <span className="text-lg font-black text-surface">홀덤맵코리아</span>
             </div>
             <span className="text-xs text-muted bg-gray-100 px-2.5 py-1 rounded-lg font-semibold">ADMIN</span>

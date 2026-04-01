@@ -42,8 +42,8 @@ export default function BoardPage() {
                 글 작성
               </Link>
             ) : (
-              <Link href="/login" className="bg-accent hover:bg-accent-hover text-white text-sm font-bold px-5 py-2.5 rounded-lg transition-all">
-                로그인 후 작성
+              <Link href="/register" className="bg-accent hover:bg-accent-hover text-white text-sm font-bold px-5 py-2.5 rounded-lg transition-all">
+                회원가입 후 작성
               </Link>
             )}
           </div>

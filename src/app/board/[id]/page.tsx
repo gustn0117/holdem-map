@@ -141,8 +141,8 @@ export default function BoardDetailPage() {
                   </button>
                 </form>
               ) : (
-                <Link href="/login" className="block text-center text-accent text-sm font-semibold hover:underline">
-                  로그인 후 댓글을 작성할 수 있습니다
+                <Link href="/register" className="block text-center text-accent text-sm font-semibold hover:underline">
+                  회원가입 후 댓글을 작성할 수 있습니다
                 </Link>
               )}
             </div>
