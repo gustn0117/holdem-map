@@ -21,10 +21,19 @@ export default function JobWritePage() {
     return (
       <div className="flex flex-col min-h-screen pb-16 md:pb-0">
         <Header />
-        <div className="flex-1 flex items-center justify-center">
-          <div className="text-center">
-            <p className="text-surface text-lg font-bold mb-3">로그인이 필요합니다</p>
-            <Link href="/register" className="text-accent font-semibold hover:underline">회원가입하기</Link>
+        <div className="flex-1 flex items-center justify-center px-4">
+          <div className="w-full max-w-sm text-center bg-white rounded-2xl card-shadow p-8">
+            <div className="w-16 h-16 rounded-full bg-accent/10 flex items-center justify-center mx-auto mb-5">
+              <svg className="w-8 h-8 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              </svg>
+            </div>
+            <h2 className="text-surface text-xl font-black mb-2">회원 전용 기능입니다</h2>
+            <p className="text-muted text-[14px] mb-6">글을 작성하려면 회원가입 또는 로그인이 필요합니다</p>
+            <div className="flex flex-col gap-2.5">
+              <Link href="/register" className="w-full bg-accent hover:bg-accent-hover text-white font-bold py-3 rounded-xl transition-all text-[15px]">회원가입</Link>
+              <Link href="/login" className="w-full border border-border-custom text-sub font-semibold py-3 rounded-xl hover:bg-bg transition-all text-[14px]">이미 계정이 있어요</Link>
+            </div>
           </div>
         </div>
         <Footer />
