@@ -282,7 +282,14 @@ export default function Home() {
         <section className="border-b border-border-custom">
           <div className="max-w-350 mx-auto px-5 md:px-10 py-8">
             <div className="flex items-center justify-between mb-5">
-              <h2 className="text-[17px] font-bold text-surface">구인구직</h2>
+              <div className="flex items-center gap-2">
+                <span className="relative flex h-2 w-2">
+                  <span className="live-pulse absolute inline-flex h-full w-full rounded-full bg-red-500 opacity-75" />
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500" />
+                </span>
+                <span className="text-red-500 text-[13px] font-extrabold">실시간</span>
+                <h2 className="text-[17px] font-bold text-surface">구인구직</h2>
+              </div>
               <Link href="/jobs" className="text-accent text-[13px] font-semibold hover:underline">전체보기 →</Link>
             </div>
             {jobs.length === 0 ? (
