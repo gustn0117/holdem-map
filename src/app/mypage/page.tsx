@@ -112,7 +112,7 @@ export default function MyPage() {
   return (
     <div className="flex flex-col min-h-screen pb-16 md:pb-0">
       <Header />
-      <main className="container-main py-6 flex-1">
+      <main className="flex-1 px-4 md:px-12 lg:px-20 py-6" style={{ maxWidth: "1400px", margin: "0 auto", width: "100%" }}>
         <div>
           {/* Profile header */}
           <div className="bg-white rounded-2xl card-shadow overflow-hidden mb-6">
