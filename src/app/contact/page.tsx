@@ -15,10 +15,11 @@ export default function ContactPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
-    await supabase.from("inquiries").insert({
+    const { error } = await supabase.from("inquiries").insert({
       name: form.name, phone: form.phone, store_name: form.storeName, region: form.region, message: form.message,
     });
     setSaving(false);
+    if (error) { alert("문의 등록에 실패했습니다. 다시 시도해주세요."); return; }
     setSubmitted(true);
   };
 

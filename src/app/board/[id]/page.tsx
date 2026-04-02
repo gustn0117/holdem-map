@@ -51,12 +51,13 @@ export default function BoardDetailPage() {
   const handleComment = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!commentText.trim() || !user) return;
-    const { data } = await supabase.from("comments").insert({
+    const { data, error } = await supabase.from("comments").insert({
       post_id: id,
       user_id: user.id,
       nickname: profile?.nickname || "익명",
       content: commentText.trim(),
     }).select().single();
+    if (error) { alert("댓글 등록에 실패했습니다."); return; }
     if (data) setComments([...comments, data]);
     setCommentText("");
   };

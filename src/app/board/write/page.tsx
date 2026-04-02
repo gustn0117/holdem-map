@@ -41,12 +41,13 @@ export default function BoardWritePage() {
     e.preventDefault();
     if (!title.trim() || !content.trim()) return;
     setLoading(true);
-    await supabase.from("posts").insert({
+    const { error } = await supabase.from("posts").insert({
       user_id: user.id,
       nickname: profile?.nickname || "익명",
       title: title.trim(),
       content: content.trim(),
     });
+    if (error) { alert("작성에 실패했습니다."); setLoading(false); return; }
     router.push("/board");
   };
 

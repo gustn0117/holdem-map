@@ -65,12 +65,7 @@ body {
 
 .glass { background: var(--color-glass); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); }
 
-/* Accent utilities */
-.gold-text-shine { color: var(--color-accent); }
-.gold-btn, .gold-shine { background-color: var(--color-accent); }
-.gold-btn:hover { background-color: var(--color-accent-hover); }
-.gold-border::before, .noise::after { display: none; }
-.felt-gradient { background: var(--color-accent); }
+.gold-shine { background-color: var(--color-accent); }
 
 .ad-pattern {
   background: repeating-linear-gradient(-45deg, #fafafa, #fafafa 6px, #f3f3f3 6px, #f3f3f3 7px);
@@ -105,17 +100,3 @@ body {
   50% { opacity: 0.6; transform: scale(1.15); }
 }
 .live-pulse { animation: livePulse 1.5s ease-in-out infinite; }
-
-.container-main {
-  max-width: 1400px;
-  margin-left: auto;
-  margin-right: auto;
-  padding-left: 24px;
-  padding-right: 24px;
-}
-@media (min-width: 768px) {
-  .container-main { padding-left: 48px; padding-right: 48px; }
-}
-@media (min-width: 1440px) {
-  .container-main { padding-left: 64px; padding-right: 64px; }
-}
