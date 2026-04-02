@@ -37,7 +37,7 @@ export default function MarketPage() {
   return (
     <div className="flex flex-col min-h-screen pb-16 md:pb-0">
       <Header />
-      <main className="container-main py-8 flex-1">
+      <main className="w-full mx-auto px-5 md:px-10 py-8 flex-1" style={{ maxWidth: "1400px" }}>
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
           <div>

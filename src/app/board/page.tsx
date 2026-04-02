@@ -30,7 +30,7 @@ export default function BoardPage() {
   return (
     <div className="flex flex-col min-h-screen pb-16 md:pb-0">
       <Header />
-      <main className="container-main py-8 flex-1">
+      <main className="w-full mx-auto px-5 md:px-10 py-8 flex-1" style={{ maxWidth: "1400px" }}>
         <div className="max-w-4xl mx-auto">
           <div className="flex items-center justify-between mb-6">
             <div>

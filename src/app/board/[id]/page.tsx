@@ -92,7 +92,7 @@ export default function BoardDetailPage() {
   return (
     <div className="flex flex-col min-h-screen pb-16 md:pb-0">
       <Header />
-      <main className="container-main py-8 flex-1">
+      <main className="w-full mx-auto px-5 md:px-10 py-8 flex-1" style={{ maxWidth: "1400px" }}>
         <div className="max-w-3xl mx-auto">
           <Link href="/board" className="inline-flex items-center gap-1.5 text-muted hover:text-accent text-sm font-medium mb-6 transition-colors">
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>

@@ -53,7 +53,7 @@ export default function BoardWritePage() {
   return (
     <div className="flex flex-col min-h-screen pb-16 md:pb-0">
       <Header />
-      <main className="container-main py-8 flex-1">
+      <main className="w-full mx-auto px-5 md:px-10 py-8 flex-1" style={{ maxWidth: "1400px" }}>
         <div className="max-w-2xl mx-auto">
           <h1 className="text-2xl font-black text-surface mb-6">글 작성</h1>
           <form onSubmit={handleSubmit} className="space-y-4">

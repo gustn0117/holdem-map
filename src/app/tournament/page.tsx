@@ -20,7 +20,7 @@ export default function TournamentPage() {
   return (
     <div className="flex flex-col min-h-screen pb-16 md:pb-0">
       <Header />
-      <main className="container-main py-8 flex-1">
+      <main className="w-full mx-auto px-5 md:px-10 py-8 flex-1" style={{ maxWidth: "1400px" }}>
         {/* Hero */}
         <div className="bg-red-500 rounded-3xl p-8 md:p-12 mb-8 text-white relative overflow-hidden">
           <div className="absolute inset-0 bg-linear-to-r from-red-600 to-red-400 opacity-50" />

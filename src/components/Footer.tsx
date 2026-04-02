@@ -3,7 +3,7 @@ import Link from "next/link";
 export default function Footer() {
   return (
     <footer className="bg-[#fafafa] border-t border-border-custom mt-auto">
-      <div className="container-main py-10">
+      <div className="w-full mx-auto px-5 md:px-10 py-10" style={{ maxWidth: "1400px" }}>
         <div className="grid grid-cols-2 md:grid-cols-12 gap-8 md:gap-6">
           {/* Brand */}
           <div className="col-span-2 md:col-span-4">

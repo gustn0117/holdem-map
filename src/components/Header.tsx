@@ -62,7 +62,7 @@ export default function Header() {
   return (
     <>
       <header className="sticky top-0 z-50 bg-white border-b border-border-custom">
-        <div className="container-main h-14 flex items-center justify-between relative">
+        <div className="w-full mx-auto px-5 md:px-10 h-14 flex items-center justify-between relative" style={{ maxWidth: "1400px" }}>
           {/* Left: Logo */}
           <Link href="/" className="flex items-center gap-1.5 shrink-0 relative z-10 group">
             <svg className="w-8 h-8" viewBox="0 0 36 36" fill="none">

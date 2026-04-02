@@ -95,7 +95,7 @@ export default function JobsPage() {
   return (
     <div className="flex flex-col min-h-screen pb-16 md:pb-0">
       <Header />
-      <main className="container-main py-6 flex-1">
+      <main className="w-full mx-auto px-5 md:px-10 py-6 flex-1" style={{ maxWidth: "1400px" }}>
         {/* Hero */}
         <div className="bg-white rounded-2xl card-shadow p-5 md:p-6 mb-5">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">

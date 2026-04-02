@@ -45,7 +45,7 @@ export default function TopBanner() {
 
   return (
     <div className="sticky top-0 z-60 bg-white border-b border-border-custom">
-      <div className="container-main py-2">
+      <div className="w-full mx-auto px-5 md:px-10 py-2" style={{ maxWidth: "1400px" }}>
         {current?.image ? (
           <div className="relative overflow-hidden rounded-xl">
             {current.link ? (
