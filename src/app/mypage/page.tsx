@@ -41,12 +41,14 @@ export default function MyPage() {
     }
   }, [profile]);
 
-  if (loading || !profile) return (
+  if (loading) return (
     <div className="flex flex-col min-h-screen pb-16 md:pb-0">
       <Header />
       <div className="flex-1 flex items-center justify-center"><div className="w-8 h-8 border-2 border-accent/30 border-t-accent rounded-full animate-spin" /></div>
     </div>
   );
+
+  if (!user || !profile) return null;
 
   const set = (key: string, value: unknown) => setForm(prev => ({ ...prev, [key]: value }));
 
