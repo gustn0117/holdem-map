@@ -122,7 +122,7 @@ export async function getJobs(): Promise<Job[]> {
   return data || [];
 }
 
-export async function createJob(job: Omit<Job, "id" | "created_at">) {
+export async function createJob(job: Record<string, unknown>) {
   const { data, error } = await supabase.from("jobs").insert(job).select().single();
   if (error) throw error;
   return data;
