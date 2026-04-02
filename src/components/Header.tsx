@@ -65,7 +65,7 @@ export default function Header() {
           {/* Left: Logo */}
           <Link href="/" className="flex items-center gap-1.5 shrink-0 relative z-10 group">
             <svg className="w-8 h-8" viewBox="0 0 36 36" fill="none">
-              <rect x="1.25" y="1.25" width="33.5" height="33.5" rx="7" fill="white" stroke="#03C75A" strokeWidth="2.5" />
+              <rect width="36" height="36" rx="8" fill="#03C75A" />
               <path d="M10 10h4v6.5l8-6.5h4v16h-4v-6.5l-8 6.5h-4V10z" fill="#DC2626" />
             </svg>
             <span className="text-[18px] font-black text-surface">홀덤맵코리아</span>
@@ -92,6 +92,8 @@ export default function Header() {
                       <p className="text-surface text-[13px] font-bold">{profile?.nickname}</p>
                       <p className="text-muted text-[11px]">{profile?.email}</p>
                     </div>
+                    <Link href="/mypage" onClick={() => setUserMenuOpen(false)}
+                      className="block px-4 py-2.5 text-[13px] text-sub hover:bg-[#f5f6f8] transition-colors">마이페이지</Link>
                     <button onClick={() => { signOut(); setUserMenuOpen(false); }}
                       className="w-full text-left px-4 py-2.5 text-[13px] text-red-500 hover:bg-red-50 transition-colors">로그아웃</button>
                   </div>
@@ -129,10 +131,10 @@ export default function Header() {
             </div>
             {user ? (
               <div className="flex items-center justify-between bg-[#f5f6f8] rounded-lg px-4 py-2.5">
-                <div>
+                <Link href="/mypage" onClick={() => setMenuOpen(false)}>
                   <p className="text-surface text-[13px] font-bold">{profile?.nickname}</p>
-                  <p className="text-muted text-[11px]">{profile?.email}</p>
-                </div>
+                  <p className="text-accent text-[11px]">마이페이지 →</p>
+                </Link>
                 <button onClick={() => { signOut(); setMenuOpen(false); }}
                   className="text-red-400 text-[12px] font-semibold">로그아웃</button>
               </div>
@@ -220,7 +222,7 @@ export default function Header() {
             </button>
             <div className="text-center mb-5">
               <svg className="w-12 h-12 mx-auto mb-3" viewBox="0 0 36 36" fill="none">
-                <rect x="1.25" y="1.25" width="33.5" height="33.5" rx="7" fill="white" stroke="#03C75A" strokeWidth="2.5" />
+                <rect width="36" height="36" rx="8" fill="#03C75A" />
                 <path d="M10 10h4v6.5l8-6.5h4v16h-4v-6.5l-8 6.5h-4V10z" fill="#DC2626" />
               </svg>
               <h3 className="text-surface text-lg font-black">홀덤맵코리아 앱 설치</h3>

@@ -46,6 +46,9 @@ export default function JobWritePage() {
     role: "딜러",
     experience: "",
     areas: [] as string[],
+    contact_kakao: "",
+    contact_telegram: "",
+    contact_phone: "",
     contact_type: "카카오톡",
     contact: "",
     photo: "",
@@ -69,13 +72,22 @@ export default function JobWritePage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.nickname || !form.experience || form.areas.length === 0 || !form.contact) {
+    if (!form.nickname || !form.experience || form.areas.length === 0) {
       alert("필수 항목을 모두 입력해주세요.");
+      return;
+    }
+    // Build contact string from multiple fields
+    const contacts: string[] = [];
+    if (form.contact_kakao) contacts.push(`카카오톡: ${form.contact_kakao}`);
+    if (form.contact_telegram) contacts.push(`텔레그램: ${form.contact_telegram}`);
+    if (form.contact_phone) contacts.push(`전화: ${form.contact_phone}`);
+    if (contacts.length === 0) {
+      alert("연락처를 하나 이상 입력해주세요.");
       return;
     }
     setSaving(true);
     try {
-      await createJob(form);
+      await createJob({ ...form, contact_type: "복수", contact: contacts.join(" / ") });
       router.push("/jobs");
     } catch {
       alert("등록에 실패했습니다.");
@@ -184,17 +196,22 @@ export default function JobWritePage() {
             </div>
           </div>
 
-          {/* Contact */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-            <div>
-              <label className="text-sub text-sm font-semibold block mb-2">연락 방법 *</label>
-              <Select value={form.contact_type} onChange={v => set("contact_type", v)} options={[
-                { value: "카카오톡", label: "카카오톡" }, { value: "텔레그램", label: "텔레그램" },
-              ]} />
-            </div>
-            <div className="md:col-span-2">
-              <label className="text-sub text-sm font-semibold block mb-2">연락처 (ID) *</label>
-              <input className={inputClass} value={form.contact} onChange={e => set("contact", e.target.value)} placeholder="카카오톡 또는 텔레그램 ID" />
+          {/* Contact - multiple methods */}
+          <div>
+            <label className="text-sub text-sm font-semibold block mb-3">연락처 <span className="text-muted font-normal">(하나 이상 입력)</span></label>
+            <div className="space-y-3">
+              <div className="flex items-center gap-3">
+                <span className="w-20 text-[13px] font-semibold text-surface shrink-0">카카오톡</span>
+                <input className={inputClass} value={form.contact_kakao} onChange={e => set("contact_kakao", e.target.value)} placeholder="카카오톡 ID" />
+              </div>
+              <div className="flex items-center gap-3">
+                <span className="w-20 text-[13px] font-semibold text-surface shrink-0">텔레그램</span>
+                <input className={inputClass} value={form.contact_telegram} onChange={e => set("contact_telegram", e.target.value)} placeholder="텔레그램 ID" />
+              </div>
+              <div className="flex items-center gap-3">
+                <span className="w-20 text-[13px] font-semibold text-surface shrink-0">전화번호</span>
+                <input className={inputClass} value={form.contact_phone} onChange={e => set("contact_phone", e.target.value)} placeholder="01012345678" />
+              </div>
             </div>
           </div>
 

@@ -4,7 +4,7 @@ import { createContext, useContext, useState, useEffect, ReactNode } from "react
 import { supabase } from "@/lib/supabase";
 import { User, Session } from "@supabase/supabase-js";
 
-interface Profile {
+export interface Profile {
   id: string;
   email: string;
   nickname: string;
@@ -12,6 +12,18 @@ interface Profile {
   phone: string;
   avatar: string;
   is_blocked: boolean;
+  user_type: string;
+  status: string;
+  status_expires_at: string | null;
+  status_updated_at: string | null;
+  bio: string;
+  experience: string;
+  areas: string[];
+  store_name: string;
+  contact_kakao: string;
+  contact_telegram: string;
+  contact_phone: string;
+  created_at: string;
 }
 
 interface AuthContextType {

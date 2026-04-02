@@ -29,14 +29,11 @@ export default function TopBanner() {
     const rotate = () => {
       setCurrentIdx(prev => {
         const next = (prev + 1) % banners.length;
-        // Main banner (index 0) = 3s, others = 2s
-        const delay = next === 0 ? 3000 : 2000;
-        timerRef.current = setTimeout(rotate, delay);
+        timerRef.current = setTimeout(rotate, 3000);
         return next;
       });
     };
 
-    // First banner is main = 3s
     timerRef.current = setTimeout(rotate, 3000);
     return () => { if (timerRef.current) clearTimeout(timerRef.current); };
   }, [banners]);
