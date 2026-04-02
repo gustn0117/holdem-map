@@ -30,7 +30,7 @@ interface AuthContextType {
   user: User | null;
   profile: Profile | null;
   loading: boolean;
-  signUp: (email: string, password: string, nickname: string) => Promise<{ error: string | null }>;
+  signUp: (email: string, password: string, nickname: string, userType?: string) => Promise<{ error: string | null }>;
   signIn: (email: string, password: string) => Promise<{ error: string | null }>;
   signOut: () => Promise<void>;
   refreshProfile: () => Promise<void>;
@@ -84,7 +84,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => subscription.unsubscribe();
   }, []);
 
-  const signUp = async (email: string, password: string, nickname: string) => {
+  const signUp = async (email: string, password: string, nickname: string, userType: string = "일반") => {
     const { data, error } = await supabase.auth.signUp({ email, password });
     if (error) return { error: error.message };
     if (data.user) {
@@ -93,6 +93,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         email,
         nickname,
         role: "user",
+        user_type: userType,
       });
       await fetchProfile(data.user.id);
     }
