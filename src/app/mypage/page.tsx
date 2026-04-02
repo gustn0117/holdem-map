@@ -113,7 +113,7 @@ export default function MyPage() {
     <div className="flex flex-col min-h-screen pb-16 md:pb-0">
       <Header />
       <main className="container-main py-6 flex-1">
-        <div className="max-w-5xl mx-auto">
+        <div style={{ maxWidth: "1100px", margin: "0 auto" }}>
           {/* Profile header */}
           <div className="bg-white rounded-2xl card-shadow overflow-hidden mb-6">
             <div className={`h-20 ${
