@@ -87,7 +87,7 @@ export default function JobWritePage() {
     }
     setSaving(true);
     try {
-      await createJob({ ...form, contact_type: "복수", contact: contacts.join(" / ") });
+      await createJob({ ...form, contact_type: "복수", contact: contacts.join(" / "), user_id: user.id });
       router.push("/jobs");
     } catch {
       alert("등록에 실패했습니다.");

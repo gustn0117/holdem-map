@@ -1,19 +1,28 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { useAuth } from "@/contexts/AuthContext";
 import { useEvents } from "@/hooks/useData";
+import { supabase } from "@/lib/supabase";
 
 export default function TournamentPage() {
   const { user, profile } = useAuth();
   const { events } = useEvents();
   const [applied, setApplied] = useState<string[]>([]);
 
-  const handleApply = (eventId: string) => {
+  useEffect(() => {
+    if (user) {
+      supabase.from("tournament_applications").select("event_id").eq("user_id", user.id)
+        .then(({ data }) => setApplied(data?.map(a => a.event_id) || []));
+    }
+  }, [user]);
+
+  const handleApply = async (eventId: string) => {
     if (!user) return;
+    await supabase.from("tournament_applications").insert({ user_id: user.id, event_id: eventId });
     setApplied(prev => [...prev, eventId]);
   };
 

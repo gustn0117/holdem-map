@@ -5,12 +5,22 @@ import Link from "next/link";
 import Header from "@/components/Header";
 import Select from "@/components/Select";
 import Footer from "@/components/Footer";
+import { supabase } from "@/lib/supabase";
 
 export default function ContactPage() {
   const [form, setForm] = useState({ name: "", phone: "", storeName: "", storeAddress: "", region: "서울", message: "" });
   const [submitted, setSubmitted] = useState(false);
+  const [saving, setSaving] = useState(false);
   const set = (key: string, value: string) => setForm(prev => ({ ...prev, [key]: value }));
-  const handleSubmit = (e: React.FormEvent) => { e.preventDefault(); setSubmitted(true); };
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSaving(true);
+    await supabase.from("inquiries").insert({
+      name: form.name, phone: form.phone, store_name: form.storeName, region: form.region, message: form.message,
+    });
+    setSaving(false);
+    setSubmitted(true);
+  };
 
   const inputClass = "w-full bg-card border border-border-custom rounded-xl px-5 py-4 text-base text-surface focus:outline-none focus:border-accent/50 focus:ring-2 focus:ring-accent/10 transition-all placeholder:text-muted";
 
