@@ -22,8 +22,8 @@ export default function TournamentPage() {
       <Header />
       <main className="w-full mx-auto px-5 md:px-10 py-8 flex-1" style={{ maxWidth: "1400px" }}>
         {/* Hero */}
-        <div className="bg-red-500 rounded-3xl p-8 md:p-12 mb-8 text-white relative overflow-hidden">
-          <div className="absolute inset-0 bg-linear-to-r from-red-600 to-red-400 opacity-50" />
+        <div className="bg-[#00874a] rounded-3xl p-8 md:p-12 mb-8 text-white relative overflow-hidden">
+          <div className="absolute inset-0 bg-linear-to-r from-[#006b3a] to-[#00a05a] opacity-50" />
           <div className="relative">
             <p className="text-white/80 text-sm font-bold uppercase tracking-widest mb-3">FREE TOURNAMENT</p>
             <h1 className="text-3xl md:text-4xl font-black mb-3">무료 토너먼트</h1>
@@ -70,7 +70,7 @@ export default function TournamentPage() {
                       <h3 className="text-surface text-[17px] font-black">{event.title}</h3>
                       <p className="text-sub text-[14px] mt-1">{event.store_name}</p>
                     </div>
-                    {event.prize && <span className="bg-red-500 text-white text-[12px] font-bold px-3 py-1 rounded-full shrink-0">{event.prize}</span>}
+                    {event.prize && <span className="bg-[#00874a] text-white text-[12px] font-bold px-3 py-1 rounded-full shrink-0">{event.prize}</span>}
                   </div>
                   <div className="flex items-center gap-4 text-[13px] text-muted mb-4">
                     <span>{d.getFullYear()}.{d.getMonth()+1}.{d.getDate()}</span>
@@ -80,7 +80,7 @@ export default function TournamentPage() {
                     isApplied ? (
                       <div className="bg-accent/10 text-accent text-[14px] font-bold py-3 rounded-xl text-center">신청 완료</div>
                     ) : (
-                      <button onClick={() => handleApply(event.id)} className="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-3 rounded-xl transition-all text-[14px]">
+                      <button onClick={() => handleApply(event.id)} className="w-full bg-[#00874a] hover:bg-[#006b3a] text-white font-bold py-3 rounded-xl transition-all text-[14px]">
                         무료 참가 신청
                       </button>
                     )

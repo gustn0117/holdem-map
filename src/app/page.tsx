@@ -223,7 +223,7 @@ export default function Home() {
 
         {/* 4. 무료 토너먼트 배너 */}
         <section className="px-4 pb-5">
-          <Link href="/tournament" className="block bg-red-500 hover:bg-red-600 rounded-2xl p-5 transition-all card-shadow">
+          <Link href="/tournament" className="block bg-[#00874a] hover:bg-[#006b3a] rounded-2xl p-5 transition-all card-shadow">
             <div className="flex items-center gap-4">
               <div className="w-14 h-14 rounded-xl bg-white/20 flex items-center justify-center shrink-0">
                 <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -301,7 +301,7 @@ export default function Home() {
         {/* PC: 무료 토너먼트 배너 */}
         <section className="border-b border-border-custom">
           <div className="max-w-350 mx-auto px-5 md:px-10 py-6">
-            <Link href="/tournament" className="block bg-red-500 hover:bg-red-600 rounded-2xl p-6 transition-all card-shadow group">
+            <Link href="/tournament" className="block bg-[#00874a] hover:bg-[#006b3a] rounded-2xl p-6 transition-all card-shadow group">
               <div className="flex items-center gap-5">
                 <div className="w-16 h-16 rounded-xl bg-white/20 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
                   <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -80,7 +80,7 @@ export default function Header() {
                 {l.label}
               </Link>
             ))}
-            <Link href="/tournament" className="hidden md:block bg-red-500 hover:bg-red-600 text-white text-[13px] font-bold px-4 py-[7px] rounded-lg transition-all ml-1">무료토너</Link>
+            <Link href="/tournament" className="hidden md:block bg-[#00874a] hover:bg-[#006b3a] text-white text-[13px] font-bold px-4 py-[7px] rounded-lg transition-all ml-1">무료토너</Link>
             <Link href="/contact" className="hidden md:block bg-accent hover:bg-accent-hover text-white text-[13px] font-bold px-4 py-[7px] rounded-lg transition-all ml-0.5">매장 등록</Link>
             {user ? (
               <div className="hidden md:block relative ml-1">
