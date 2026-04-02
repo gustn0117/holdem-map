@@ -44,8 +44,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   const fetchProfile = async (userId: string) => {
-    const { data } = await supabase.from("profiles").select("*").eq("id", userId).single();
-    setProfile(data);
+    const { data, error } = await supabase.from("profiles").select("*").eq("id", userId).single();
+    if (data) {
+      setProfile(data);
+    } else {
+      // Profile doesn't exist yet - create it
+      const { data: authUser } = await supabase.auth.getUser();
+      if (authUser?.user) {
+        const newProfile = {
+          id: userId,
+          email: authUser.user.email || "",
+          nickname: authUser.user.email?.split("@")[0] || "회원",
+          role: "user",
+        };
+        await supabase.from("profiles").upsert(newProfile);
+        const { data: created } = await supabase.from("profiles").select("*").eq("id", userId).single();
+        setProfile(created);
+      }
+    }
   };
 
   const refreshProfile = async () => {
