@@ -113,40 +113,49 @@ export default function MyPage() {
     <div className="flex flex-col min-h-screen pb-16 md:pb-0">
       <Header />
       <main className="container-main py-6 flex-1">
-        <div className="max-w-2xl mx-auto">
+        <div className="max-w-3xl mx-auto">
           {/* Profile header */}
-          <div className="bg-white rounded-2xl card-shadow p-5 mb-5">
-            <div className="flex items-center gap-4">
-              <div className="w-14 h-14 rounded-full bg-accent/10 flex items-center justify-center text-accent text-xl font-black shrink-0">
-                {profile.nickname?.charAt(0)}
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 flex-wrap">
-                  <h1 className="text-lg font-black text-surface">{profile.nickname}</h1>
-                  <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${
-                    profile.user_type === "딜러" ? "bg-emerald-100 text-emerald-700" :
-                    profile.user_type === "업주" ? "bg-blue-100 text-blue-600" : "bg-gray-100 text-gray-600"
-                  }`}>{profile.user_type}</span>
-                  {profile.user_type === "딜러" && (
-                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full text-white ${
-                      STATUS_OPTIONS.find(s => s.value === profile.status)?.color || "bg-gray-400"
-                    }`}>{profile.status || "비노출"}</span>
-                  )}
+          <div className="bg-white rounded-2xl card-shadow overflow-hidden mb-6">
+            <div className={`h-20 ${
+              profile.user_type === "딜러" ? "bg-linear-to-r from-emerald-500 to-emerald-400" :
+              profile.user_type === "업주" ? "bg-linear-to-r from-blue-500 to-blue-400" :
+              "bg-linear-to-r from-accent to-emerald-400"
+            }`} />
+            <div className="px-6 pb-6 -mt-10">
+              <div className="flex items-end gap-4 mb-4">
+                <div className="w-20 h-20 rounded-2xl bg-white border-4 border-white shadow-md flex items-center justify-center text-accent text-3xl font-black shrink-0">
+                  {profile.nickname?.charAt(0)}
                 </div>
-                <p className="text-muted text-[13px] truncate">{profile.email?.includes("@phone.holdemmap") ? profile.phone : profile.email}</p>
+                <div className="flex-1 min-w-0 pb-1">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <h1 className="text-xl font-black text-surface">{profile.nickname}</h1>
+                    <span className={`text-[11px] font-bold px-2.5 py-0.5 rounded-full ${
+                      profile.user_type === "딜러" ? "bg-emerald-100 text-emerald-700" :
+                      profile.user_type === "업주" ? "bg-blue-100 text-blue-600" : "bg-gray-100 text-gray-600"
+                    }`}>{profile.user_type}</span>
+                    {profile.user_type === "딜러" && (
+                      <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full text-white ${
+                        STATUS_OPTIONS.find(s => s.value === profile.status)?.color || "bg-gray-400"
+                      }`}>{profile.status || "비노출"}</span>
+                    )}
+                  </div>
+                </div>
+              </div>
+              <div className="flex items-center gap-4 text-[13px]">
+                <span className="text-muted">{profile.email?.includes("@phone.holdemmap") ? `전화: ${profile.phone}` : profile.email}</span>
                 {profile.user_type === "딜러" && profile.status_updated_at && (
-                  <p className="text-muted text-[11px]">상태: {timeAgo(profile.status_updated_at)}</p>
+                  <span className="text-muted">상태 변경 {timeAgo(profile.status_updated_at)}</span>
                 )}
               </div>
             </div>
           </div>
 
-          {/* Tabs - scrollable on mobile */}
-          <div className="flex gap-1 overflow-x-auto hide-scrollbar mb-5">
+          {/* Tabs */}
+          <div className="flex gap-1.5 overflow-x-auto hide-scrollbar mb-6 bg-white rounded-xl card-shadow p-1.5">
             {tabConfig.map(t => (
               <button key={t.key} onClick={() => setTab(t.key)}
-                className={`shrink-0 px-4 py-2 rounded-full text-[13px] font-semibold transition-all ${
-                  tab === t.key ? "bg-accent text-white" : "bg-[#f5f6f8] text-sub hover:bg-accent/10"
+                className={`shrink-0 px-5 py-2.5 rounded-lg text-[13px] font-semibold transition-all ${
+                  tab === t.key ? "bg-accent text-white shadow-sm" : "text-sub hover:bg-[#f5f6f8]"
                 }`}>{t.label}</button>
             ))}
           </div>
