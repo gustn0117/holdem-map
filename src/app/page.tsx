@@ -221,6 +221,26 @@ export default function Home() {
         {/* 3. 진행중인 대회 */}
         <section className="px-4 py-5"><EventsSection /></section>
 
+        {/* 4. 무료 토너먼트 배너 */}
+        <section className="px-4 pb-5">
+          <Link href="/tournament" className="block bg-red-500 hover:bg-red-600 rounded-2xl p-5 transition-all card-shadow">
+            <div className="flex items-center gap-4">
+              <div className="w-14 h-14 rounded-xl bg-white/20 flex items-center justify-center shrink-0">
+                <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" />
+                </svg>
+              </div>
+              <div className="flex-1">
+                <p className="text-white text-[17px] font-black">무료 토너먼트 신청하기</p>
+                <p className="text-white/70 text-[13px] mt-0.5">가입만 하면 무료 참가! 지금 신청하세요</p>
+              </div>
+              <svg className="w-5 h-5 text-white/60 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </div>
+          </Link>
+        </section>
+
         {/* 5. 지도 */}
         <section className="section-alt border-y border-border-custom px-4 py-5">
           <div className="flex items-center justify-between mb-3">
@@ -275,6 +295,28 @@ export default function Home() {
             <div className="h-80 lg:h-110 rounded-2xl overflow-hidden card-shadow">
               <MapView stores={filteredStores} onStoreClick={setSelectedStore} selectedStore={selectedStore} />
             </div>
+          </div>
+        </section>
+
+        {/* PC: 무료 토너먼트 배너 */}
+        <section className="border-b border-border-custom">
+          <div className="max-w-350 mx-auto px-5 md:px-10 py-6">
+            <Link href="/tournament" className="block bg-red-500 hover:bg-red-600 rounded-2xl p-6 transition-all card-shadow group">
+              <div className="flex items-center gap-5">
+                <div className="w-16 h-16 rounded-xl bg-white/20 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                  <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" />
+                  </svg>
+                </div>
+                <div className="flex-1">
+                  <p className="text-white text-xl font-black">무료 토너먼트 신청하기</p>
+                  <p className="text-white/70 text-[14px] mt-1">가입만 하면 무료 참가! 리바이·애드온 혜택까지</p>
+                </div>
+                <svg className="w-6 h-6 text-white/50 group-hover:text-white group-hover:translate-x-1 shrink-0 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </div>
+            </Link>
           </div>
         </section>
 

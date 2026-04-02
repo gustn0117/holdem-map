@@ -54,6 +54,7 @@ export default function Header() {
   const navLinks = [
     { href: "/events", label: "대회" },
     { href: "/jobs", label: "구인구직" },
+    { href: "/market", label: "매장매매" },
     { href: "/board", label: "게시판" },
     { href: "/shorts", label: "숏츠" },
   ];
@@ -79,7 +80,8 @@ export default function Header() {
                 {l.label}
               </Link>
             ))}
-            <Link href="/contact" className="hidden md:block bg-accent hover:bg-accent-hover text-white text-[13px] font-bold px-4 py-[7px] rounded-lg transition-all ml-1">매장 등록</Link>
+            <Link href="/tournament" className="hidden md:block bg-red-500 hover:bg-red-600 text-white text-[13px] font-bold px-4 py-[7px] rounded-lg transition-all ml-1">무료토너</Link>
+            <Link href="/contact" className="hidden md:block bg-accent hover:bg-accent-hover text-white text-[13px] font-bold px-4 py-[7px] rounded-lg transition-all ml-0.5">매장 등록</Link>
             {user ? (
               <div className="hidden md:block relative ml-1">
                 <button onClick={() => setUserMenuOpen(!userMenuOpen)}
@@ -173,6 +175,7 @@ export default function Header() {
               { href: "/jobs", label: "구인구직", icon: "M21 13.255A23.193 23.193 0 0112 15c-3.183 0-6.22-.64-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m8 0H8m8 0h2a2 2 0 012 2v6M8 6H6a2 2 0 00-2 2v6", bg: "bg-[#ef6b6b] hover:bg-[#e05252]" },
               { href: "/events", label: "대회", icon: "M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z", bg: "bg-[#60a5fa] hover:bg-[#4d94ef]" },
               { href: "/shorts", label: "숏츠", icon: "M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664zM21 12a9 9 0 11-18 0 9 9 0 0118 0z", bg: "bg-[#fbbf24] hover:bg-[#e5ac1e]" },
+              { href: "/market", label: "매장매매", icon: "M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4", bg: "bg-[#1e3a5f] hover:bg-[#162d4a]" },
               { href: "/map", label: "매장정보", icon: "M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z", bg: "bg-[#a78bfa] hover:bg-[#9575f0]" },
             ].map((item) => (
               <Link key={item.href} href={item.href}
