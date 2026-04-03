@@ -162,7 +162,7 @@ export default function JobsPage() {
               <div>
                 <p className="text-sub text-[12px] font-semibold mb-2">직종</p>
                 <div className="flex gap-1.5">
-                  {["전체", "딜러", "서빙"].map(r => <button key={r} onClick={() => setFilterRole(r)} className={`px-3 py-1.5 rounded-lg text-[12px] font-semibold transition-all ${filterRole === r ? "bg-accent text-white" : "bg-[#f5f6f8] text-sub"}`}>{r}</button>)}
+                  {["전체", "딜러", "서빙", "매니저", "플로어"].map(r => <button key={r} onClick={() => setFilterRole(r)} className={`px-3 py-1.5 rounded-lg text-[12px] font-semibold transition-all ${filterRole === r ? "bg-accent text-white" : "bg-[#f5f6f8] text-sub"}`}>{r}</button>)}
                 </div>
               </div>
             )}

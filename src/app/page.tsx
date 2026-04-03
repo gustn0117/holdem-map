@@ -224,38 +224,44 @@ export default function Home() {
         {/* 4. 무료 토너먼트 배너 */}
         <section className="px-4 pb-5">
           <Link href="/tournament" className="block rounded-2xl overflow-hidden relative group">
-            {/* Background layers */}
             <div className="absolute inset-0 bg-linear-to-br from-[#003d20] via-[#00693a] to-[#00874a]" />
-            <div className="absolute inset-0 opacity-[0.07]" style={{ backgroundImage: "radial-gradient(circle at 20% 50%, white 1px, transparent 1px), radial-gradient(circle at 80% 20%, white 1px, transparent 1px), radial-gradient(circle at 60% 80%, white 1px, transparent 1px)", backgroundSize: "60px 60px, 40px 40px, 50px 50px" }} />
-            <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -translate-y-10 translate-x-10" />
-            <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/5 rounded-full translate-y-8 -translate-x-8" />
+            <div className="absolute inset-0 opacity-[0.05]" style={{ backgroundImage: "radial-gradient(circle, white 1px, transparent 1px)", backgroundSize: "20px 20px" }} />
 
-            <div className="relative p-5">
-              <div className="flex items-center gap-4">
-                {/* Icon */}
-                <div className="relative shrink-0">
-                  <div className="w-14 h-14 rounded-2xl bg-white/15 backdrop-blur-sm flex items-center justify-center border border-white/10 group-hover:scale-110 transition-transform">
-                    <svg className="w-7 h-7 text-white" fill="none" viewBox="0 0 24 24">
-                      <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 4v4M8 4v4M4 8h16M12 14v3m-4-1.5h8M6 20h12a2 2 0 002-2V8a2 2 0 00-2-2H6a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                    </svg>
-                  </div>
-                  <span className="absolute -top-1 -right-1 w-5 h-5 bg-yellow-400 rounded-full flex items-center justify-center text-[8px] font-black text-yellow-900 border-2 border-[#00693a] shadow-sm">!</span>
+            <div className="relative p-4">
+              {/* Top: Title + FREE badge */}
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-2">
+                  <span className="text-[9px] font-black text-yellow-300 bg-yellow-400/15 px-2 py-0.5 rounded-full border border-yellow-400/20 uppercase">FREE</span>
+                  <p className="text-white text-[15px] font-black">무료 토너먼트 신청</p>
                 </div>
-
-                {/* Text */}
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className="text-[10px] font-bold text-yellow-300 bg-yellow-400/15 px-2 py-0.5 rounded-full border border-yellow-400/20 uppercase tracking-wide">FREE</span>
-                  </div>
-                  <p className="text-white text-[17px] font-black leading-tight">무료 토너먼트 신청</p>
-                  <p className="text-white/60 text-[12px] mt-0.5">가입만 하면 무료 참가 + 바인권 지급</p>
+                <div className="w-7 h-7 rounded-full bg-white/15 flex items-center justify-center group-hover:bg-white/25 transition-all">
+                  <svg className="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" /></svg>
                 </div>
+              </div>
 
-                {/* CTA */}
-                <div className="shrink-0 w-9 h-9 rounded-full bg-white/15 flex items-center justify-center group-hover:bg-white/25 group-hover:scale-110 transition-all">
-                  <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
-                  </svg>
+              {/* Stats row */}
+              <div className="flex gap-2 mb-3">
+                <div className="flex-1 bg-white/10 rounded-lg px-3 py-2 text-center">
+                  <p className="text-white/50 text-[9px]">남은 티켓</p>
+                  <p className="text-yellow-300 text-[15px] font-black">12장</p>
+                </div>
+                <div className="flex-1 bg-white/10 rounded-lg px-3 py-2 text-center">
+                  <p className="text-white/50 text-[9px]">남은 시간</p>
+                  <p className="text-white text-[15px] font-black">2:34:00</p>
+                </div>
+                <div className="flex-1 bg-white/10 rounded-lg px-3 py-2 text-center">
+                  <p className="text-white/50 text-[9px]">참가 신청</p>
+                  <p className="text-emerald-300 text-[15px] font-black">38명</p>
+                </div>
+              </div>
+
+              {/* Recent applicants ticker */}
+              <div className="flex items-center gap-2 overflow-hidden">
+                <span className="text-white/30 text-[9px] shrink-0">최근 신청</span>
+                <div className="flex gap-2 overflow-hidden">
+                  {["user***", "hold***", "deal***", "play***", "king***"].map(id => (
+                    <span key={id} className="text-white/50 text-[10px] bg-white/8 px-2 py-0.5 rounded shrink-0">{id}</span>
+                  ))}
                 </div>
               </div>
             </div>

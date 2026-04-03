@@ -137,7 +137,7 @@ export default function JobWritePage() {
             <div>
               <label className="text-sub text-sm font-semibold block mb-2">{form.type === "구인" ? "모집 직종 *" : "직종 *"}</label>
               <Select value={form.role} onChange={v => set("role", v)} options={[
-                { value: "딜러", label: "딜러" }, { value: "서빙", label: "서빙" },
+                { value: "딜러", label: "딜러" }, { value: "서빙", label: "서빙" }, { value: "매니저", label: "매니저" }, { value: "플로어", label: "플로어" },
               ]} />
             </div>
             <div>
