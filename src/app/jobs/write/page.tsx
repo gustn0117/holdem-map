@@ -72,17 +72,21 @@ export default function JobWritePage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.nickname || !form.experience || form.areas.length === 0) {
-      alert("필수 항목을 모두 입력해주세요.");
+    const missing: string[] = [];
+    if (!form.nickname?.trim()) missing.push("닉네임");
+    if (!form.experience?.trim()) missing.push("경력");
+    if (!form.areas || form.areas.length === 0) missing.push("희망 근무지역");
+    if (missing.length > 0) {
+      alert(`다음 항목을 입력해주세요: ${missing.join(", ")}`);
       return;
     }
     // Build contact string from multiple fields
     const contacts: string[] = [];
-    if (form.contact_kakao) contacts.push(`카카오톡: ${form.contact_kakao}`);
-    if (form.contact_telegram) contacts.push(`텔레그램: ${form.contact_telegram}`);
-    if (form.contact_phone) contacts.push(`전화: ${form.contact_phone}`);
+    if (form.contact_kakao?.trim()) contacts.push(`카카오톡: ${form.contact_kakao.trim()}`);
+    if (form.contact_telegram?.trim()) contacts.push(`텔레그램: ${form.contact_telegram.trim()}`);
+    if (form.contact_phone?.trim()) contacts.push(`전화: ${form.contact_phone.trim()}`);
     if (contacts.length === 0) {
-      alert("연락처를 하나 이상 입력해주세요.");
+      alert("연락처를 하나 이상 입력해주세요. (카카오톡, 텔레그램, 전화번호 중 택1)");
       return;
     }
     setSaving(true);
