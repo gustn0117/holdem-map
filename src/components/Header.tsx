@@ -190,11 +190,11 @@ export default function Header() {
               { href: "/market", label: "대관/매매", icon: "M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4", bg: "bg-[#1e3a5f] hover:bg-[#162d4a]" },
             ].map((item) => (
               <Link key={item.href} href={item.href}
-                className={`flex-1 flex items-center justify-center gap-1 text-white rounded-lg py-2 transition-all ${item.bg}`}>
-                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                className={`flex-1 flex items-center justify-center gap-0.5 text-white rounded-lg py-2 transition-all whitespace-nowrap ${item.bg}`}>
+                <svg className="w-3 h-3 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={item.icon} />
                 </svg>
-                <span className="text-[10px] font-bold">{item.label}</span>
+                <span className="text-[9px] font-bold">{item.label}</span>
               </Link>
             ))}
           </div>
