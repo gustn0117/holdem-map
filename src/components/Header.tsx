@@ -69,7 +69,8 @@ export default function Header() {
               <rect width="36" height="36" rx="8" fill="#03C75A" />
               <path d="M10 10h4v6.5l8-6.5h4v16h-4v-6.5l-8 6.5h-4V10z" fill="#DC2626" />
             </svg>
-            <span className="text-[18px] font-black text-surface">홀덤맵<span className="italic" style={{ fontFamily: "'Georgia', 'Times New Roman', serif" }}>KOREA</span></span>
+            <span className="text-[18px] font-black text-surface tracking-tight">홀덤맵</span>
+            <span className="text-[11px] font-bold text-accent tracking-[0.15em] -ml-0.5 self-end mb-0.5">KOREA</span>
           </Link>
 
           {/* Right: Nav */}

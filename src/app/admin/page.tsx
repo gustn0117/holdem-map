@@ -213,7 +213,8 @@ export default function AdminPage() {
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-1.5">
               <svg className="w-7 h-7" viewBox="0 0 36 36" fill="none"><rect width="36" height="36" rx="8" fill="#03C75A" /><path d="M10 10h4v6.5l8-6.5h4v16h-4v-6.5l-8 6.5h-4V10z" fill="#DC2626" /></svg>
-              <span className="text-lg font-black text-surface">홀덤맵<span className="italic" style={{ fontFamily: "Georgia, serif" }}>KOREA</span></span>
+              <span className="text-lg font-black text-surface tracking-tight">홀덤맵</span>
+              <span className="text-[10px] font-bold text-accent tracking-[0.15em] -ml-0.5 self-end mb-0.5">KOREA</span>
             </div>
             <span className="text-xs text-muted bg-gray-100 px-2.5 py-1 rounded-lg font-semibold">ADMIN</span>
           </div>
