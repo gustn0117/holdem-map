@@ -45,10 +45,10 @@ export default function TopBanner() {
         <div className="relative overflow-hidden">
           {current.link ? (
             <a href={current.link} target="_blank" rel="noopener noreferrer" className="block">
-              <img src={current.image} alt="" className="w-full h-14 md:h-20 object-cover" />
+              <img src={current.image} alt="" className="w-full h-11 md:h-16 object-cover" />
             </a>
           ) : (
-            <img src={current.image} alt="" className="w-full h-14 md:h-20 object-cover" />
+            <img src={current.image} alt="" className="w-full h-11 md:h-16 object-cover" />
           )}
           {banners.length > 1 && (
             <div className="absolute bottom-1.5 right-2 bg-black/40 text-white text-[9px] font-semibold px-2 py-0.5 rounded-full">
@@ -57,7 +57,7 @@ export default function TopBanner() {
           )}
         </div>
       ) : (
-        <div className="ad-pattern h-14 md:h-20 flex items-center justify-center">
+        <div className="ad-pattern h-11 md:h-16 flex items-center justify-center">
           <p className="text-muted text-[12px]">광고 영역</p>
         </div>
       )}
