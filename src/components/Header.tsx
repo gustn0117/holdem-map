@@ -52,6 +52,7 @@ export default function Header() {
   };
 
   const navLinks = [
+    { href: "/live", label: "실시간" },
     { href: "/events", label: "대회" },
     { href: "/jobs", label: "구인구직" },
     { href: "/market", label: "매장매매" },
@@ -189,6 +190,7 @@ export default function Header() {
           </div>
           <div className="md:hidden flex items-center gap-2 mt-2">
             {[
+              { href: "/live", label: "실시간", icon: "M13 10V3L4 14h7v7l9-11h-7z", bg: "bg-[#dc2626] hover:bg-[#b91c1c]" },
               { href: "/jobs", label: "구인구직", icon: "M21 13.255A23.193 23.193 0 0112 15c-3.183 0-6.22-.64-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m8 0H8m8 0h2a2 2 0 012 2v6M8 6H6a2 2 0 00-2 2v6", bg: "bg-[#ef6b6b] hover:bg-[#e05252]" },
               { href: "/events", label: "대회", icon: "M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z", bg: "bg-[#60a5fa] hover:bg-[#4d94ef]" },
               { href: "/map", label: "매장정보", icon: "M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z", bg: "bg-[#a78bfa] hover:bg-[#9575f0]" },
@@ -212,6 +214,7 @@ export default function Header() {
         <div className="flex items-center justify-around py-1.5 pb-[calc(0.375rem+env(safe-area-inset-bottom))]">
           {[
             { href: "/", label: "홈", icon: "M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" },
+            { href: "/live", label: "실시간", icon: "M13 10V3L4 14h7v7l9-11h-7z" },
             { href: "/map", label: "지도", icon: "M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" },
             { href: "/events", label: "대회", icon: "M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" },
             { href: "/jobs", label: "구인구직", icon: "M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" },

@@ -11,7 +11,7 @@ import ImageUpload from "@/components/ImageUpload";
 
 import { supabase } from "@/lib/supabase";
 
-type Tab = "stores" | "events" | "notices" | "banners" | "shorts" | "users";
+type Tab = "stores" | "events" | "notices" | "banners" | "shorts" | "users" | "live";
 const ADMIN_PASSWORD = "1234";
 const inputClass = "w-full bg-white border border-border-custom rounded-xl px-4 py-3 text-base text-surface focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/10 transition-all placeholder:text-muted";
 
@@ -37,9 +37,26 @@ export default function AdminPage() {
   const [banners, setBanners] = useState<import("@/types").Banner[]>([]);
   const [bannerSaving, setBannerSaving] = useState<string | null>(null);
   const [shorts, setShorts] = useState<import("@/types").Short[]>([]);
+  const [liveGames, setLiveGames] = useState<any[]>([]);
   const [users, setUsers] = useState<Profile[]>([]);
 
-  useEffect(() => { api.getBanners().then(setBanners); api.getAllShorts().then(setShorts); refreshUsers(); }, []);
+  useEffect(() => { api.getBanners().then(setBanners); api.getAllShorts().then(setShorts); refreshUsers(); refreshLiveGames(); }, []);
+
+  const refreshLiveGames = async () => {
+    const { data } = await supabase.from("live_games").select("*").order("created_at", { ascending: false });
+    setLiveGames(data || []);
+  };
+
+  const handleDeleteLive = async (id: string) => {
+    if (!confirm("삭제하시겠습니까?")) return;
+    await supabase.from("live_games").delete().eq("id", id);
+    refreshLiveGames();
+  };
+
+  const handleEndLive = async (id: string) => {
+    await supabase.from("live_games").update({ status: "종료", end_time: new Date().toISOString() }).eq("id", id);
+    refreshLiveGames();
+  };
 
   const refreshUsers = async () => {
     const { data } = await supabase.from("profiles").select("*").order("created_at", { ascending: false });
@@ -72,6 +89,7 @@ export default function AdminPage() {
     { key: "banners", label: "배너 광고", count: banners.filter(b => b.image).length },
     { key: "shorts", label: "숏츠", count: shorts.length },
     { key: "users", label: "회원", count: users.length },
+    { key: "live", label: "실시간", count: liveGames.length },
   ];
 
   const refreshShorts = () => api.getAllShorts().then(setShorts);
@@ -432,6 +450,50 @@ export default function AdminPage() {
                 </div>
               ))
             )}
+          </div>
+        )}
+
+        {/* Live games management */}
+        {activeTab === "live" && (
+          <div className="bg-white rounded-2xl border border-border-custom overflow-hidden">
+            <div className="hidden md:grid grid-cols-12 gap-4 px-5 py-3 bg-[#f9f9f9] border-b border-border-custom text-[12px] text-muted font-semibold">
+              <div className="col-span-1">카테고리</div>
+              <div className="col-span-3">제목</div>
+              <div className="col-span-2">매장</div>
+              <div className="col-span-2">상태</div>
+              <div className="col-span-2">등록일</div>
+              <div className="col-span-2 text-right">관리</div>
+            </div>
+            {liveGames.length === 0 ? (
+              <div className="text-center py-12 text-muted text-sm">등록된 실시간 현황이 없습니다</div>
+            ) : liveGames.map(g => (
+              <div key={g.id} className="grid grid-cols-1 md:grid-cols-12 gap-2 md:gap-4 px-5 py-4 border-b border-border-custom last:border-b-0 items-center">
+                <div className="md:col-span-1">
+                  <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                    g.category === "게임" ? "bg-blue-100 text-blue-600" :
+                    g.category === "토너" ? "bg-emerald-100 text-emerald-700" :
+                    g.category === "대회" ? "bg-red-100 text-red-600" :
+                    "bg-amber-100 text-amber-700"
+                  }`}>{g.category}</span>
+                </div>
+                <div className="md:col-span-3 text-surface text-[14px] font-bold">{g.title}</div>
+                <div className="md:col-span-2 text-sub text-[13px]">{g.store_name}</div>
+                <div className="md:col-span-2">
+                  <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${
+                    g.status === "진행중" ? "bg-green-100 text-green-700" :
+                    g.status === "대기중" ? "bg-yellow-100 text-yellow-700" :
+                    "bg-gray-100 text-gray-600"
+                  }`}>{g.status}</span>
+                </div>
+                <div className="md:col-span-2 text-muted text-[13px]">{g.created_at?.slice(0, 10)}</div>
+                <div className="md:col-span-2 flex gap-2 justify-end">
+                  {g.status === "진행중" && (
+                    <button onClick={() => handleEndLive(g.id)} className="text-[12px] font-semibold px-3 py-1.5 rounded-lg bg-yellow-50 text-yellow-600 hover:bg-yellow-100 transition-all">종료</button>
+                  )}
+                  <button onClick={() => handleDeleteLive(g.id)} className="text-[12px] font-semibold px-3 py-1.5 rounded-lg bg-[#f5f6f8] text-muted hover:bg-red-50 hover:text-red-500 transition-all">삭제</button>
+                </div>
+              </div>
+            ))}
           </div>
         )}
 
