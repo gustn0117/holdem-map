@@ -69,7 +69,7 @@ export default function Header() {
               <rect width="36" height="36" rx="8" fill="#03C75A" />
               <path d="M10 10h4v6.5l8-6.5h4v16h-4v-6.5l-8 6.5h-4V10z" fill="#DC2626" />
             </svg>
-            <span className="text-[18px] font-black text-surface">홀덤맵코리아</span>
+            <span className="text-[18px] font-black text-surface">홀덤맵<span className="italic" style={{ fontFamily: "'Georgia', 'Times New Roman', serif" }}>KOREA</span></span>
           </Link>
 
           {/* Right: Nav */}
@@ -159,9 +159,10 @@ export default function Header() {
             )}
           </div>
         )}
-        {/* Search bar - always visible below header (PC + Mobile) */}
-        <div className="border-t border-border-custom px-4 py-2.5 bg-white">
-          <form onSubmit={handleSearch} className="max-w-[600px] mx-auto">
+        {/* Search bar + 무료토너 */}
+        <div className="border-t border-border-custom px-4 py-2 bg-white">
+          <div className="flex items-center gap-2 max-w-[700px] mx-auto">
+          <form onSubmit={handleSearch} className="flex-1">
             <div className={`relative rounded-full border transition-all ${focused ? "border-accent shadow-[0_0_0_3px_rgba(3,199,90,0.1)] bg-white" : "border-border-custom bg-[#f5f6f8]"}`}>
               <svg className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -181,6 +182,11 @@ export default function Header() {
               </button>
             </div>
           </form>
+          <Link href="/tournament" className="shrink-0 bg-[#00874a] hover:bg-[#006b3a] text-white text-[11px] md:text-[13px] font-black px-3 md:px-4 py-2 md:py-2.5 rounded-full transition-all whitespace-nowrap flex items-center gap-1">
+            <svg className="w-3.5 h-3.5 text-yellow-300" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
+            무료토너
+          </Link>
+          </div>
           <div className="md:hidden flex items-center gap-2 mt-2">
             {[
               { href: "/jobs", label: "구인구직", icon: "M21 13.255A23.193 23.193 0 0112 15c-3.183 0-6.22-.64-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m8 0H8m8 0h2a2 2 0 012 2v6M8 6H6a2 2 0 00-2 2v6", bg: "bg-[#ef6b6b] hover:bg-[#e05252]" },
@@ -239,7 +245,7 @@ export default function Header() {
                 <rect width="36" height="36" rx="8" fill="#03C75A" />
                 <path d="M10 10h4v6.5l8-6.5h4v16h-4v-6.5l-8 6.5h-4V10z" fill="#DC2626" />
               </svg>
-              <h3 className="text-surface text-lg font-black">홀덤맵코리아 앱 설치</h3>
+              <h3 className="text-surface text-lg font-black">홀덤맵KOREA 앱 설치</h3>
               <p className="text-muted text-sm mt-1">홈 화면에 추가하여 앱처럼 사용하세요</p>
             </div>
             <div className="space-y-4">

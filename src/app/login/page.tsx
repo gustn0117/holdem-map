@@ -38,7 +38,7 @@ export default function LoginPage() {
               <path d="M10 10h4v6.5l8-6.5h4v16h-4v-6.5l-8 6.5h-4V10z" fill="#DC2626" />
             </svg>
             <h1 className="text-2xl font-black text-surface">로그인</h1>
-            <p className="text-muted text-sm mt-1">홀덤맵코리아에 오신 것을 환영합니다</p>
+            <p className="text-muted text-sm mt-1">홀덤맵KOREA에 오신 것을 환영합니다</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
