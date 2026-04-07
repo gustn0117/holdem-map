@@ -35,6 +35,7 @@ export default function LivePage() {
   const [loading, setLoading] = useState(true);
   const [category, setCategory] = useState("전체");
   const [showForm, setShowForm] = useState(false);
+  const [selectedGame, setSelectedGame] = useState<LiveGame | null>(null);
   const [saving, setSaving] = useState(false);
   const [form, setForm] = useState({
     store_name: "", category: "게임", title: "", blind: "", buy_in: "",
@@ -211,7 +212,7 @@ export default function LivePage() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {filtered.map(game => (
-              <div key={game.id} className="bg-white rounded-2xl card-shadow overflow-hidden hover:card-shadow-hover transition-all">
+              <div key={game.id} onClick={() => setSelectedGame(game)} className="bg-white rounded-2xl card-shadow overflow-hidden hover:card-shadow-hover transition-all cursor-pointer">
                 <div className="p-5">
                   {/* Header */}
                   <div className="flex items-center justify-between mb-3">
@@ -279,6 +280,56 @@ export default function LivePage() {
                 </div>
               </div>
             ))}
+          </div>
+        )}
+        {/* Detail modal */}
+        {selectedGame && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <div className="absolute inset-0 bg-black/50" onClick={() => setSelectedGame(null)} />
+            <div className="relative bg-white rounded-2xl w-full max-w-lg max-h-[85vh] overflow-y-auto card-shadow">
+              <button onClick={() => setSelectedGame(null)} className="absolute top-4 right-4 text-muted hover:text-surface z-10">
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+              </button>
+              <div className="p-6">
+                {/* Header */}
+                <div className="flex items-center gap-2 mb-4">
+                  <span className={`text-[11px] font-bold px-3 py-1 rounded-full ${CATEGORY_COLORS[selectedGame.category] || "bg-gray-100 text-gray-600"}`}>{selectedGame.category}</span>
+                  <div className="flex items-center gap-1">
+                    <span className={`w-2.5 h-2.5 rounded-full ${STATUS_COLORS[selectedGame.status] || "bg-gray-400"}`} />
+                    <span className="text-[13px] font-semibold text-sub">{selectedGame.status}</span>
+                  </div>
+                </div>
+
+                <h2 className="text-2xl font-black text-surface mb-1">{selectedGame.title}</h2>
+                <p className="text-accent text-[15px] font-semibold mb-5">{selectedGame.store_name}</p>
+
+                {/* Stats */}
+                <div className="grid grid-cols-2 gap-3 mb-5">
+                  {selectedGame.blind && <div className="bg-[#f9f9f9] rounded-xl p-4"><p className="text-[11px] text-muted mb-0.5">블라인드</p><p className="text-surface text-[17px] font-black">{selectedGame.blind}</p></div>}
+                  {selectedGame.buy_in && <div className="bg-[#f9f9f9] rounded-xl p-4"><p className="text-[11px] text-muted mb-0.5">바이인</p><p className="text-surface text-[17px] font-black">{selectedGame.buy_in}</p></div>}
+                  {selectedGame.prize && <div className="bg-[#f9f9f9] rounded-xl p-4"><p className="text-[11px] text-muted mb-0.5">프라이즈</p><p className="text-accent text-[17px] font-black">{selectedGame.prize}</p></div>}
+                  {selectedGame.rake && <div className="bg-[#f9f9f9] rounded-xl p-4"><p className="text-[11px] text-muted mb-0.5">레이크</p><p className="text-surface text-[17px] font-black">{selectedGame.rake}</p></div>}
+                  {(selectedGame.players_current > 0 || selectedGame.players_max > 0) && (
+                    <div className="bg-[#f9f9f9] rounded-xl p-4"><p className="text-[11px] text-muted mb-0.5">현재 인원</p><p className="text-surface text-[17px] font-black">{selectedGame.players_current}{selectedGame.players_max > 0 && ` / ${selectedGame.players_max}`}명</p></div>
+                  )}
+                  <div className="bg-[#f9f9f9] rounded-xl p-4"><p className="text-[11px] text-muted mb-0.5">경과 시간</p><p className="text-surface text-[17px] font-black">{elapsed(selectedGame.start_time)}</p></div>
+                </div>
+
+                {selectedGame.description && (
+                  <div className="mb-5">
+                    <p className="text-[13px] text-muted mb-1">상세 정보</p>
+                    <p className="text-sub text-[15px] leading-relaxed whitespace-pre-wrap bg-[#f9f9f9] rounded-xl p-4">{selectedGame.description}</p>
+                  </div>
+                )}
+
+                <p className="text-muted text-[12px]">등록: {selectedGame.created_at?.slice(0, 16).replace("T", " ")}</p>
+
+                {user?.id === selectedGame.created_by && selectedGame.status === "진행중" && (
+                  <button onClick={() => { handleEnd(selectedGame.id); setSelectedGame(null); }}
+                    className="w-full mt-4 border border-red-200 text-red-500 font-bold py-3 rounded-xl hover:bg-red-50 transition-all">종료하기</button>
+                )}
+              </div>
+            </div>
           </div>
         )}
       </main>
