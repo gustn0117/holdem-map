@@ -116,7 +116,7 @@ export default function LivePage() {
                 })}
               </div>
             </div>
-            {user && profile?.user_type === "업주" && (
+            {user && (
               <button onClick={() => setShowForm(!showForm)}
                 className="bg-accent hover:bg-accent-hover text-white text-sm font-bold px-5 py-2.5 rounded-lg transition-all shrink-0">
                 {showForm ? "닫기" : "실시간 등록"}
