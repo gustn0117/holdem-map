@@ -12,8 +12,7 @@ export default function Footer() {
                 <rect width="36" height="36" rx="8" fill="#03C75A" />
                 <path d="M10 10h4v6.5l8-6.5h4v16h-4v-6.5l-8 6.5h-4V10z" fill="#DC2626" />
               </svg>
-              <span className="text-[17px] font-black text-surface tracking-tight">홀덤맵</span>
-              <span className="text-[10px] font-bold text-accent tracking-[0.15em] -ml-0.5 self-end mb-0.5">KOREA</span>
+              <span className="text-[17px] font-black text-surface leading-none">홀덤맵<span className="text-accent">KOREA</span></span>
             </Link>
             <p className="text-muted text-[13px] mt-3 leading-relaxed max-w-[280px]">전국 홀덤 매장 정보를 한눈에 확인하고, 가까운 매장을 찾아보세요.</p>
           </div>
