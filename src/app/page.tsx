@@ -231,6 +231,31 @@ export default function Home() {
           </section>
         )}
 
+        {/* 이벤트 배너 */}
+        <section className="px-4 pb-3 pt-3">
+          <Link href="/promotions" className="block rounded-2xl overflow-hidden relative group">
+            <div className="absolute inset-0 bg-linear-to-r from-[#1e3a8a] via-[#2563eb] to-[#3b82f6]" />
+            <div className="absolute inset-0 opacity-[0.06]" style={{ backgroundImage: "radial-gradient(circle, white 1px, transparent 1px)", backgroundSize: "20px 20px" }} />
+            <div className="relative p-4 flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-white/15 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+                <svg className="w-5 h-5 text-yellow-300" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" />
+                </svg>
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-1.5 mb-0.5">
+                  <span className="text-[9px] font-black text-yellow-300 bg-yellow-400/20 px-1.5 py-0.5 rounded-full uppercase">EVENT</span>
+                </div>
+                <p className="text-white text-[15px] font-black leading-tight">이벤트 보기</p>
+                <p className="text-white/50 text-[11px]">특별 혜택과 프로모션을 확인하세요</p>
+              </div>
+              <div className="w-8 h-8 rounded-full bg-white/15 flex items-center justify-center shrink-0 group-hover:bg-white/25 transition-all">
+                <svg className="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" /></svg>
+              </div>
+            </div>
+          </Link>
+        </section>
+
         {/* 3. 자유게시판 (티커) */}
         <section className="border-b border-border-custom bg-white">
           <div className="px-4 pt-3 pb-1">

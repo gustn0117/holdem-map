@@ -11,7 +11,7 @@ import ImageUpload from "@/components/ImageUpload";
 
 import { supabase } from "@/lib/supabase";
 
-type Tab = "stores" | "events" | "notices" | "banners" | "shorts" | "users" | "live";
+type Tab = "stores" | "events" | "notices" | "banners" | "shorts" | "users" | "live" | "promotions";
 const ADMIN_PASSWORD = "1234";
 const inputClass = "w-full bg-white border border-border-custom rounded-xl px-4 py-3 text-base text-surface focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/10 transition-all placeholder:text-muted";
 
@@ -38,9 +38,10 @@ export default function AdminPage() {
   const [bannerSaving, setBannerSaving] = useState<string | null>(null);
   const [shorts, setShorts] = useState<import("@/types").Short[]>([]);
   const [liveGames, setLiveGames] = useState<any[]>([]);
+  const [promotions, setPromotions] = useState<any[]>([]);
   const [users, setUsers] = useState<Profile[]>([]);
 
-  useEffect(() => { api.getBanners().then(setBanners); api.getAllShorts().then(setShorts); refreshUsers(); refreshLiveGames(); }, []);
+  useEffect(() => { api.getBanners().then(setBanners); api.getAllShorts().then(setShorts); refreshUsers(); refreshLiveGames(); refreshPromotions(); }, []);
 
   const refreshLiveGames = async () => {
     const { data } = await supabase.from("live_games").select("*").order("created_at", { ascending: false });
@@ -56,6 +57,35 @@ export default function AdminPage() {
   const handleEndLive = async (id: string) => {
     await supabase.from("live_games").update({ status: "종료", end_time: new Date().toISOString() }).eq("id", id);
     refreshLiveGames();
+  };
+
+  const refreshPromotions = async () => {
+    const { data } = await supabase.from("promotions").select("*").order("sort_order", { ascending: true });
+    setPromotions(data || []);
+  };
+  const [promoForm, setPromoForm] = useState({ title: "", content: "", badge: "EVENT", start_date: "", end_date: "", image: "", link: "" });
+  const [promoSaving, setPromoSaving] = useState(false);
+  const [promoEditing, setPromoEditing] = useState<string | null>(null);
+  const handlePromoSubmit = async () => {
+    if (!promoForm.title.trim() || !promoForm.content.trim()) { alert("제목과 내용을 입력하세요."); return; }
+    setPromoSaving(true);
+    if (promoEditing) {
+      await supabase.from("promotions").update(promoForm).eq("id", promoEditing);
+    } else {
+      await supabase.from("promotions").insert(promoForm);
+    }
+    setPromoSaving(false); setPromoEditing(null);
+    setPromoForm({ title: "", content: "", badge: "EVENT", start_date: "", end_date: "", image: "", link: "" });
+    refreshPromotions();
+  };
+  const handlePromoDelete = async (id: string) => {
+    if (!confirm("삭제하시겠습니까?")) return;
+    await supabase.from("promotions").delete().eq("id", id);
+    refreshPromotions();
+  };
+  const handlePromoToggle = async (id: string, active: boolean) => {
+    await supabase.from("promotions").update({ active }).eq("id", id);
+    refreshPromotions();
   };
 
   const refreshUsers = async () => {
@@ -90,6 +120,7 @@ export default function AdminPage() {
     { key: "shorts", label: "숏츠", count: shorts.length },
     { key: "users", label: "회원", count: users.length },
     { key: "live", label: "실시간", count: liveGames.length },
+    { key: "promotions", label: "이벤트", count: promotions.length },
   ];
 
   const refreshShorts = () => api.getAllShorts().then(setShorts);
@@ -494,6 +525,66 @@ export default function AdminPage() {
                 </div>
               </div>
             ))}
+          </div>
+        )}
+
+        {/* Promotions management */}
+        {activeTab === "promotions" && (
+          <div className="space-y-5">
+            {/* Form */}
+            <div className="bg-white rounded-2xl border border-border-custom p-6">
+              <h3 className="text-surface font-bold text-lg mb-4">{promoEditing ? "이벤트 수정" : "새 이벤트 등록"}</h3>
+              <div className="space-y-3">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <input className={inputClass} value={promoForm.title} onChange={e => setPromoForm(p => ({ ...p, title: e.target.value }))} placeholder="이벤트 제목 *" />
+                  <div className="flex gap-2">
+                    {["HOT", "NEW", "EVENT", "SALE"].map(b => (
+                      <button key={b} type="button" onClick={() => setPromoForm(p => ({ ...p, badge: b }))}
+                        className={`flex-1 py-2.5 rounded-xl text-[12px] font-bold border transition-all ${promoForm.badge === b ? "bg-accent text-white border-accent" : "border-border-custom text-sub"}`}>{b}</button>
+                    ))}
+                  </div>
+                </div>
+                <textarea className={inputClass + " resize-none"} rows={3} value={promoForm.content} onChange={e => setPromoForm(p => ({ ...p, content: e.target.value }))} placeholder="이벤트 내용 *" />
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                  <input type="date" className={inputClass} value={promoForm.start_date} onChange={e => setPromoForm(p => ({ ...p, start_date: e.target.value }))} />
+                  <input type="date" className={inputClass} value={promoForm.end_date} onChange={e => setPromoForm(p => ({ ...p, end_date: e.target.value }))} />
+                  <input className={inputClass} value={promoForm.image} onChange={e => setPromoForm(p => ({ ...p, image: e.target.value }))} placeholder="이미지 URL" />
+                  <input className={inputClass} value={promoForm.link} onChange={e => setPromoForm(p => ({ ...p, link: e.target.value }))} placeholder="링크 URL" />
+                </div>
+                <div className="flex gap-2">
+                  {promoEditing && <button onClick={() => { setPromoEditing(null); setPromoForm({ title: "", content: "", badge: "EVENT", start_date: "", end_date: "", image: "", link: "" }); }} className="px-5 py-2.5 rounded-xl border border-border-custom text-sub font-semibold">취소</button>}
+                  <button onClick={handlePromoSubmit} disabled={promoSaving} className="bg-accent hover:bg-accent-hover text-white font-bold px-6 py-2.5 rounded-xl disabled:opacity-50 transition-all">
+                    {promoSaving ? "저장 중..." : promoEditing ? "수정" : "등록"}
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* List */}
+            <div className="bg-white rounded-2xl border border-border-custom overflow-hidden">
+              {promotions.length === 0 ? (
+                <div className="text-center py-12 text-muted text-sm">등록된 이벤트가 없습니다</div>
+              ) : promotions.map(p => (
+                <div key={p.id} className="flex items-center gap-4 px-5 py-4 border-b border-border-custom last:border-b-0">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-1">
+                      {p.badge && <span className={`text-[9px] font-black px-2 py-0.5 rounded-full ${p.badge === "HOT" ? "bg-red-500 text-white" : p.badge === "NEW" ? "bg-accent text-white" : p.badge === "SALE" ? "bg-amber-500 text-white" : "bg-blue-500 text-white"}`}>{p.badge}</span>}
+                      <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${p.active ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-500"}`}>{p.active ? "활성" : "비활성"}</span>
+                    </div>
+                    <p className="text-surface text-[14px] font-bold truncate">{p.title}</p>
+                    <p className="text-muted text-[12px] truncate">{p.content}</p>
+                  </div>
+                  <div className="flex gap-1.5 shrink-0">
+                    <button onClick={() => { setPromoEditing(p.id); setPromoForm({ title: p.title, content: p.content, badge: p.badge || "EVENT", start_date: p.start_date || "", end_date: p.end_date || "", image: p.image || "", link: p.link || "" }); }}
+                      className="text-[12px] font-semibold px-3 py-1.5 rounded-lg bg-[#f5f6f8] text-sub hover:bg-accent/10 hover:text-accent transition-all">수정</button>
+                    <button onClick={() => handlePromoToggle(p.id, !p.active)}
+                      className="text-[12px] font-semibold px-3 py-1.5 rounded-lg bg-[#f5f6f8] text-sub transition-all">{p.active ? "비활성" : "활성"}</button>
+                    <button onClick={() => handlePromoDelete(p.id)}
+                      className="text-[12px] font-semibold px-3 py-1.5 rounded-lg bg-[#f5f6f8] text-muted hover:bg-red-50 hover:text-red-500 transition-all">삭제</button>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         )}
 
