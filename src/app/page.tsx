@@ -399,6 +399,37 @@ export default function Home() {
           </div>
         </section>
 
+        {/* PC: 이벤트 배너 */}
+        <section className="border-b border-border-custom">
+          <div className="max-w-350 mx-auto px-5 md:px-10 py-5">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-[17px] font-bold text-surface">이벤트</h2>
+              <Link href="/promotions" className="text-accent text-[13px] font-semibold hover:underline">전체보기 →</Link>
+            </div>
+            <Link href="/promotions" className="block rounded-2xl overflow-hidden relative group">
+              <div className="absolute inset-0 bg-linear-to-r from-[#1e3a8a] via-[#2563eb] to-[#3b82f6]" />
+              <div className="absolute inset-0 opacity-[0.05]" style={{ backgroundImage: "radial-gradient(circle, white 1px, transparent 1px)", backgroundSize: "24px 24px" }} />
+              <div className="relative px-8 py-6 flex items-center gap-6">
+                <div className="w-14 h-14 rounded-2xl bg-white/15 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+                  <svg className="w-7 h-7 text-yellow-300" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" />
+                  </svg>
+                </div>
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="text-[10px] font-black text-yellow-300 bg-yellow-400/15 px-2 py-0.5 rounded-full border border-yellow-400/20 uppercase">EVENT</span>
+                  </div>
+                  <p className="text-white text-xl font-black">진행중인 이벤트 보기</p>
+                  <p className="text-white/50 text-[14px] mt-0.5">특별 혜택과 프로모션을 확인하세요</p>
+                </div>
+                <div className="w-10 h-10 rounded-full bg-white/15 flex items-center justify-center shrink-0 group-hover:bg-white/25 transition-all">
+                  <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" /></svg>
+                </div>
+              </div>
+            </Link>
+          </div>
+        </section>
+
         {/* PC: 무료 토너먼트 배너 */}
         <section className="border-b border-border-custom">
           <div className="max-w-350 mx-auto px-5 md:px-10 py-6">
