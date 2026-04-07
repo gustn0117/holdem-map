@@ -40,27 +40,29 @@ export default function TopBanner() {
   const current = banners[currentIdx];
 
   return (
-    <div className="sticky top-0 z-60 bg-white border-b border-border-custom">
-      {current?.image ? (
-        <div className="relative overflow-hidden">
-          {current.link ? (
-            <a href={current.link} target="_blank" rel="noopener noreferrer" className="block">
-              <img src={current.image} alt="" className="w-full h-11 md:h-16 object-cover" />
-            </a>
-          ) : (
-            <img src={current.image} alt="" className="w-full h-11 md:h-16 object-cover" />
-          )}
-          {banners.length > 1 && (
-            <div className="absolute bottom-1.5 right-2 bg-black/40 text-white text-[9px] font-semibold px-2 py-0.5 rounded-full">
-              {currentIdx + 1}/{banners.length}
-            </div>
-          )}
-        </div>
-      ) : (
-        <div className="ad-pattern h-11 md:h-16 flex items-center justify-center">
-          <p className="text-muted text-[12px]">광고 영역</p>
-        </div>
-      )}
+    <div className="sticky top-0 z-60 bg-white border-b border-border-custom px-3 md:px-6 py-1.5">
+      <div className="mx-auto" style={{ maxWidth: "1400px" }}>
+        {current?.image ? (
+          <div className="relative overflow-hidden rounded-xl">
+            {current.link ? (
+              <a href={current.link} target="_blank" rel="noopener noreferrer" className="block">
+                <img src={current.image} alt="" className="w-full h-11 md:h-16 object-cover rounded-xl" />
+              </a>
+            ) : (
+              <img src={current.image} alt="" className="w-full h-11 md:h-16 object-cover rounded-xl" />
+            )}
+            {banners.length > 1 && (
+              <div className="absolute bottom-1.5 right-2 bg-black/40 text-white text-[9px] font-semibold px-2 py-0.5 rounded-full">
+                {currentIdx + 1}/{banners.length}
+              </div>
+            )}
+          </div>
+        ) : (
+          <div className="ad-pattern h-11 md:h-16 flex items-center justify-center rounded-xl">
+            <p className="text-muted text-[12px]">광고 영역</p>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
