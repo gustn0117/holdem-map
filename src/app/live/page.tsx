@@ -12,7 +12,7 @@ interface LiveGame {
   title: string; blind: string; buy_in: string; prize: string; rake: string;
   players_current: number; players_max: number; status: string;
   start_time: string; end_time: string | null; description: string;
-  created_at: string; updated_at: string;
+  created_by: string | null; created_at: string; updated_at: string;
 }
 
 const CATEGORIES = ["전체", "게임", "토너", "대회", "레이크"];
