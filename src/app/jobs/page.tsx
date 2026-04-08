@@ -40,9 +40,43 @@ export default function JobsPage() {
       supabase.from("profiles").select("*").eq("user_type", "딜러"),
       supabase.from("jobs").select("*").order("created_at", { ascending: false }),
     ]).then(([{ data: d }, { data: j }]) => {
-      // Filter out 비노출 on client (keep null/empty status visible)
-      setDealers((d || []).filter(p => p.status !== "비노출"));
-      setJobs(j || []);
+      const allJobs = j || [];
+      const profileDealers = (d || []).filter(p => p.status !== "비노출");
+
+      // Merge: 구직글 작성자도 딜러 카드에 포함 (profiles에 없는 경우)
+      const profileIds = new Set(profileDealers.map(p => p.id));
+      const jobDealers = allJobs
+        .filter(job => job.type === "구직" && !profileIds.has(job.user_id))
+        .map(job => ({
+          id: job.user_id || job.id,
+          nickname: job.nickname,
+          status: "지금 가능",
+          status_updated_at: job.created_at,
+          experience: job.experience,
+          areas: job.areas || [],
+          bio: job.message || "",
+          avatar: job.photo || "",
+          contact_kakao: "",
+          contact_telegram: "",
+          contact_phone: "",
+          created_at: job.created_at,
+        }));
+
+      // Parse contact field for job dealers
+      jobDealers.forEach(d => {
+        const job = allJobs.find(j => j.nickname === d.nickname && j.type === "구직");
+        if (job?.contact) {
+          const parts = job.contact.split(" / ");
+          parts.forEach(p => {
+            if (p.startsWith("카카오톡:")) d.contact_kakao = p.replace("카카오톡: ", "");
+            if (p.startsWith("텔레그램:")) d.contact_telegram = p.replace("텔레그램: ", "");
+            if (p.startsWith("전화:")) d.contact_phone = p.replace("전화: ", "");
+          });
+        }
+      });
+
+      setDealers([...profileDealers, ...jobDealers]);
+      setJobs(allJobs);
       setLoading(false);
     });
   }, []);
