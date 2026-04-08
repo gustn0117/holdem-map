@@ -186,20 +186,20 @@ export default function Home() {
         )}
 
         {/* 2. 실시간 게임/토너/대회/레이크 (티커) */}
-        {liveGames.length > 0 && (
-          <section className="border-b border-border-custom bg-white">
-            <div className="px-4 pt-3 pb-1">
-              <div className="flex items-center justify-between mb-1">
-                <div className="flex items-center gap-2">
-                  <span className="relative flex h-2 w-2">
-                    <span className="live-pulse absolute inline-flex h-full w-full rounded-full bg-red-500 opacity-75" />
-                    <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500" />
-                  </span>
-                  <h3 className="text-surface text-[15px] font-extrabold">실시간 현황</h3>
-                </div>
-                <Link href="/live" className="text-accent text-[12px] font-semibold">전체보기 →</Link>
+        <section className="border-b border-border-custom bg-white">
+          <div className="px-4 pt-3 pb-1">
+            <div className="flex items-center justify-between mb-1">
+              <div className="flex items-center gap-2">
+                <span className="relative flex h-2 w-2">
+                  <span className="live-pulse absolute inline-flex h-full w-full rounded-full bg-red-500 opacity-75" />
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500" />
+                </span>
+                <h3 className="text-surface text-[15px] font-extrabold">실시간 현황</h3>
               </div>
+              <Link href="/live" className="text-accent text-[12px] font-semibold">전체보기 →</Link>
             </div>
+          </div>
+          {liveGames.length > 0 ? (
             <div className="relative h-25 overflow-hidden">
               <div className="absolute top-0 left-0 right-0 h-3 bg-linear-to-b from-white to-transparent z-10 pointer-events-none" />
               <div className="absolute bottom-0 left-0 right-0 h-3 bg-linear-to-t from-white to-transparent z-10 pointer-events-none" />
@@ -228,8 +228,12 @@ export default function Home() {
                 ))}
               </div>
             </div>
-          </section>
-        )}
+          ) : (
+            <div className="px-4 pb-3">
+              <Link href="/live" className="block text-center py-4 text-muted text-[13px]">현재 진행중인 현황이 없습니다 <span className="text-accent font-semibold">등록하기 →</span></Link>
+            </div>
+          )}
+        </section>
 
         {/* 이벤트 배너 */}
         <section className="px-4 pb-2 pt-3">
