@@ -36,10 +36,11 @@ export default function JobsPage() {
 
   useEffect(() => {
     Promise.all([
-      supabase.from("profiles").select("*").eq("user_type", "딜러").neq("status", "비노출"),
+      supabase.from("profiles").select("*").eq("user_type", "딜러"),
       supabase.from("jobs").select("*").order("created_at", { ascending: false }),
     ]).then(([{ data: d }, { data: j }]) => {
-      setDealers(d || []);
+      // Filter out 비노출 on client (keep null/empty status visible)
+      setDealers((d || []).filter(p => p.status !== "비노출"));
       setJobs(j || []);
       setLoading(false);
     });
@@ -47,20 +48,18 @@ export default function JobsPage() {
 
   const filteredDealers = useMemo(() => {
     let result = dealers;
-    if (filterRegion !== "전체") result = result.filter(d => d.areas?.some(a => a.includes(filterRegion)));
+    if (filterRegion !== "전체") result = result.filter(d => d.areas && d.areas.length > 0 && d.areas.some((a: string) => a.includes(filterRegion)));
     if (filterStatus !== "전체") result = result.filter(d => d.status === filterStatus);
 
-    // Sort: 지금 가능 > 예약 가능 > 일하는 중, then by update time
+    // Sort: 지금 가능 > 예약 가능 > 일하는 중 > 미설정, then by update time
     const statusOrder: Record<string, number> = { "지금 가능": 0, "예약 가능": 1, "일하는 중": 2 };
-    if (sortBy === "available") {
-      result = [...result].sort((a, b) => {
+    result = [...result].sort((a, b) => {
+      if (sortBy === "available" || sortBy === "updated") {
         const sa = statusOrder[a.status] ?? 3, sb = statusOrder[b.status] ?? 3;
-        if (sa !== sb) return sa - sb;
-        return new Date(b.status_updated_at || 0).getTime() - new Date(a.status_updated_at || 0).getTime();
-      });
-    } else if (sortBy === "updated") {
-      result = [...result].sort((a, b) => new Date(b.status_updated_at || 0).getTime() - new Date(a.status_updated_at || 0).getTime());
-    }
+        if (sortBy === "available" && sa !== sb) return sa - sb;
+      }
+      return new Date(b.status_updated_at || b.created_at || 0).getTime() - new Date(a.status_updated_at || a.created_at || 0).getTime();
+    });
     return result;
   }, [dealers, filterRegion, filterStatus, sortBy]);
 
@@ -186,7 +185,7 @@ export default function JobsPage() {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
                         <p className="text-surface text-[16px] font-bold truncate">{d.nickname}</p>
-                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${statusBg(d.status)}`}>{d.status}</span>
+                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${statusBg(d.status || "")}`}>{d.status || "상태 미설정"}</span>
                       </div>
                       <p className="text-muted text-[12px]">{d.areas?.slice(0, 2).join(", ")} · {d.experience || "경력 미입력"}</p>
                     </div>
