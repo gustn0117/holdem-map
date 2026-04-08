@@ -67,7 +67,7 @@ export default function JobsPage() {
         const job = allJobs.find(j => j.nickname === d.nickname && j.type === "구직");
         if (job?.contact) {
           const parts = job.contact.split(" / ");
-          parts.forEach(p => {
+          parts.forEach((p: string) => {
             if (p.startsWith("카카오톡:")) d.contact_kakao = p.replace("카카오톡: ", "");
             if (p.startsWith("텔레그램:")) d.contact_telegram = p.replace("텔레그램: ", "");
             if (p.startsWith("전화:")) d.contact_phone = p.replace("전화: ", "");
