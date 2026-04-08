@@ -20,6 +20,7 @@ interface DealerProfile {
   id: string; nickname: string; status: string; status_updated_at: string;
   experience: string; areas: string[]; bio: string; avatar: string;
   contact_kakao: string; contact_telegram: string; contact_phone: string;
+  created_at: string;
 }
 
 export default function JobsPage() {
