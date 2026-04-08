@@ -85,6 +85,9 @@ body {
 @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
 .anim-in { animation: fadeIn 0.3s ease forwards; }
 
+@keyframes btnFade { 0% { opacity: 0; } 15% { opacity: 1; } 85% { opacity: 1; } 100% { opacity: 0; } }
+.btn-fade { animation: btnFade 2s ease infinite; }
+
 .glow-line { height: 1px; background: var(--color-border-custom); }
 
 /* Real-time ticker */
