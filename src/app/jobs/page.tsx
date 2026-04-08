@@ -162,9 +162,11 @@ export default function JobsPage() {
             <button onClick={() => setTab("dealer")} className={`px-5 py-2 rounded-md text-[13px] font-semibold transition-all ${tab === "dealer" ? "bg-accent text-white" : "text-sub"}`}>딜러 찾기</button>
             <button onClick={() => setTab("jobs")} className={`px-5 py-2 rounded-md text-[13px] font-semibold transition-all ${tab === "jobs" ? "bg-accent text-white" : "text-sub"}`}>구인/구직글</button>
           </div>
-          <button onClick={() => setShowFilter(!showFilter)} className="bg-white card-shadow px-4 py-2 rounded-lg text-[13px] font-semibold text-sub flex items-center gap-1.5">
+          <button onClick={() => setShowFilter(!showFilter)} className={`card-shadow px-4 py-2 rounded-lg text-[13px] font-semibold flex items-center gap-1.5 transition-all ${
+            (filterRegion !== "전체" || filterStatus !== "전체") ? "bg-accent text-white" : "bg-white text-sub"
+          }`}>
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" /></svg>
-            필터
+            필터{(filterRegion !== "전체" || filterStatus !== "전체") && " ON"}
           </button>
         </div>
 
@@ -203,6 +205,11 @@ export default function JobsPage() {
           </div>
         )}
 
+        {/* Results count */}
+        {!loading && tab === "dealer" && (
+          <p className="text-muted text-[13px] mb-3">검색 결과 <span className="text-accent font-bold">{filteredDealers.length}</span>명</p>
+        )}
+
         {loading ? (
           <div className="flex justify-center py-20"><div className="w-8 h-8 border-2 border-accent/30 border-t-accent rounded-full animate-spin" /></div>
         ) : tab === "dealer" ? (
@@ -210,7 +217,11 @@ export default function JobsPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {filteredDealers.length === 0 ? (
               <div className="col-span-full text-center py-16 bg-white rounded-2xl card-shadow">
-                <p className="text-muted text-lg">조건에 맞는 딜러가 없습니다</p>
+                <p className="text-muted text-lg mb-2">조건에 맞는 딜러가 없습니다</p>
+                {(filterRegion !== "전체" || filterStatus !== "전체") && (
+                  <button onClick={() => { setFilterRegion("전체"); setFilterStatus("전체"); }}
+                    className="text-accent text-sm font-semibold hover:underline">필터 초기화</button>
+                )}
               </div>
             ) : filteredDealers.map(d => (
               <div key={d.id} className="bg-white rounded-2xl card-shadow overflow-hidden hover:card-shadow-hover transition-all">
