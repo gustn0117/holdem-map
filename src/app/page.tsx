@@ -194,7 +194,7 @@ export default function Home() {
                   <span className="live-pulse absolute inline-flex h-full w-full rounded-full bg-red-500 opacity-75" />
                   <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500" />
                 </span>
-                <h3 className="text-surface text-[15px] font-extrabold">실시간 현황</h3>
+                <h3 className="text-surface text-[14px] font-extrabold">진행중인 게임/토너/대회/레이크</h3>
               </div>
               <Link href="/live" className="text-accent text-[12px] font-semibold">전체보기 →</Link>
             </div>

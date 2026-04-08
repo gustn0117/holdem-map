@@ -13,6 +13,8 @@ export default function Header() {
   const [dark, setDark] = useState(false);
   const [installPrompt, setInstallPrompt] = useState<Event | null>(null);
   const [showInstallGuide, setShowInstallGuide] = useState(false);
+  const [tournerBtnIdx, setTournerBtnIdx] = useState(0);
+  const tournerTexts = ["무료토너", "선착순 참가권받기"];
   const pathname = usePathname();
   const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
@@ -24,7 +26,9 @@ export default function Header() {
 
     const handler = (e: Event) => { e.preventDefault(); setInstallPrompt(e); };
     window.addEventListener("beforeinstallprompt", handler);
-    return () => window.removeEventListener("beforeinstallprompt", handler);
+
+    const tournerInterval = setInterval(() => setTournerBtnIdx(prev => (prev + 1) % 2), 2000);
+    return () => { window.removeEventListener("beforeinstallprompt", handler); clearInterval(tournerInterval); };
   }, []);
 
   const handleInstall = async () => {
@@ -183,9 +187,9 @@ export default function Header() {
               </button>
             </div>
           </form>
-          <Link href="/tournament" className="shrink-0 bg-[#00874a] hover:bg-[#006b3a] text-white text-[11px] md:text-[13px] font-black px-3 md:px-4 py-2 md:py-2.5 rounded-full transition-all whitespace-nowrap flex items-center gap-1">
-            <svg className="w-3.5 h-3.5 text-yellow-300" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
-            무료토너
+          <Link href="/tournament" className="shrink-0 bg-[#00874a] hover:bg-[#006b3a] text-white text-[11px] md:text-[13px] font-black px-3 md:px-4 py-2 md:py-2.5 rounded-full transition-all whitespace-nowrap flex items-center gap-1 overflow-hidden relative" style={{ minWidth: "90px" }}>
+            <svg className="w-3.5 h-3.5 text-yellow-300 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
+            <span key={tournerBtnIdx} className="anim-in">{tournerTexts[tournerBtnIdx]}</span>
           </Link>
           </div>
           <div className="md:hidden flex items-center gap-2 mt-2">
