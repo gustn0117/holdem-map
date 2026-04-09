@@ -235,7 +235,7 @@ export default function JobsPage() {
                 )}
               </div>
             ) : filteredDealers.map(d => (
-              <div key={d.id} className="bg-white rounded-2xl card-shadow overflow-hidden hover:card-shadow-hover transition-all">
+              <div key={d.id} className="bg-white rounded-2xl card-shadow overflow-hidden hover:card-shadow-hover transition-all flex flex-col">
                 {/* Photo / Placeholder */}
                 <div className="h-36 bg-[#f5f6f8] overflow-hidden relative">
                   {d.avatar ? (
@@ -248,7 +248,7 @@ export default function JobsPage() {
                     </div>
                   )}
                 </div>
-                <div className="p-5">
+                <div className="p-5 flex flex-col flex-1">
                   <div className="flex items-center gap-3 mb-3">
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
@@ -263,8 +263,8 @@ export default function JobsPage() {
                     <span>{timeAgo(d.status_updated_at || d.created_at)}</span>
                   </div>
                   {d.bio && <p className="text-sub text-[13px] mb-3 line-clamp-2">{d.bio}</p>}
-                  {/* Contact icons */}
-                  <div className="flex gap-2">
+                  {/* Contact icons - pushed to bottom */}
+                  <div className="flex gap-2 mt-auto pt-2">
                     {d.contact_phone && (
                       <a href={`tel:${d.contact_phone}`} className="flex items-center gap-1.5 flex-1 bg-accent hover:bg-accent-hover text-white text-[12px] font-bold py-2.5 rounded-xl justify-center transition-all">
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>
