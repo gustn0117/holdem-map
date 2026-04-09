@@ -236,17 +236,20 @@ export default function JobsPage() {
               </div>
             ) : filteredDealers.map(d => (
               <div key={d.id} className="bg-white rounded-2xl card-shadow overflow-hidden hover:card-shadow-hover transition-all">
-                {/* Photo */}
-                {d.avatar && (
-                  <div className="h-40 bg-[#f5f6f8] overflow-hidden">
+                {/* Photo / Placeholder */}
+                <div className="h-36 bg-[#f5f6f8] overflow-hidden relative">
+                  {d.avatar ? (
                     <img src={d.avatar} alt={d.nickname} className="w-full h-full object-cover" />
-                  </div>
-                )}
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center bg-accent/5">
+                      <svg className="w-14 h-14 text-accent/20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                      </svg>
+                    </div>
+                  )}
+                </div>
                 <div className="p-5">
                   <div className="flex items-center gap-3 mb-3">
-                    {!d.avatar && (
-                      <div className="w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center text-accent text-lg font-black shrink-0">{d.nickname?.charAt(0)}</div>
-                    )}
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
                         <p className="text-surface text-[16px] font-bold truncate">{d.nickname}</p>
