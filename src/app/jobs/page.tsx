@@ -113,18 +113,25 @@ export default function JobsPage() {
   const statusColor = (s: string) => s === "지금 가능" ? "bg-green-500" : s === "예약 가능" ? "bg-blue-500" : s === "일하는 중" ? "bg-yellow-500" : "bg-gray-400";
   const statusBg = (s: string) => s === "지금 가능" ? "bg-green-100 text-green-700" : s === "예약 가능" ? "bg-blue-100 text-blue-700" : s === "일하는 중" ? "bg-yellow-100 text-yellow-700" : "bg-gray-100 text-gray-600";
 
-  // Region stats
+  // Region + Role stats
   const regionStats = useMemo(() => {
     const counts: Record<string, number> = {};
-    dealers.filter(d => d.status === "지금 가능").forEach(d => {
-      d.areas?.forEach(a => {
+    dealers.forEach(d => {
+      d.areas?.forEach((a: string) => {
         const r = a.split(" ")[0]; counts[r] = (counts[r] || 0) + 1;
       });
     });
     return counts;
   }, [dealers]);
 
-  const availableCount = dealers.filter(d => d.status === "지금 가능").length;
+  const roleStats = useMemo(() => {
+    const counts: Record<string, number> = {};
+    // From jobs
+    jobs.filter(j => j.type === "구직").forEach(j => { counts[j.role] = (counts[j.role] || 0) + 1; });
+    return counts;
+  }, [jobs]);
+
+  const availableCount = dealers.length;
 
   return (
     <div className="flex flex-col min-h-screen pb-16 md:pb-0">
@@ -138,11 +145,15 @@ export default function JobsPage() {
                 <span className="relative flex h-2.5 w-2.5"><span className="live-pulse absolute inline-flex h-full w-full rounded-full bg-green-500 opacity-75" /><span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500" /></span>
                 <h1 className="text-xl font-black text-surface">지금 바로 가능한 인원</h1>
               </div>
-              <p className="text-muted text-[14px]">현재 <span className="text-accent font-bold">{availableCount}명</span>의 딜러가 즉시 연결 가능합니다</p>
-              {/* Region stats */}
-              <div className="flex flex-wrap gap-2 mt-3">
-                {Object.entries(regionStats).slice(0, 5).map(([r, c]) => (
-                  <span key={r} className="text-[12px] bg-accent/10 text-accent font-semibold px-2.5 py-1 rounded-lg">{r} ({c}명)</span>
+              <p className="text-muted text-[14px]">현재 <span className="text-accent font-bold">{availableCount}명</span>이 즉시 연결 가능합니다</p>
+              {/* Region + Role stats */}
+              <div className="flex flex-wrap gap-1.5 mt-3">
+                {Object.entries(regionStats).map(([r, c]) => (
+                  <span key={r} className="text-[11px] bg-accent/10 text-accent font-semibold px-2 py-0.5 rounded-lg">{r}({c}명)</span>
+                ))}
+                <span className="w-px h-4 bg-border-custom self-center mx-0.5" />
+                {Object.entries(roleStats).map(([r, c]) => (
+                  <span key={r} className="text-[11px] bg-blue-50 text-blue-600 font-semibold px-2 py-0.5 rounded-lg">{r}({c}명)</span>
                 ))}
               </div>
             </div>
@@ -225,26 +236,50 @@ export default function JobsPage() {
               </div>
             ) : filteredDealers.map(d => (
               <div key={d.id} className="bg-white rounded-2xl card-shadow overflow-hidden hover:card-shadow-hover transition-all">
+                {/* Photo */}
+                {d.avatar && (
+                  <div className="h-40 bg-[#f5f6f8] overflow-hidden">
+                    <img src={d.avatar} alt={d.nickname} className="w-full h-full object-cover" />
+                  </div>
+                )}
                 <div className="p-5">
                   <div className="flex items-center gap-3 mb-3">
-                    <div className="w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center text-accent text-lg font-black shrink-0">{d.nickname?.charAt(0)}</div>
+                    {!d.avatar && (
+                      <div className="w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center text-accent text-lg font-black shrink-0">{d.nickname?.charAt(0)}</div>
+                    )}
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
                         <p className="text-surface text-[16px] font-bold truncate">{d.nickname}</p>
-                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${statusBg(d.status || "")}`}>{d.status || "상태 미설정"}</span>
+                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${statusBg(d.status || "")}`}>{d.status || "등록됨"}</span>
                       </div>
                       <p className="text-muted text-[12px]">{d.areas?.slice(0, 2).join(", ")} · {d.experience || "경력 미입력"}</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-2 text-[12px] text-muted mb-3">
-                    <span className={`w-2 h-2 rounded-full ${statusColor(d.status)}`} />
-                    <span>마지막 업데이트 {timeAgo(d.status_updated_at)}</span>
+                    <span className={`w-2 h-2 rounded-full ${statusColor(d.status || "")}`} />
+                    <span>{timeAgo(d.status_updated_at || d.created_at)}</span>
                   </div>
                   {d.bio && <p className="text-sub text-[13px] mb-3 line-clamp-2">{d.bio}</p>}
+                  {/* Contact icons */}
                   <div className="flex gap-2">
-                    {d.contact_phone && <a href={`tel:${d.contact_phone}`} className="flex-1 bg-accent hover:bg-accent-hover text-white text-[13px] font-bold py-2.5 rounded-xl text-center transition-all">연락하기</a>}
-                    {d.contact_kakao && <span className="flex-1 bg-[#f5f6f8] text-sub text-[13px] font-semibold py-2.5 rounded-xl text-center">카톡: {d.contact_kakao}</span>}
-                    {!d.contact_phone && !d.contact_kakao && d.contact_telegram && <span className="flex-1 bg-[#f5f6f8] text-sub text-[13px] font-semibold py-2.5 rounded-xl text-center">TG: {d.contact_telegram}</span>}
+                    {d.contact_phone && (
+                      <a href={`tel:${d.contact_phone}`} className="flex items-center gap-1.5 flex-1 bg-accent hover:bg-accent-hover text-white text-[12px] font-bold py-2.5 rounded-xl justify-center transition-all">
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>
+                        전화
+                      </a>
+                    )}
+                    {d.contact_kakao && (
+                      <button onClick={() => { navigator.clipboard.writeText(d.contact_kakao); alert(`카카오톡 ID: ${d.contact_kakao} (복사됨)`); }} className="flex items-center gap-1.5 flex-1 bg-[#FEE500] hover:bg-[#e6cf00] text-[#3C1E1E] text-[12px] font-bold py-2.5 rounded-xl justify-center transition-all">
+                        <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3C6.477 3 2 6.463 2 10.691c0 2.72 1.8 5.108 4.516 6.467-.197.735-.714 2.666-.818 3.08-.128.512.188.504.395.367.163-.108 2.592-1.76 3.637-2.477.733.104 1.49.16 2.27.16 5.523 0 10-3.463 10-7.691S17.523 3 12 3z"/></svg>
+                        카톡
+                      </button>
+                    )}
+                    {d.contact_telegram && (
+                      <a href={`https://t.me/${d.contact_telegram}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 flex-1 bg-[#229ED9] hover:bg-[#1a8bc2] text-white text-[12px] font-bold py-2.5 rounded-xl justify-center transition-all">
+                        <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.2-.08-.06-.19-.04-.28-.02-.12.02-2.02 1.28-5.7 3.77-.54.37-1.03.55-1.47.54-.48-.01-1.41-.27-2.1-.5-.84-.28-1.51-.43-1.45-.91.03-.25.38-.51 1.05-.78 4.12-1.79 6.87-2.97 8.26-3.54 3.93-1.62 4.75-1.9 5.28-1.91.12 0 .38.03.55.17.14.12.18.28.2.45-.01.06-.01.24-.02.38z"/></svg>
+                        텔레
+                      </a>
+                    )}
                   </div>
                 </div>
               </div>
