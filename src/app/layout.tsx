@@ -27,7 +27,7 @@ export default function RootLayout({
       </head>
       <body className="min-h-full">
         <Script
-          src="//dapi.kakao.com/v2/maps/sdk.js?appkey=b8559dd3c40c3c2697fbc3889bfb9dcb&autoload=false"
+          src="//dapi.kakao.com/v2/maps/sdk.js?appkey=b8559dd3c40c3c2697fbc3889bfb9dcb&autoload=false&libraries=services"
           strategy="beforeInteractive"
         />
         <Providers>
