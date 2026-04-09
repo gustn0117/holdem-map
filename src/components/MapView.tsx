@@ -2,8 +2,12 @@
 
 import { Store } from "@/types";
 import { useEffect, useRef, useState } from "react";
-import L from "leaflet";
-import "leaflet/dist/leaflet.css";
+
+declare global {
+  interface Window {
+    kakao: any;
+  }
+}
 
 interface MapViewProps {
   stores: Store[];
@@ -11,139 +15,118 @@ interface MapViewProps {
   selectedStore?: Store | null;
 }
 
-const defaultCenter: [number, number] = [37.5, 126.95];
-const defaultZoom = 11;
-
-function createPinIcon(color: string, glowColor: string, size: number = 30) {
-  return L.divIcon({
-    className: "",
-    html: `<div style="position:relative;width:${size}px;height:${Math.round(size * 1.3)}px">
-      <div style="position:absolute;bottom:2px;left:50%;transform:translateX(-50%);width:${size * 0.5}px;height:4px;background:${glowColor};border-radius:50%;filter:blur(3px);opacity:0.5"></div>
-      <svg width="${size}" height="${Math.round(size * 1.3)}" viewBox="0 0 30 40" style="filter:drop-shadow(0 2px 4px rgba(0,0,0,0.3))">
-        <path d="M15 0C6.716 0 0 6.716 0 15c0 11.25 15 25 15 25s15-13.75 15-25C30 6.716 23.284 0 15 0z" fill="${color}"/>
-        <circle cx="15" cy="14" r="6.5" fill="rgba(255,255,255,0.95)"/>
-        <circle cx="15" cy="14" r="3" fill="${color}" opacity="0.7"/>
-      </svg>
-    </div>`,
-    iconSize: [size, Math.round(size * 1.3)],
-    iconAnchor: [size / 2, Math.round(size * 1.3)],
-    popupAnchor: [0, -Math.round(size * 1.2)],
-  });
-}
-
-const accentIcon = createPinIcon("#03c75a", "rgba(3,199,90,0.3)");
-const goldIcon = createPinIcon("#03c75a", "rgba(3,199,90,0.4)");
-const selectedIcon = createPinIcon("#02b350", "rgba(2,179,80,0.5)", 38);
+const defaultCenter = { lat: 37.5, lng: 126.95 };
+const defaultZoom = 8;
 
 export default function MapView({ stores, onStoreClick, selectedStore }: MapViewProps) {
-  const mapRef = useRef<L.Map | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const markersRef = useRef<Map<string, L.Marker>>(new Map());
+  const mapRef = useRef<any>(null);
+  const markersRef = useRef<Map<string, any>>(new Map());
+  const overlayRef = useRef<any>(null);
   const [ready, setReady] = useState(false);
 
+  // Init map
   useEffect(() => {
-    if (!containerRef.current || mapRef.current) return;
+    if (!containerRef.current) return;
 
-    const map = L.map(containerRef.current, {
-      center: defaultCenter,
-      zoom: defaultZoom,
-      zoomControl: false,
-    });
+    const initMap = () => {
+      if (!window.kakao?.maps) return;
 
-    L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/">CARTO</a>',
-      maxZoom: 19,
-    }).addTo(map);
+      window.kakao.maps.load(() => {
+        const options = {
+          center: new window.kakao.maps.LatLng(defaultCenter.lat, defaultCenter.lng),
+          level: defaultZoom,
+        };
+        const map = new window.kakao.maps.Map(containerRef.current, options);
 
-    L.control.zoom({ position: "bottomright" }).addTo(map);
+        // Add zoom control
+        const zoomControl = new window.kakao.maps.ZoomControl();
+        map.addControl(zoomControl, window.kakao.maps.ControlPosition.BOTTOMRIGHT);
 
-    mapRef.current = map;
-    setReady(true);
-
-    return () => {
-      map.remove();
-      mapRef.current = null;
+        mapRef.current = map;
+        setReady(true);
+      });
     };
+
+    if (window.kakao?.maps) {
+      initMap();
+    } else {
+      const check = setInterval(() => {
+        if (window.kakao?.maps) { clearInterval(check); initMap(); }
+      }, 100);
+      return () => clearInterval(check);
+    }
   }, []);
 
+  // Update markers
   useEffect(() => {
     if (!mapRef.current || !ready) return;
     const map = mapRef.current;
 
-    markersRef.current.forEach((m) => m.remove());
+    // Clear old markers
+    markersRef.current.forEach(m => m.setMap(null));
     markersRef.current.clear();
+    if (overlayRef.current) { overlayRef.current.setMap(null); overlayRef.current = null; }
 
-    stores.forEach((store) => {
-      const icon = store.is_recommended ? goldIcon : accentIcon;
-      const marker = L.marker([store.lat, store.lng], { icon }).addTo(map);
+    stores.forEach(store => {
+      const position = new window.kakao.maps.LatLng(store.lat, store.lng);
 
-      marker.bindPopup(
-        `<div style="font-family:-apple-system,sans-serif;min-width:180px;padding:4px 0">
-          <a href="/store/${store.id}" style="font-weight:700;font-size:14px;color:#03c75a;text-decoration:none;display:block;margin-bottom:6px;cursor:pointer">${store.name}${store.is_recommended ? ' <span style="background:#e6f7ee;color:#03c75a;font-size:9px;padding:2px 6px;border-radius:4px;font-weight:700;margin-left:4px">추천</span>' : ''} <span style="font-size:11px;color:#999">→</span></a>
-          <div style="font-size:12px;color:#555;margin-bottom:3px">영업시간: ${store.hours}</div>
-          <div style="font-size:12px;color:#777">${store.address}</div>
-          <div style="font-size:11px;color:#777;margin-top:4px">${store.phone}</div>
-        </div>`,
-        {
-          className: "dark-popup",
-          closeButton: false,
-        }
+      const markerImage = new window.kakao.maps.MarkerImage(
+        `data:image/svg+xml,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="28" height="36" viewBox="0 0 28 36"><path d="M14 0C6.268 0 0 6.268 0 14c0 10.5 14 22 14 22s14-11.5 14-22C28 6.268 21.732 0 14 0z" fill="${store.is_recommended ? '#02b350' : '#03c75a'}"/><circle cx="14" cy="13" r="5.5" fill="white"/><circle cx="14" cy="13" r="2.5" fill="${store.is_recommended ? '#02b350' : '#03c75a'}" opacity="0.7"/></svg>`)}`,
+        new window.kakao.maps.Size(28, 36),
+        { offset: new window.kakao.maps.Point(14, 36) }
       );
 
-      marker.on("click", () => onStoreClick?.(store));
+      const marker = new window.kakao.maps.Marker({ position, image: markerImage });
+      marker.setMap(map);
+
+      // Click event
+      window.kakao.maps.event.addListener(marker, "click", () => {
+        onStoreClick?.(store);
+
+        // Custom overlay (info window)
+        if (overlayRef.current) overlayRef.current.setMap(null);
+
+        const content = `<div style="background:white;border:1px solid #e5e5e5;border-radius:12px;padding:14px 16px;min-width:200px;box-shadow:0 4px 20px rgba(0,0,0,0.1);font-family:-apple-system,sans-serif;position:relative">
+          <a href="/store/${store.id}" style="font-weight:700;font-size:14px;color:#03c75a;text-decoration:none;display:block;margin-bottom:6px">${store.name}${store.is_recommended ? ' <span style="background:#e6f7ee;color:#03c75a;font-size:9px;padding:2px 6px;border-radius:4px;font-weight:700;margin-left:4px">추천</span>' : ''} <span style="font-size:11px;color:#999">→</span></a>
+          <div style="font-size:12px;color:#555;margin-bottom:3px">${store.hours}</div>
+          <div style="font-size:12px;color:#777">${store.address}</div>
+          ${store.phone ? `<div style="font-size:11px;color:#777;margin-top:4px">${store.phone}</div>` : ''}
+          <div style="position:absolute;bottom:-8px;left:50%;transform:translateX(-50%);width:16px;height:16px;background:white;border-right:1px solid #e5e5e5;border-bottom:1px solid #e5e5e5;transform:translateX(-50%) rotate(45deg)"></div>
+        </div>`;
+
+        const overlay = new window.kakao.maps.CustomOverlay({
+          content, position, yAnchor: 1.15,
+        });
+        overlay.setMap(map);
+        overlayRef.current = overlay;
+
+        map.panTo(position);
+      });
+
       markersRef.current.set(store.id, marker);
+    });
+
+    // Click on map to close overlay
+    window.kakao.maps.event.addListener(map, "click", () => {
+      if (overlayRef.current) { overlayRef.current.setMap(null); overlayRef.current = null; }
     });
   }, [stores, ready, onStoreClick]);
 
+  // Handle selected store
   useEffect(() => {
-    if (!mapRef.current || !ready) return;
+    if (!mapRef.current || !ready || !selectedStore) return;
 
-    markersRef.current.forEach((marker, id) => {
-      const store = stores.find((s) => s.id === id);
-      if (!store) return;
-      if (selectedStore?.id === id) {
-        marker.setIcon(selectedIcon);
-        marker.openPopup();
-        mapRef.current?.setView([store.lat, store.lng], 13, { animate: true });
-      } else {
-        marker.setIcon(store.is_recommended ? goldIcon : accentIcon);
-      }
-    });
-  }, [selectedStore, stores, ready]);
+    const marker = markersRef.current.get(selectedStore.id);
+    if (marker) {
+      window.kakao.maps.event.trigger(marker, "click");
+    }
+  }, [selectedStore, ready]);
 
   return (
     <div className="relative w-full h-full rounded-xl overflow-hidden border border-border-custom z-0">
-      <style>{`
-        .dark-popup .leaflet-popup-content-wrapper {
-          background: #ffffff;
-          border: 1px solid #e5e5e5;
-          border-radius: 12px;
-          box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-          color: #1a1a1a;
-          padding: 4px;
-        }
-        .dark-popup .leaflet-popup-tip {
-          background: #ffffff;
-          border-right: 1px solid #e5e5e5;
-          border-bottom: 1px solid #e5e5e5;
-        }
-        .dark-popup .leaflet-popup-content {
-          margin: 10px 14px;
-        }
-        .leaflet-control-zoom a {
-          background: #ffffff !important;
-          color: #777 !important;
-          border-color: #e5e5e5 !important;
-        }
-        .leaflet-control-zoom a:hover {
-          background: #f5f5f5 !important;
-          color: #03c75a !important;
-        }
-      `}</style>
       <div ref={containerRef} className="w-full h-full" />
-
-      {/* Count */}
-      <div className="absolute top-3 right-3 bg-white rounded-lg px-3 py-1.5 border border-border-custom shadow-sm z-1000">
+      <div className="absolute top-3 right-3 bg-white rounded-lg px-3 py-1.5 border border-border-custom shadow-sm" style={{ zIndex: 2 }}>
         <p className="text-muted text-xs">
           매장 <span className="text-accent font-bold">{stores.length}</span>
         </p>

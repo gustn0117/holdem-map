@@ -23,6 +23,7 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <meta name="apple-mobile-web-app-title" content="홀덤맵KOREA" />
         <link rel="apple-touch-icon" href="/icon-192.png" />
+        <script type="text/javascript" src={`//dapi.kakao.com/v2/maps/sdk.js?appkey=b8559dd3c40c3c2697fbc3889bfb9dcb&autoload=false`} />
       </head>
       <body className="min-h-full">
         <Providers>
