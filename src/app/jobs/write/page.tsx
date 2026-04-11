@@ -213,6 +213,22 @@ export default function JobWritePage() {
                 <div className="p-3 bg-[#f9f9f9] border-t border-border-custom">
                   <p className="text-[11px] text-muted mb-2 font-semibold">{expandedRegion} 세부 지역</p>
                   <div className="grid grid-cols-3 md:grid-cols-4 gap-1.5">
+                    {/* 전체 선택 */}
+                    {(() => {
+                      const fullArea = `${expandedRegion} 전체`;
+                      const isSelected = form.areas.includes(fullArea);
+                      return (
+                        <button key="전체" type="button" onClick={() => toggleArea(fullArea)}
+                          disabled={form.areas.length >= 3 && !isSelected}
+                          className={`text-[12px] py-2 px-2 rounded-lg text-center transition-all font-bold ${
+                            isSelected ? "bg-accent text-white" :
+                            form.areas.length >= 3 ? "bg-white text-gray-300 cursor-not-allowed" :
+                            "bg-accent/10 text-accent hover:bg-accent/20 border border-accent/20"
+                          }`}>
+                          {expandedRegion} 전체
+                        </button>
+                      );
+                    })()}
                     {regionData[expandedRegion].map(district => {
                       const fullArea = `${expandedRegion} ${district}`;
                       const isSelected = form.areas.includes(fullArea);
