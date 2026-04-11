@@ -6,7 +6,7 @@ import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { createJob } from "@/lib/api";
-import { allAreas } from "@/data/areas";
+import { regionData, allRegions } from "@/data/areas";
 import Select from "@/components/Select";
 import ImageUpload from "@/components/ImageUpload";
 import { useAuth } from "@/contexts/AuthContext";
@@ -16,6 +16,7 @@ export default function JobWritePage() {
   const { user, profile } = useAuth();
   const [saving, setSaving] = useState(false);
   const [areaSearch, setAreaSearch] = useState("");
+  const [expandedRegion, setExpandedRegion] = useState<string | null>(null);
 
   if (!user) {
     return (
@@ -66,6 +67,7 @@ export default function JobWritePage() {
     });
   };
 
+  const allAreas = Object.entries(regionData).flatMap(([r, ds]) => ds.map(d => `${r} ${d}`));
   const filteredAreas = areaSearch
     ? allAreas.filter(a => a.includes(areaSearch))
     : allAreas;
@@ -168,7 +170,7 @@ export default function JobWritePage() {
             <input className={inputClass} value={form.experience} onChange={e => set("experience", e.target.value)} placeholder={form.type === "구인" ? "예: 경력 1년 이상, 신입 가능" : "예: 딜러 2년, 신입"} />
           </div>
 
-          {/* Areas */}
+          {/* Areas - 2-step selection */}
           <div>
             <label className="text-sub text-sm font-semibold block mb-2">
               희망 근무지역 * <span className="text-muted font-normal">(최대 3개)</span>
@@ -187,28 +189,48 @@ export default function JobWritePage() {
               </div>
             )}
 
-            {/* Search */}
-            <input
-              type="text" value={areaSearch} onChange={e => setAreaSearch(e.target.value)}
-              placeholder="지역 검색 (예: 강남, 수원)"
-              className={inputClass + " mb-3"}
-            />
+            {/* Region grid (시/도) */}
+            <div className="border border-border-custom rounded-xl overflow-hidden">
+              <div className="grid grid-cols-3 md:grid-cols-4">
+                {allRegions.map(region => (
+                  <button key={region} type="button"
+                    onClick={() => setExpandedRegion(expandedRegion === region ? null : region)}
+                    className={`py-3 px-2 text-[13px] font-semibold text-center border-b border-r border-border-custom transition-all flex items-center justify-center gap-1 ${
+                      expandedRegion === region ? "bg-accent text-white" :
+                      form.areas.some(a => a.startsWith(region)) ? "bg-accent/10 text-accent" :
+                      "text-sub hover:bg-[#f5f6f8]"
+                    }`}>
+                    {region}
+                    <svg className={`w-3 h-3 transition-transform ${expandedRegion === region ? "rotate-180" : ""}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
+                ))}
+              </div>
 
-            {/* Area grid */}
-            <div className="max-h-48 overflow-y-auto border border-border-custom rounded-xl p-3 grid grid-cols-3 md:grid-cols-4 gap-1.5">
-              {filteredAreas.map(area => (
-                <button key={area} type="button" onClick={() => toggleArea(area)}
-                  disabled={form.areas.length >= 3 && !form.areas.includes(area)}
-                  className={`text-xs py-2 px-2 rounded-lg text-center transition-all ${
-                    form.areas.includes(area)
-                      ? "bg-accent text-white font-semibold"
-                      : form.areas.length >= 3
-                        ? "bg-gray-50 text-gray-300 cursor-not-allowed"
-                        : "bg-gray-50 text-muted hover:bg-accent/10 hover:text-accent"
-                  }`}>
-                  {area}
-                </button>
-              ))}
+              {/* District list (구/군) */}
+              {expandedRegion && (
+                <div className="p-3 bg-[#f9f9f9] border-t border-border-custom">
+                  <p className="text-[11px] text-muted mb-2 font-semibold">{expandedRegion} 세부 지역</p>
+                  <div className="grid grid-cols-3 md:grid-cols-4 gap-1.5">
+                    {regionData[expandedRegion].map(district => {
+                      const fullArea = `${expandedRegion} ${district}`;
+                      const isSelected = form.areas.includes(fullArea);
+                      return (
+                        <button key={district} type="button" onClick={() => toggleArea(fullArea)}
+                          disabled={form.areas.length >= 3 && !isSelected}
+                          className={`text-[12px] py-2 px-2 rounded-lg text-center transition-all ${
+                            isSelected ? "bg-accent text-white font-semibold" :
+                            form.areas.length >= 3 ? "bg-white text-gray-300 cursor-not-allowed" :
+                            "bg-white text-sub hover:bg-accent/10 hover:text-accent border border-border-custom"
+                          }`}>
+                          {district}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
