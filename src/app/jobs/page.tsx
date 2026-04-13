@@ -10,6 +10,7 @@ import { Job } from "@/types";
 
 const REGIONS = ["전체", "서울", "경기", "인천", "지방"];
 const STATUSES = ["전체", "지금 가능", "예약 가능", "일하는 중"];
+const GENDERS = ["전체", "남", "여"];
 const SORTS = [
   { value: "available", label: "즉시 가능순" },
   { value: "recent", label: "최근 등록순" },
@@ -30,6 +31,7 @@ export default function JobsPage() {
   const [jobs, setJobs] = useState<Job[]>([]);
   const [loading, setLoading] = useState(true);
   const [filterRegion, setFilterRegion] = useState("전체");
+  const [filterGender, setFilterGender] = useState("전체");
   const [filterStatus, setFilterStatus] = useState("전체");
   const [filterRole, setFilterRole] = useState("전체");
   const [sortBy, setSortBy] = useState("available");
@@ -85,6 +87,7 @@ export default function JobsPage() {
     let result = dealers;
     if (filterRegion !== "전체") result = result.filter(d => d.areas && d.areas.length > 0 && d.areas.some((a: string) => a.includes(filterRegion)));
     if (filterStatus !== "전체") result = result.filter(d => d.status === filterStatus);
+    if (filterGender !== "전체") result = result.filter((d: any) => d.gender === filterGender);
 
     // Sort: 지금 가능 > 예약 가능 > 일하는 중 > 미설정, then by update time
     const statusOrder: Record<string, number> = { "지금 가능": 0, "예약 가능": 1, "일하는 중": 2 };
@@ -96,7 +99,7 @@ export default function JobsPage() {
       return new Date(b.status_updated_at || b.created_at || 0).getTime() - new Date(a.status_updated_at || a.created_at || 0).getTime();
     });
     return result;
-  }, [dealers, filterRegion, filterStatus, sortBy]);
+  }, [dealers, filterRegion, filterStatus, filterGender, sortBy]);
 
   const filteredJobs = useMemo(() => {
     let result = jobs;
@@ -196,6 +199,12 @@ export default function JobsPage() {
                   <p className="text-sub text-[12px] font-semibold mb-2">상태</p>
                   <div className="flex flex-wrap gap-1.5">
                     {STATUSES.map(s => <button key={s} onClick={() => setFilterStatus(s)} className={`px-3 py-1.5 rounded-lg text-[12px] font-semibold transition-all ${filterStatus === s ? "bg-accent text-white" : "bg-[#f5f6f8] text-sub"}`}>{s}</button>)}
+                  </div>
+                </div>
+                <div>
+                  <p className="text-sub text-[12px] font-semibold mb-2">성별</p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {GENDERS.map(g => <button key={g} onClick={() => setFilterGender(g)} className={`px-3 py-1.5 rounded-lg text-[12px] font-semibold transition-all ${filterGender === g ? "bg-accent text-white" : "bg-[#f5f6f8] text-sub"}`}>{g}</button>)}
                   </div>
                 </div>
                 <div>

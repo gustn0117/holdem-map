@@ -7,6 +7,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { useAuth, Profile } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
+import { AvatarPicker, renderAvatar } from "@/components/Avatar";
 
 const STATUS_OPTIONS = [
   { value: "지금 가능", label: "지금 가능", color: "bg-green-500", desc: "즉시 근무 가능" },
@@ -61,8 +62,9 @@ export default function MyPage() {
     setSaving(true);
     await supabase.from("profiles").update({
       nickname: form.nickname, user_type: form.user_type, bio: form.bio, experience: form.experience,
-      areas: form.areas, store_name: form.store_name,
+      areas: form.areas, store_name: form.store_name, avatar: form.avatar,
       contact_kakao: form.contact_kakao, contact_telegram: form.contact_telegram, contact_phone: form.contact_phone,
+      gender: (form as any).gender,
     }).eq("id", profile.id);
     await refreshProfile(); setEditing(false); setSaving(false);
   };
@@ -123,8 +125,12 @@ export default function MyPage() {
             }`} />
             <div className="px-6 pb-6 -mt-10">
               <div className="flex items-end gap-4 mb-4">
-                <div className="w-20 h-20 rounded-2xl bg-white border-4 border-white shadow-md flex items-center justify-center text-accent text-3xl font-black shrink-0">
-                  {profile.nickname?.charAt(0)}
+                <div className="w-20 h-20 rounded-2xl bg-white border-4 border-white shadow-md flex items-center justify-center overflow-hidden shrink-0">
+                  {profile.avatar ? (
+                    profile.avatar.includes("-") ? renderAvatar(profile.avatar, 72) : <img src={profile.avatar} alt="" className="w-full h-full object-cover" />
+                  ) : (
+                    <span className="text-accent text-3xl font-black">{profile.nickname?.charAt(0)}</span>
+                  )}
                 </div>
                 <div className="flex-1 min-w-0 pb-1">
                   <div className="flex items-center gap-2 flex-wrap">
@@ -195,6 +201,17 @@ export default function MyPage() {
                 <div className="space-y-4">
                   <h2 className="text-lg font-bold text-surface">프로필 수정</h2>
                   <Field label="닉네임"><input className={inputClass} value={form.nickname || ""} onChange={e => set("nickname", e.target.value)} /></Field>
+                  <Field label="성별">
+                    <div className="flex gap-2">
+                      {["남", "여"].map(g => (
+                        <button key={g} type="button" onClick={() => set("gender", g)}
+                          className={`flex-1 py-2.5 rounded-xl text-[13px] font-semibold border transition-all ${form.gender === g ? "bg-accent text-white border-accent" : "border-border-custom text-sub"}`}>{g}</button>
+                      ))}
+                    </div>
+                  </Field>
+                  <Field label="아바타 선택">
+                    <AvatarPicker value={form.avatar || ""} onChange={v => set("avatar", v)} />
+                  </Field>
                   <Field label="자기소개"><textarea className={inputClass + " resize-none"} rows={3} value={form.bio || ""} onChange={e => set("bio", e.target.value)} placeholder="간단한 자기소개" /></Field>
                   {(profile.user_type === "딜러" || profile.user_type === "업주") && (
                     <Field label={profile.user_type === "딜러" ? "경력" : "업체 정보"}>
