@@ -58,26 +58,23 @@ export default function MapView({ stores, onStoreClick, selectedStore }: MapView
     };
 
     if (window.kakao?.maps) {
+      setDebug("이미 로드됨, 초기화 중...");
       initMap();
       return;
     }
 
-    const existingScript = document.querySelector('script[src*="dapi.kakao.com"]');
-    if (existingScript) {
-      setDebug("기존 스크립트 감지, 로딩 대기...");
-      const check = setInterval(() => {
-        if (window.kakao?.maps) { clearInterval(check); initMap(); }
-      }, 100);
-      setTimeout(() => clearInterval(check), 10000);
-      return () => clearInterval(check);
-    }
+    // Remove stale scripts
+    document.querySelectorAll('script[src*="dapi.kakao.com"]').forEach(s => s.remove());
 
     setDebug("SDK 스크립트 로드 시작...");
     const script = document.createElement("script");
     script.src = "https://dapi.kakao.com/v2/maps/sdk.js?appkey=b8559dd3c40c3c2697fbc3889bfb9dcb&autoload=false&libraries=services";
     script.async = true;
-    script.onload = () => { setDebug("스크립트 로드 완료"); initMap(); };
-    script.onerror = () => setDebug("ERROR: SDK 로드 실패 - 도메인 등록 확인 필요");
+    script.onload = () => {
+      setDebug(`스크립트 로드됨 (kakao: ${!!(window as any).kakao}, maps: ${!!(window as any).kakao?.maps})`);
+      setTimeout(() => initMap(), 100);
+    };
+    script.onerror = (e) => setDebug(`ERROR: SDK 로드 실패 - 도메인 등록 필요`);
     document.head.appendChild(script);
   }, []);
 
