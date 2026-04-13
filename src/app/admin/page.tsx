@@ -545,12 +545,12 @@ export default function AdminPage() {
                   </div>
                 </div>
                 <textarea className={inputClass + " resize-none"} rows={3} value={promoForm.content} onChange={e => setPromoForm(p => ({ ...p, content: e.target.value }))} placeholder="이벤트 내용 *" />
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                   <input type="date" className={inputClass} value={promoForm.start_date} onChange={e => setPromoForm(p => ({ ...p, start_date: e.target.value }))} />
                   <input type="date" className={inputClass} value={promoForm.end_date} onChange={e => setPromoForm(p => ({ ...p, end_date: e.target.value }))} />
-                  <input className={inputClass} value={promoForm.image} onChange={e => setPromoForm(p => ({ ...p, image: e.target.value }))} placeholder="이미지 URL" />
-                  <input className={inputClass} value={promoForm.link} onChange={e => setPromoForm(p => ({ ...p, link: e.target.value }))} placeholder="링크 URL" />
+                  <input className={inputClass} value={promoForm.link} onChange={e => setPromoForm(p => ({ ...p, link: e.target.value }))} placeholder="링크 URL (선택)" />
                 </div>
+                <ImageUpload value={promoForm.image} onChange={v => setPromoForm(p => ({ ...p, image: v }))} folder="promotions" label="이벤트 이미지" hint="권장 1400x200px" />
                 <div className="flex gap-2">
                   {promoEditing && <button onClick={() => { setPromoEditing(null); setPromoForm({ title: "", content: "", badge: "EVENT", start_date: "", end_date: "", image: "", link: "" }); }} className="px-5 py-2.5 rounded-xl border border-border-custom text-sub font-semibold">취소</button>}
                   <button onClick={handlePromoSubmit} disabled={promoSaving} className="bg-accent hover:bg-accent-hover text-white font-bold px-6 py-2.5 rounded-xl disabled:opacity-50 transition-all">
