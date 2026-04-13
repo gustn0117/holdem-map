@@ -24,48 +24,60 @@ export default function MapView({ stores, onStoreClick, selectedStore }: MapView
   const markersRef = useRef<Map<string, any>>(new Map());
   const overlayRef = useRef<any>(null);
   const [ready, setReady] = useState(false);
+  const [debug, setDebug] = useState("SDK 로딩 대기중...");
 
   // Init map - load SDK dynamically
   useEffect(() => {
     if (!containerRef.current) return;
 
     const initMap = () => {
-      if (!window.kakao?.maps || !containerRef.current) return;
+      setDebug("SDK 로드됨, 지도 초기화 중...");
+      if (!window.kakao?.maps || !containerRef.current) {
+        setDebug("ERROR: kakao.maps 객체 없음");
+        return;
+      }
 
-      window.kakao.maps.load(() => {
-        if (!containerRef.current) return;
-        const options = {
-          center: new window.kakao.maps.LatLng(defaultCenter.lat, defaultCenter.lng),
-          level: defaultZoom,
-        };
-        const map = new window.kakao.maps.Map(containerRef.current, options);
-        const zoomControl = new window.kakao.maps.ZoomControl();
-        map.addControl(zoomControl, window.kakao.maps.ControlPosition.BOTTOMRIGHT);
-        mapRef.current = map;
-        setReady(true);
-      });
+      try {
+        window.kakao.maps.load(() => {
+          if (!containerRef.current) return;
+          setDebug("지도 생성 중...");
+          const options = {
+            center: new window.kakao.maps.LatLng(defaultCenter.lat, defaultCenter.lng),
+            level: defaultZoom,
+          };
+          const map = new window.kakao.maps.Map(containerRef.current, options);
+          const zoomControl = new window.kakao.maps.ZoomControl();
+          map.addControl(zoomControl, window.kakao.maps.ControlPosition.BOTTOMRIGHT);
+          mapRef.current = map;
+          setReady(true);
+          setDebug("");
+        });
+      } catch (e: any) {
+        setDebug(`ERROR: ${e.message || e}`);
+      }
     };
 
-    // If already loaded
     if (window.kakao?.maps) {
       initMap();
       return;
     }
 
-    // Check if script is already being loaded
     const existingScript = document.querySelector('script[src*="dapi.kakao.com"]');
     if (existingScript) {
+      setDebug("기존 스크립트 감지, 로딩 대기...");
       const check = setInterval(() => {
         if (window.kakao?.maps) { clearInterval(check); initMap(); }
       }, 100);
+      setTimeout(() => clearInterval(check), 10000);
       return () => clearInterval(check);
     }
 
-    // Load script
+    setDebug("SDK 스크립트 로드 시작...");
     const script = document.createElement("script");
-    script.src = "//dapi.kakao.com/v2/maps/sdk.js?appkey=b8559dd3c40c3c2697fbc3889bfb9dcb&autoload=false&libraries=services";
+    script.src = "https://dapi.kakao.com/v2/maps/sdk.js?appkey=b8559dd3c40c3c2697fbc3889bfb9dcb&autoload=false&libraries=services";
     script.async = true;
-    script.onload = () => initMap();
+    script.onload = () => { setDebug("스크립트 로드 완료"); initMap(); };
+    script.onerror = () => setDebug("ERROR: SDK 로드 실패 - 도메인 등록 확인 필요");
     document.head.appendChild(script);
   }, []);
 
@@ -136,7 +148,12 @@ export default function MapView({ stores, onStoreClick, selectedStore }: MapView
 
   return (
     <div className="relative w-full h-full rounded-xl overflow-hidden border border-border-custom z-0">
-      <div ref={containerRef} className="w-full h-full" />
+      <div ref={containerRef} className="w-full h-full bg-[#f5f6f8]" />
+      {debug && (
+        <div className="absolute inset-0 flex items-center justify-center bg-[#f5f6f8] text-muted text-sm p-4 text-center" style={{ zIndex: 3 }}>
+          {debug}
+        </div>
+      )}
       <div className="absolute top-3 right-3 bg-white rounded-lg px-3 py-1.5 border border-border-custom shadow-sm" style={{ zIndex: 2 }}>
         <p className="text-muted text-xs">
           매장 <span className="text-accent font-bold">{stores.length}</span>
