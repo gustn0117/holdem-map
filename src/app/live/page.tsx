@@ -13,6 +13,7 @@ interface LiveGame {
   players_current: number; players_max: number; status: string;
   start_time: string; end_time: string | null; description: string;
   created_by: string | null; created_at: string; updated_at: string;
+  image: string; contact_kakao: string; contact_telegram: string; contact_phone: string;
 }
 
 const CATEGORIES = ["전체", "토너", "대회", "레이크"];
@@ -38,8 +39,9 @@ export default function LivePage() {
   const [selectedGame, setSelectedGame] = useState<LiveGame | null>(null);
   const [saving, setSaving] = useState(false);
   const [form, setForm] = useState({
-    store_name: "", category: "게임", title: "", blind: "", buy_in: "",
+    store_name: "", category: "토너", title: "", blind: "", buy_in: "",
     prize: "", rake: "", players_current: 0, players_max: 0, description: "",
+    image: "", contact_kakao: "", contact_telegram: "", contact_phone: "",
   });
 
   const fetchGames = () => {
@@ -64,10 +66,11 @@ export default function LivePage() {
       blind: form.blind, buy_in: form.buy_in, prize: form.prize, rake: form.rake,
       players_current: form.players_current, players_max: form.players_max,
       description: form.description, created_by: user?.id,
+      image: form.image, contact_kakao: form.contact_kakao, contact_telegram: form.contact_telegram, contact_phone: form.contact_phone,
     });
     if (error) { alert("등록에 실패했습니다."); setSaving(false); return; }
     setShowForm(false); setSaving(false);
-    setForm({ store_name: "", category: "게임", title: "", blind: "", buy_in: "", prize: "", rake: "", players_current: 0, players_max: 0, description: "" });
+    setForm({ store_name: "", category: "토너", title: "", blind: "", buy_in: "", prize: "", rake: "", players_current: 0, players_max: 0, description: "", image: "", contact_kakao: "", contact_telegram: "", contact_phone: "" });
     fetchGames();
   };
 
@@ -110,9 +113,10 @@ export default function LivePage() {
                 {["토너", "대회", "레이크"].map(cat => {
                   const count = games.filter(g => g.category === cat && g.status === "진행중").length;
                   return (
-                    <span key={cat} className={`text-[12px] font-semibold px-2.5 py-1 rounded-lg ${CATEGORY_COLORS[cat]}`}>
+                    <button key={cat} onClick={() => setCategory(cat)}
+                      className={`text-[12px] font-semibold px-2.5 py-1 rounded-lg transition-all hover:scale-105 ${CATEGORY_COLORS[cat]}`}>
                       {cat} {count}건
-                    </span>
+                    </button>
                   );
                 })}
               </div>
@@ -181,6 +185,29 @@ export default function LivePage() {
                 <textarea className={inputClass + " resize-none"} rows={2} value={form.description} onChange={e => set("description", e.target.value)} placeholder="추가 정보 (선택)" />
               </div>
 
+              <div>
+                <label className="text-sub text-sm font-semibold mb-1.5 block">포스터 이미지 URL <span className="text-muted font-normal">(선택)</span></label>
+                <input className={inputClass} value={form.image} onChange={e => set("image", e.target.value)} placeholder="https://..." />
+              </div>
+
+              <div>
+                <label className="text-sub text-sm font-semibold mb-1.5 block">연락처 <span className="text-muted font-normal">(하나 이상 입력)</span></label>
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <span className="w-16 text-[12px] font-semibold shrink-0">카카오톡</span>
+                    <input className={inputClass} value={form.contact_kakao} onChange={e => set("contact_kakao", e.target.value)} placeholder="카톡 ID" />
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="w-16 text-[12px] font-semibold shrink-0">텔레그램</span>
+                    <input className={inputClass} value={form.contact_telegram} onChange={e => set("contact_telegram", e.target.value)} placeholder="텔레 ID" />
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="w-16 text-[12px] font-semibold shrink-0">전화번호</span>
+                    <input className={inputClass} value={form.contact_phone} onChange={e => set("contact_phone", e.target.value)} placeholder="01012345678" />
+                  </div>
+                </div>
+              </div>
+
               <button type="submit" disabled={saving} className="w-full bg-accent hover:bg-accent-hover text-white font-bold py-3 rounded-xl disabled:opacity-50 transition-all">
                 {saving ? "등록 중..." : "등록하기"}
               </button>
@@ -213,6 +240,12 @@ export default function LivePage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {filtered.map(game => (
               <div key={game.id} onClick={() => setSelectedGame(game)} className="bg-white rounded-2xl card-shadow overflow-hidden hover:card-shadow-hover transition-all cursor-pointer">
+                {/* Poster image */}
+                {game.image && (
+                  <div className="h-40 bg-[#f5f6f8] overflow-hidden">
+                    <img src={game.image} alt={game.title} className="w-full h-full object-cover" />
+                  </div>
+                )}
                 <div className="p-5">
                   {/* Header */}
                   <div className="flex items-center justify-between mb-3">
@@ -287,9 +320,15 @@ export default function LivePage() {
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
             <div className="absolute inset-0 bg-black/50" onClick={() => setSelectedGame(null)} />
             <div className="relative bg-white rounded-2xl w-full max-w-lg max-h-[85vh] overflow-y-auto card-shadow">
-              <button onClick={() => setSelectedGame(null)} className="absolute top-4 right-4 text-muted hover:text-surface z-10">
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+              <button onClick={() => setSelectedGame(null)} className="absolute top-4 right-4 text-muted hover:text-surface z-10 bg-white/80 rounded-full w-8 h-8 flex items-center justify-center">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
               </button>
+              {/* Poster */}
+              {selectedGame.image && (
+                <div className="h-64 bg-bg overflow-hidden">
+                  <img src={selectedGame.image} alt={selectedGame.title} className="w-full h-full object-cover" />
+                </div>
+              )}
               <div className="p-6">
                 {/* Header */}
                 <div className="flex items-center gap-2 mb-4">
@@ -319,6 +358,33 @@ export default function LivePage() {
                   <div className="mb-5">
                     <p className="text-[13px] text-muted mb-1">상세 정보</p>
                     <p className="text-sub text-[15px] leading-relaxed whitespace-pre-wrap bg-[#f9f9f9] rounded-xl p-4">{selectedGame.description}</p>
+                  </div>
+                )}
+
+                {/* Contact buttons */}
+                {(selectedGame.contact_phone || selectedGame.contact_kakao || selectedGame.contact_telegram) && (
+                  <div className="mb-5">
+                    <p className="text-[13px] text-muted mb-2">연락처</p>
+                    <div className="flex flex-wrap gap-2">
+                      {selectedGame.contact_phone && (
+                        <a href={`tel:${selectedGame.contact_phone}`} className="flex items-center gap-1.5 bg-accent hover:bg-accent-hover text-white text-[13px] font-bold py-2.5 px-4 rounded-xl transition-all">
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>
+                          전화
+                        </a>
+                      )}
+                      {selectedGame.contact_kakao && (
+                        <button onClick={() => { navigator.clipboard.writeText(selectedGame.contact_kakao); alert(`카카오톡 ID: ${selectedGame.contact_kakao} (복사됨)`); }} className="flex items-center gap-1.5 bg-[#FEE500] hover:bg-[#e6cf00] text-[#3C1E1E] text-[13px] font-bold py-2.5 px-4 rounded-xl transition-all">
+                          <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3C6.477 3 2 6.463 2 10.691c0 2.72 1.8 5.108 4.516 6.467-.197.735-.714 2.666-.818 3.08-.128.512.188.504.395.367.163-.108 2.592-1.76 3.637-2.477.733.104 1.49.16 2.27.16 5.523 0 10-3.463 10-7.691S17.523 3 12 3z"/></svg>
+                          카톡
+                        </button>
+                      )}
+                      {selectedGame.contact_telegram && (
+                        <a href={`https://t.me/${selectedGame.contact_telegram}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 bg-[#229ED9] hover:bg-[#1a8bc2] text-white text-[13px] font-bold py-2.5 px-4 rounded-xl transition-all">
+                          <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.2-.08-.06-.19-.04-.28-.02-.12.02-2.02 1.28-5.7 3.77-.54.37-1.03.55-1.47.54-.48-.01-1.41-.27-2.1-.5-.84-.28-1.51-.43-1.45-.91.03-.25.38-.51 1.05-.78 4.12-1.79 6.87-2.97 8.26-3.54 3.93-1.62 4.75-1.9 5.28-1.91.12 0 .38.03.55.17.14.12.18.28.2.45-.01.06-.01.24-.02.38z"/></svg>
+                          텔레
+                        </a>
+                      )}
+                    </div>
                   </div>
                 )}
 
