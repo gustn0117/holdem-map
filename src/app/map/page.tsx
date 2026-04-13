@@ -2,6 +2,7 @@
 
 import { Suspense, useState, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
+import Link from "next/link";
 import dynamic from "next/dynamic";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -49,20 +50,26 @@ function MapPageInner() {
         {/* Sidebar */}
         <div className="lg:w-110 lg:shrink-0 lg:h-[calc(100vh-56px)] lg:sticky lg:top-14 flex flex-col border-r border-border-custom bg-primary">
           <div className="p-5 space-y-4 border-b border-border-custom">
-            <div className="relative">
-              <svg className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
-              <input
-                type="text" value={query} onChange={(e) => setQuery(e.target.value)}
-                placeholder="지역명, 매장명 검색"
-                className="w-full bg-card border border-border-custom text-surface rounded-xl pl-12 pr-10 py-3.5 text-base focus:outline-none focus:border-accent/50 transition-all placeholder:text-muted"
-              />
-              {query && (
-                <button onClick={() => setQuery("")} className="absolute right-4 top-1/2 -translate-y-1/2 text-muted hover:text-surface transition-colors">
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
-                </button>
-              )}
+            <div className="flex gap-2">
+              <div className="relative flex-1">
+                <svg className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+                <input
+                  type="text" value={query} onChange={(e) => setQuery(e.target.value)}
+                  placeholder="매장명 검색"
+                  className="w-full bg-card border border-border-custom text-surface rounded-xl pl-10 pr-8 py-2.5 text-sm focus:outline-none focus:border-accent/50 transition-all placeholder:text-muted"
+                />
+                {query && (
+                  <button onClick={() => setQuery("")} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted hover:text-surface transition-colors">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+                  </button>
+                )}
+              </div>
+              <Link href="/contact" className="shrink-0 bg-accent hover:bg-accent-hover text-white text-sm font-bold px-4 py-2.5 rounded-xl transition-all flex items-center gap-1 whitespace-nowrap">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
+                매장 등록
+              </Link>
             </div>
             <div className="flex gap-1.5 bg-card rounded-xl p-1.5 border border-border-custom">
               {regions.map((r) => (
