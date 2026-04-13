@@ -64,7 +64,7 @@ export default function MyPage() {
       nickname: form.nickname, user_type: form.user_type, bio: form.bio, experience: form.experience,
       areas: form.areas, store_name: form.store_name, avatar: form.avatar,
       contact_kakao: form.contact_kakao, contact_telegram: form.contact_telegram, contact_phone: form.contact_phone,
-      gender: (form as any).gender,
+      gender: form.gender,
     }).eq("id", profile.id);
     await refreshProfile(); setEditing(false); setSaving(false);
   };

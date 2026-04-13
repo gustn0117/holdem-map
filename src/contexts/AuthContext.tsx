@@ -23,6 +23,7 @@ export interface Profile {
   contact_kakao: string;
   contact_telegram: string;
   contact_phone: string;
+  gender: string;
   created_at: string;
 }
 
