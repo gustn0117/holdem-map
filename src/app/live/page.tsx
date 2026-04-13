@@ -15,7 +15,7 @@ interface LiveGame {
   created_by: string | null; created_at: string; updated_at: string;
 }
 
-const CATEGORIES = ["전체", "게임", "토너", "대회", "레이크"];
+const CATEGORIES = ["전체", "토너", "대회", "레이크"];
 const CATEGORY_COLORS: Record<string, string> = {
   "게임": "bg-blue-100 text-blue-600",
   "토너": "bg-emerald-100 text-emerald-700",
@@ -105,9 +105,9 @@ export default function LivePage() {
                 </span>
                 <h1 className="text-xl font-black text-surface">실시간 현황</h1>
               </div>
-              <p className="text-muted text-[14px]">현재 진행중인 게임 · 토너먼트 · 대회 · 레이크 정보</p>
+              <p className="text-muted text-[14px]">현재 진행중인 토너먼트 · 대회 · 레이크 정보</p>
               <div className="flex flex-wrap gap-3 mt-3">
-                {["게임", "토너", "대회", "레이크"].map(cat => {
+                {["토너", "대회", "레이크"].map(cat => {
                   const count = games.filter(g => g.category === cat && g.status === "진행중").length;
                   return (
                     <span key={cat} className={`text-[12px] font-semibold px-2.5 py-1 rounded-lg ${CATEGORY_COLORS[cat]}`}>
@@ -139,7 +139,7 @@ export default function LivePage() {
                 <div>
                   <label className="text-sub text-sm font-semibold mb-1.5 block">카테고리 *</label>
                   <div className="flex gap-2">
-                    {["게임", "토너", "대회", "레이크"].map(c => (
+                    {["토너", "대회", "레이크"].map(c => (
                       <button key={c} type="button" onClick={() => set("category", c)}
                         className={`flex-1 py-2.5 rounded-xl text-[13px] font-semibold border transition-all ${form.category === c ? "bg-accent text-white border-accent" : "border-border-custom text-sub"}`}>{c}</button>
                     ))}
