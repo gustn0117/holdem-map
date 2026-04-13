@@ -6,10 +6,12 @@ import Header from "@/components/Header";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
 import Link from "next/link";
+import ImageUpload from "@/components/ImageUpload";
 
 export default function BoardWritePage() {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
+  const [image, setImage] = useState("");
   const [loading, setLoading] = useState(false);
   const { user, profile } = useAuth();
   const router = useRouter();
@@ -46,6 +48,7 @@ export default function BoardWritePage() {
       nickname: profile?.nickname || "익명",
       title: title.trim(),
       content: content.trim(),
+      image,
     });
     if (error) { alert("작성에 실패했습니다."); setLoading(false); return; }
     router.push("/board");
@@ -70,6 +73,7 @@ export default function BoardWritePage() {
                 className="w-full border border-border-custom rounded-xl px-4 py-3 text-[15px] focus:outline-none focus:border-accent bg-white resize-none"
                 placeholder="내용을 입력하세요" />
             </div>
+            <ImageUpload value={image} onChange={setImage} folder="posts" label="이미지 첨부 (선택)" />
             <div className="flex gap-3">
               <button type="button" onClick={() => router.back()}
                 className="flex-1 border border-border-custom text-sub font-semibold py-3 rounded-xl hover:bg-[#f5f6f8] transition-all">
