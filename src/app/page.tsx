@@ -295,8 +295,6 @@ export default function Home() {
           )}
         </section>
 
-        {/* 3. 진행중인 대회 */}
-        <section className="px-4 py-5"><EventsSection /></section>
 
         {/* 4. 무료 토너먼트 배너 */}
         <section className="px-4 pb-5">
