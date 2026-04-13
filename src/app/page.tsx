@@ -42,6 +42,15 @@ export default function Home() {
   const recommendedStores = stores.filter((s) => s.is_recommended);
   const upcomingEvents = events.slice(0, 3);
 
+  const timeAgo = (date: string) => {
+    if (!date) return "";
+    const m = Math.floor((Date.now() - new Date(date).getTime()) / 60000);
+    if (m < 1) return "방금"; if (m < 60) return `${m}분 전`;
+    const h = Math.floor(m / 60);
+    if (h < 24) return `${h}시간 전`;
+    return `${Math.floor(h / 24)}일 전`;
+  };
+
   // ── Shared Components ──
 
   const BoardSection = () => (
@@ -142,38 +151,47 @@ export default function Home() {
          ════════════════════════════════════════════ */}
       <div className="md:hidden">
         {/* 1. 구인구직 (티커) */}
-        {jobs.length > 0 && (
-          <section className="border-b border-border-custom bg-white">
-            <div className="px-4 pt-3 pb-1">
-              <div className="flex items-center justify-between mb-1">
-                <div className="flex items-center gap-2">
-                  <div className="flex items-center gap-1.5">
-                    <span className="relative flex h-2 w-2">
-                      <span className="live-pulse absolute inline-flex h-full w-full rounded-full bg-red-500 opacity-75" />
-                      <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500" />
-                    </span>
-                    <span className="text-red-500 text-[12px] font-extrabold">실시간</span>
-                  </div>
-                  <h3 className="text-surface text-[15px] font-extrabold">구인구직</h3>
+        <section className="border-b border-border-custom bg-white">
+          <div className="px-4 pt-3 pb-1">
+            <div className="flex items-center justify-between mb-1">
+              <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1.5">
+                  <span className="relative flex h-2 w-2">
+                    <span className="live-pulse absolute inline-flex h-full w-full rounded-full bg-red-500 opacity-75" />
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500" />
+                  </span>
+                  <span className="text-red-500 text-[12px] font-extrabold">실시간</span>
                 </div>
+                <h3 className="text-surface text-[15px] font-extrabold">구인구직</h3>
+              </div>
+              <div className="flex items-center gap-2">
+                <Link href="/jobs/write" className="text-white text-[11px] font-bold bg-accent px-2.5 py-1 rounded-full">등록하기</Link>
                 <Link href="/jobs" className="text-accent text-[12px] font-semibold">전체보기 →</Link>
               </div>
             </div>
+          </div>
+          {jobs.length > 0 ? (
+            <>
             <div className="relative h-25 overflow-hidden">
               <div className="absolute top-0 left-0 right-0 h-3 bg-linear-to-b from-white to-transparent z-10 pointer-events-none" />
               <div className="absolute bottom-0 left-0 right-0 h-3 bg-linear-to-t from-white to-transparent z-10 pointer-events-none" />
               <div className="ticker-scroll px-4">
                 {[...jobs, ...jobs].map((job, i) => (
                   <Link key={`${job.id}-${i}`} href={`/jobs/${job.id}`} className="flex items-center gap-3 py-2.5 group">
-                    <span className={`w-10 h-10 rounded-lg flex items-center justify-center text-[11px] font-extrabold shrink-0 ${
-                      job.type === "구인" ? "bg-blue-100 text-blue-600 border border-blue-200" : "bg-emerald-100 text-emerald-700 border border-emerald-200"
-                    }`}>{job.type}</span>
+                    {job.photo ? (
+                      <img src={job.photo} alt={job.nickname} className="w-10 h-10 rounded-lg object-cover shrink-0" />
+                    ) : (
+                      <span className={`w-10 h-10 rounded-lg flex items-center justify-center text-[11px] font-extrabold shrink-0 ${
+                        job.type === "구인" ? "bg-blue-100 text-blue-600 border border-blue-200" : "bg-emerald-100 text-emerald-700 border border-emerald-200"
+                      }`}>{job.type}</span>
+                    )}
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-1.5">
                         <p className="text-surface text-[14px] font-bold truncate">{job.nickname}</p>
                         <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${job.role === "딜러" ? "bg-emerald-100 text-emerald-700" : "bg-blue-100 text-blue-600"}`}>{job.role}</span>
+                        <span className="text-[10px] text-muted">{timeAgo(job.created_at)}</span>
                       </div>
-                      <p className="text-sub text-[12px] truncate">{job.areas.slice(0, 2).join(", ")}{job.store_name ? ` · ${job.store_name}` : ""}</p>
+                      <p className="text-sub text-[12px] truncate">{job.message ? job.message : `${job.areas?.slice(0, 2).join(", ") || ""}${job.store_name ? ` · ${job.store_name}` : ""}`}</p>
                     </div>
                     <svg className="w-4 h-4 text-[#ccc] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -182,8 +200,13 @@ export default function Home() {
                 ))}
               </div>
             </div>
-          </section>
-        )}
+            </>
+          ) : (
+            <div className="px-4 pb-3">
+              <Link href="/jobs/write" className="block text-center py-4 text-muted text-[13px]">아직 구직/구인글이 없습니다 <span className="text-accent font-semibold">등록하기 →</span></Link>
+            </div>
+          )}
+        </section>
 
         {/* 2. 실시간 게임/토너/대회/레이크 (티커) */}
         <section className="border-b border-border-custom bg-white">
