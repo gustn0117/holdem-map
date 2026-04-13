@@ -189,7 +189,7 @@ export default function Home() {
                       <div className="flex items-center gap-1.5">
                         <p className="text-surface text-[14px] font-bold truncate">{job.nickname}</p>
                         <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${job.role === "딜러" ? "bg-emerald-100 text-emerald-700" : "bg-blue-100 text-blue-600"}`}>{job.role}</span>
-                        <span className="text-[10px] text-muted">{timeAgo(job.created_at)}</span>
+                        <span className="text-[10px] text-muted">{timeAgo(job.created_at || "")}</span>
                       </div>
                       <p className="text-sub text-[12px] truncate">{job.message ? job.message : `${job.areas?.slice(0, 2).join(", ") || ""}${job.store_name ? ` · ${job.store_name}` : ""}`}</p>
                     </div>
