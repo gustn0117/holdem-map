@@ -25,37 +25,48 @@ export default function MapView({ stores, onStoreClick, selectedStore }: MapView
   const overlayRef = useRef<any>(null);
   const [ready, setReady] = useState(false);
 
-  // Init map
+  // Init map - load SDK dynamically
   useEffect(() => {
     if (!containerRef.current) return;
 
     const initMap = () => {
-      if (!window.kakao?.maps) return;
+      if (!window.kakao?.maps || !containerRef.current) return;
 
       window.kakao.maps.load(() => {
+        if (!containerRef.current) return;
         const options = {
           center: new window.kakao.maps.LatLng(defaultCenter.lat, defaultCenter.lng),
           level: defaultZoom,
         };
         const map = new window.kakao.maps.Map(containerRef.current, options);
-
-        // Add zoom control
         const zoomControl = new window.kakao.maps.ZoomControl();
         map.addControl(zoomControl, window.kakao.maps.ControlPosition.BOTTOMRIGHT);
-
         mapRef.current = map;
         setReady(true);
       });
     };
 
+    // If already loaded
     if (window.kakao?.maps) {
       initMap();
-    } else {
+      return;
+    }
+
+    // Check if script is already being loaded
+    const existingScript = document.querySelector('script[src*="dapi.kakao.com"]');
+    if (existingScript) {
       const check = setInterval(() => {
         if (window.kakao?.maps) { clearInterval(check); initMap(); }
       }, 100);
       return () => clearInterval(check);
     }
+
+    // Load script
+    const script = document.createElement("script");
+    script.src = "//dapi.kakao.com/v2/maps/sdk.js?appkey=b8559dd3c40c3c2697fbc3889bfb9dcb&autoload=false&libraries=services";
+    script.async = true;
+    script.onload = () => initMap();
+    document.head.appendChild(script);
   }, []);
 
   // Update markers

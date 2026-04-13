@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Script from "next/script";
 import "./globals.css";
 import TopBanner from "@/components/TopBanner";
 import Providers from "@/components/Providers";
@@ -26,10 +25,6 @@ export default function RootLayout({
         <link rel="apple-touch-icon" href="/icon-192.png" />
       </head>
       <body className="min-h-full">
-        <Script
-          src="//dapi.kakao.com/v2/maps/sdk.js?appkey=b8559dd3c40c3c2697fbc3889bfb9dcb&autoload=false&libraries=services"
-          strategy="beforeInteractive"
-        />
         <Providers>
           <TopBanner />
           {children}
