@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
+import Link from "next/link";
 import { getBanners } from "@/lib/api";
 import { Banner } from "@/types";
 
@@ -49,7 +50,9 @@ export default function TopBanner() {
                 <img src={current.image} alt="" className="w-full h-11 md:h-16 object-cover rounded-xl" />
               </a>
             ) : (
-              <img src={current.image} alt="" className="w-full h-11 md:h-16 object-cover rounded-xl" />
+              <Link href={`/banners/${current.id}`} className="block">
+                <img src={current.image} alt="" className="w-full h-11 md:h-16 object-cover rounded-xl" />
+              </Link>
             )}
             {banners.length > 1 && (
               <div className="absolute bottom-1.5 right-2 bg-black/40 text-white text-[9px] font-semibold px-2 py-0.5 rounded-full">
@@ -58,9 +61,9 @@ export default function TopBanner() {
             )}
           </div>
         ) : (
-          <div className="ad-pattern h-11 md:h-16 flex items-center justify-center rounded-xl">
+          <Link href="/banners" className="ad-pattern h-11 md:h-16 flex items-center justify-center rounded-xl">
             <p className="text-muted text-[12px]">광고 영역</p>
-          </div>
+          </Link>
         )}
       </div>
     </div>

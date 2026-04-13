@@ -106,9 +106,9 @@ export default function AdminPage() {
 
   const refreshBanners = () => api.getBanners().then(setBanners);
 
-  const handleBannerSave = async (id: string, image: string, link: string) => {
+  const handleBannerSave = async (id: string, image: string, link: string, title?: string, description?: string, contact?: string) => {
     setBannerSaving(id);
-    try { await api.updateBanner(id, { image, link }); await refreshBanners(); } catch { alert("저장 실패"); }
+    try { await api.updateBanner(id, { image, link, title, description, contact } as any); await refreshBanners(); } catch { alert("저장 실패"); }
     setBannerSaving(null);
   };
 
@@ -741,14 +741,17 @@ function AdminModal({ modal, stores, saving, onClose, onSave }: {
 
 // ─── Banner Editor ───
 function BannerEditor({ banner, label, size, saving, onSave }: {
-  banner: import("@/types").Banner;
+  banner: import("@/types").Banner & { title?: string; description?: string; contact?: string };
   label: string;
   size: string;
   saving: boolean;
-  onSave: (id: string, image: string, link: string) => void;
+  onSave: (id: string, image: string, link: string, title?: string, description?: string, contact?: string) => void;
 }) {
   const [image, setImage] = useState(banner.image || "");
   const [link, setLink] = useState(banner.link || "");
+  const [title, setTitle] = useState(banner.title || "");
+  const [description, setDescription] = useState(banner.description || "");
+  const [contact, setContact] = useState(banner.contact || "");
   const inputClass = "w-full bg-white border border-border-custom rounded-xl px-4 py-3 text-base text-surface focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/10 transition-all placeholder:text-muted";
 
   return (
@@ -758,7 +761,7 @@ function BannerEditor({ banner, label, size, saving, onSave }: {
           <h4 className="text-surface font-bold text-base">{label}</h4>
           <p className="text-muted text-sm mt-0.5">권장 사이즈: <span className="text-accent font-semibold">{size}</span></p>
         </div>
-        <button onClick={() => onSave(banner.id, image, link)} disabled={saving}
+        <button onClick={() => onSave(banner.id, image, link, title, description, contact)} disabled={saving}
           className="bg-accent hover:bg-accent-hover text-white text-sm font-bold px-5 py-2 rounded-lg transition-all disabled:opacity-50">
           {saving ? "저장 중..." : "저장"}
         </button>
@@ -768,7 +771,22 @@ function BannerEditor({ banner, label, size, saving, onSave }: {
         <ImageUpload value={image} onChange={setImage} folder="banners" label="배너 이미지" aspect="aspect-[4/1]" hint={size} />
 
         <div>
-          <label className="text-sub text-sm font-medium block mb-2">클릭 시 이동 URL <span className="text-muted font-normal">(선택)</span></label>
+          <label className="text-sub text-sm font-medium block mb-2">제목 <span className="text-muted font-normal">(배너 상세 페이지에 표시)</span></label>
+          <input className={inputClass} value={title} onChange={e => setTitle(e.target.value)} placeholder="예: 골프 여행 특가 안내" />
+        </div>
+
+        <div>
+          <label className="text-sub text-sm font-medium block mb-2">상세 설명</label>
+          <textarea className={inputClass + " resize-none"} rows={4} value={description} onChange={e => setDescription(e.target.value)} placeholder="배너 상세 페이지에 표시될 설명 (여행 코스, 혜택 등)" />
+        </div>
+
+        <div>
+          <label className="text-sub text-sm font-medium block mb-2">연락처</label>
+          <input className={inputClass} value={contact} onChange={e => setContact(e.target.value)} placeholder="전화번호, 카톡 ID 등" />
+        </div>
+
+        <div>
+          <label className="text-sub text-sm font-medium block mb-2">외부 링크 URL <span className="text-muted font-normal">(선택, 상세 페이지 대신 바로 이동)</span></label>
           <input className={inputClass} value={link} onChange={e => setLink(e.target.value)} placeholder="https://example.com" />
         </div>
       </div>
