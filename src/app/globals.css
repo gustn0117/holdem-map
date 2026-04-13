@@ -88,6 +88,31 @@ body {
 @keyframes btnFade { 0% { opacity: 0; } 15% { opacity: 1; } 85% { opacity: 1; } 100% { opacity: 0; } }
 .btn-fade { animation: btnFade 2s ease infinite; }
 
+@keyframes btnBounce {
+  0%, 100% { transform: scale(1) translateY(0); }
+  20% { transform: scale(1.06) translateY(-2px); }
+  40% { transform: scale(0.98) translateY(0); }
+  60% { transform: scale(1.03) translateY(-1px); }
+  80% { transform: scale(1) translateY(0); }
+}
+.btn-bounce { animation: btnBounce 2.5s ease-in-out infinite; }
+
+@keyframes btnShimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.btn-shimmer {
+  background: linear-gradient(90deg, #00874a 0%, #00a05a 25%, #fbbf24 50%, #00a05a 75%, #00874a 100%);
+  background-size: 200% 100%;
+  animation: btnShimmer 3s linear infinite;
+}
+
+@keyframes btnGlow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(0, 135, 74, 0.5), 0 2px 8px rgba(0, 135, 74, 0.3); }
+  50% { box-shadow: 0 0 0 6px rgba(0, 135, 74, 0), 0 4px 16px rgba(251, 191, 36, 0.4); }
+}
+.btn-glow { animation: btnGlow 2s ease-in-out infinite; }
+
 .glow-line { height: 1px; background: var(--color-border-custom); }
 
 /* Real-time ticker */
