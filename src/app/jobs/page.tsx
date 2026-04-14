@@ -107,8 +107,11 @@ export default function JobsPage() {
   const filteredJobs = useMemo(() => {
     let result = jobs;
     if (filterRole !== "전체") result = result.filter(j => j.role === filterRole);
+    if (filterRegion !== "전체") result = result.filter(j => j.areas && j.areas.some((a: string) => a.includes(filterRegion)));
+    if (filterDistrict !== "전체") result = result.filter(j => j.areas && j.areas.some((a: string) => a.includes(filterDistrict)));
+    if (filterGender !== "전체") result = result.filter((j: any) => j.gender === filterGender);
     return result;
-  }, [jobs, filterRole]);
+  }, [jobs, filterRole, filterRegion, filterDistrict, filterGender]);
 
   const timeAgo = (date: string | null) => {
     if (!date) return ""; const d = Date.now() - new Date(date).getTime(); const m = Math.floor(d / 60000);
@@ -229,10 +232,35 @@ export default function JobsPage() {
                 </div>
               </>
             ) : (
-              <div>
-                <p className="text-sub text-[12px] font-semibold mb-2">직종</p>
-                <div className="flex gap-1.5">
-                  {["전체", "딜러", "서빙", "매니저", "플로어"].map(r => <button key={r} onClick={() => setFilterRole(r)} className={`px-3 py-1.5 rounded-lg text-[12px] font-semibold transition-all ${filterRole === r ? "bg-accent text-white" : "bg-[#f5f6f8] text-sub"}`}>{r}</button>)}
+              <div className="space-y-4">
+                <div>
+                  <p className="text-sub text-[12px] font-semibold mb-2">직종</p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {["전체", "딜러", "서빙", "매니저", "플로어"].map(r => <button key={r} onClick={() => setFilterRole(r)} className={`px-3 py-1.5 rounded-lg text-[12px] font-semibold transition-all ${filterRole === r ? "bg-accent text-white" : "bg-[#f5f6f8] text-sub"}`}>{r}</button>)}
+                  </div>
+                </div>
+                <div>
+                  <p className="text-sub text-[12px] font-semibold mb-2">지역</p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {REGIONS.map(r => <button key={r} onClick={() => { setFilterRegion(r); setFilterDistrict("전체"); }} className={`px-3 py-1.5 rounded-lg text-[12px] font-semibold transition-all ${filterRegion === r ? "bg-accent text-white" : "bg-[#f5f6f8] text-sub"}`}>{r}</button>)}
+                  </div>
+                </div>
+                {filterRegion !== "전체" && regionData[filterRegion] && (
+                  <div>
+                    <p className="text-sub text-[12px] font-semibold mb-2">{filterRegion} 세부 지역</p>
+                    <div className="flex flex-wrap gap-1.5">
+                      <button onClick={() => setFilterDistrict("전체")} className={`px-3 py-1.5 rounded-lg text-[12px] font-semibold transition-all ${filterDistrict === "전체" ? "bg-accent text-white" : "bg-[#f5f6f8] text-sub"}`}>전체</button>
+                      {regionData[filterRegion].map(d => (
+                        <button key={d} onClick={() => setFilterDistrict(d)} className={`px-3 py-1.5 rounded-lg text-[12px] font-semibold transition-all ${filterDistrict === d ? "bg-accent text-white" : "bg-[#f5f6f8] text-sub"}`}>{d}</button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                <div>
+                  <p className="text-sub text-[12px] font-semibold mb-2">성별</p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {GENDERS.map(g => <button key={g} onClick={() => setFilterGender(g)} className={`px-3 py-1.5 rounded-lg text-[12px] font-semibold transition-all ${filterGender === g ? "bg-accent text-white" : "bg-[#f5f6f8] text-sub"}`}>{g}</button>)}
+                  </div>
                 </div>
               </div>
             )}
