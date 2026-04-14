@@ -7,6 +7,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
 import Link from "next/link";
 import ImageUpload from "@/components/ImageUpload";
+import { addPoints, POINT_RULES } from "@/lib/rank";
 
 export default function BoardWritePage() {
   const [title, setTitle] = useState("");
@@ -51,6 +52,8 @@ export default function BoardWritePage() {
       image,
     });
     if (error) { alert("작성에 실패했습니다."); setLoading(false); return; }
+    const pt = await addPoints(supabase, user.id, "post");
+    if (!pt.success && pt.message) alert(pt.message);
     router.push("/board");
   };
 

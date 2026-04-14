@@ -7,6 +7,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
+import { addPoints } from "@/lib/rank";
 
 interface Post {
   id: string; user_id: string; nickname: string; title: string; content: string;
@@ -70,6 +71,7 @@ export default function BoardDetailPage() {
       await supabase.from("posts").update(newCount).eq("id", post.id);
       setPost(p => p ? { ...p, ...newCount } : p);
       setUserReaction(type);
+      await addPoints(supabase, user.id, "reaction");
     }
   };
 
@@ -82,6 +84,7 @@ export default function BoardDetailPage() {
     if (error) { alert("댓글 등록에 실패했습니다."); return; }
     if (data) setComments([...comments, data]);
     setCommentText("");
+    await addPoints(supabase, user.id, "comment");
   };
 
   const handleDelete = async () => {

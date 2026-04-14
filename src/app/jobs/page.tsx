@@ -7,8 +7,9 @@ import Footer from "@/components/Footer";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
 import { Job } from "@/types";
+import { regionData, allRegions } from "@/data/areas";
 
-const REGIONS = ["전체", "서울", "경기", "인천", "지방"];
+const REGIONS = ["전체", ...allRegions];
 const STATUSES = ["전체", "지금 가능", "예약 가능", "일하는 중"];
 const GENDERS = ["전체", "남", "여"];
 const SORTS = [
@@ -31,6 +32,7 @@ export default function JobsPage() {
   const [jobs, setJobs] = useState<Job[]>([]);
   const [loading, setLoading] = useState(true);
   const [filterRegion, setFilterRegion] = useState("전체");
+  const [filterDistrict, setFilterDistrict] = useState("전체");
   const [filterGender, setFilterGender] = useState("전체");
   const [filterStatus, setFilterStatus] = useState("전체");
   const [filterRole, setFilterRole] = useState("전체");
@@ -86,6 +88,7 @@ export default function JobsPage() {
   const filteredDealers = useMemo(() => {
     let result = dealers;
     if (filterRegion !== "전체") result = result.filter(d => d.areas && d.areas.length > 0 && d.areas.some((a: string) => a.includes(filterRegion)));
+    if (filterDistrict !== "전체") result = result.filter(d => d.areas && d.areas.some((a: string) => a.includes(filterDistrict)));
     if (filterStatus !== "전체") result = result.filter(d => d.status === filterStatus);
     if (filterGender !== "전체") result = result.filter((d: any) => d.gender === filterGender);
 
@@ -99,7 +102,7 @@ export default function JobsPage() {
       return new Date(b.status_updated_at || b.created_at || 0).getTime() - new Date(a.status_updated_at || a.created_at || 0).getTime();
     });
     return result;
-  }, [dealers, filterRegion, filterStatus, filterGender, sortBy]);
+  }, [dealers, filterRegion, filterDistrict, filterStatus, filterGender, sortBy]);
 
   const filteredJobs = useMemo(() => {
     let result = jobs;
@@ -192,9 +195,20 @@ export default function JobsPage() {
                 <div>
                   <p className="text-sub text-[12px] font-semibold mb-2">지역</p>
                   <div className="flex flex-wrap gap-1.5">
-                    {REGIONS.map(r => <button key={r} onClick={() => setFilterRegion(r)} className={`px-3 py-1.5 rounded-lg text-[12px] font-semibold transition-all ${filterRegion === r ? "bg-accent text-white" : "bg-[#f5f6f8] text-sub"}`}>{r}</button>)}
+                    {REGIONS.map(r => <button key={r} onClick={() => { setFilterRegion(r); setFilterDistrict("전체"); }} className={`px-3 py-1.5 rounded-lg text-[12px] font-semibold transition-all ${filterRegion === r ? "bg-accent text-white" : "bg-[#f5f6f8] text-sub"}`}>{r}</button>)}
                   </div>
                 </div>
+                {filterRegion !== "전체" && regionData[filterRegion] && (
+                  <div>
+                    <p className="text-sub text-[12px] font-semibold mb-2">{filterRegion} 세부 지역</p>
+                    <div className="flex flex-wrap gap-1.5">
+                      <button onClick={() => setFilterDistrict("전체")} className={`px-3 py-1.5 rounded-lg text-[12px] font-semibold transition-all ${filterDistrict === "전체" ? "bg-accent text-white" : "bg-[#f5f6f8] text-sub"}`}>전체</button>
+                      {regionData[filterRegion].map(d => (
+                        <button key={d} onClick={() => setFilterDistrict(d)} className={`px-3 py-1.5 rounded-lg text-[12px] font-semibold transition-all ${filterDistrict === d ? "bg-accent text-white" : "bg-[#f5f6f8] text-sub"}`}>{d}</button>
+                      ))}
+                    </div>
+                  </div>
+                )}
                 <div>
                   <p className="text-sub text-[12px] font-semibold mb-2">상태</p>
                   <div className="flex flex-wrap gap-1.5">
