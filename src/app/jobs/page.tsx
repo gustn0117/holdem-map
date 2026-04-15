@@ -286,51 +286,47 @@ export default function JobsPage() {
                 )}
               </div>
             ) : filteredDealers.map(d => (
-              <div key={d.id} className="bg-white rounded-2xl card-shadow overflow-hidden hover:card-shadow-hover transition-all flex flex-col">
+              <div key={d.id} className="bg-white rounded-2xl card-shadow overflow-hidden hover:card-shadow-hover transition-all flex md:flex-col">
                 {/* Photo / Placeholder */}
-                <div className="h-36 bg-[#f5f6f8] overflow-hidden relative">
+                <div className="w-32 md:w-full md:h-36 shrink-0 bg-[#f5f6f8] overflow-hidden relative">
                   {d.avatar ? (
                     <img src={d.avatar} alt={d.nickname} className="w-full h-full object-cover" />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center bg-accent/5">
-                      <svg className="w-14 h-14 text-accent/20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div className="w-full h-full flex items-center justify-center bg-accent/5 min-h-32">
+                      <svg className="w-10 h-10 md:w-14 md:h-14 text-accent/20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                       </svg>
                     </div>
                   )}
                 </div>
-                <div className="p-5 flex flex-col flex-1">
-                  <div className="flex items-center gap-3 mb-3">
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2">
-                        <p className="text-surface text-[16px] font-bold truncate">{d.nickname}</p>
-                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${statusBg(d.status || "")}`}>{d.status || "등록됨"}</span>
-                      </div>
-                      <p className="text-muted text-[12px]">{d.areas?.slice(0, 2).join(", ")} · {d.experience || "경력 미입력"}</p>
-                    </div>
+                <div className="p-3 md:p-5 flex flex-col flex-1 min-w-0">
+                  <div className="flex items-center gap-1.5 mb-1 md:mb-3 flex-wrap">
+                    <p className="text-surface text-[14px] md:text-[16px] font-bold truncate">{d.nickname}</p>
+                    <span className={`text-[9px] md:text-[10px] font-bold px-1.5 md:px-2 py-0.5 rounded-full ${statusBg(d.status || "")}`}>{d.status || "등록됨"}</span>
                   </div>
-                  <div className="flex items-center gap-2 text-[12px] text-muted mb-3">
-                    <span className={`w-2 h-2 rounded-full ${statusColor(d.status || "")}`} />
+                  <p className="text-muted text-[11px] md:text-[12px] truncate">{d.areas?.slice(0, 2).join(", ")}{d.experience && ` · ${d.experience}`}</p>
+                  <div className="flex items-center gap-1.5 text-[10px] md:text-[12px] text-muted my-1.5 md:mb-3">
+                    <span className={`w-1.5 h-1.5 md:w-2 md:h-2 rounded-full ${statusColor(d.status || "")}`} />
                     <span>{timeAgo(d.status_updated_at || d.created_at)}</span>
                   </div>
-                  {d.bio && <p className="text-sub text-[13px] mb-3 line-clamp-2">{d.bio}</p>}
-                  {/* Contact icons - pushed to bottom */}
-                  <div className="flex gap-2 mt-auto pt-2">
+                  {d.bio && <p className="text-sub text-[11px] md:text-[13px] mb-2 md:mb-3 line-clamp-1 md:line-clamp-2">{d.bio}</p>}
+                  {/* Contact icons */}
+                  <div className="flex gap-1 md:gap-2 mt-auto md:pt-2">
                     {d.contact_phone && (
-                      <a href={`tel:${d.contact_phone}`} className="flex items-center gap-1.5 flex-1 bg-accent hover:bg-accent-hover text-white text-[12px] font-bold py-2.5 rounded-xl justify-center transition-all">
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>
+                      <a href={`tel:${d.contact_phone}`} onClick={e => e.stopPropagation()} className="flex items-center gap-1 flex-1 bg-accent hover:bg-accent-hover text-white text-[11px] md:text-[12px] font-bold py-1.5 md:py-2.5 rounded-lg md:rounded-xl justify-center transition-all">
+                        <svg className="w-3 h-3 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>
                         전화
                       </a>
                     )}
                     {d.contact_kakao && (
-                      <button onClick={() => { navigator.clipboard.writeText(d.contact_kakao); alert(`카카오톡 ID: ${d.contact_kakao} (복사됨)`); }} className="flex items-center gap-1.5 flex-1 bg-[#FEE500] hover:bg-[#e6cf00] text-[#3C1E1E] text-[12px] font-bold py-2.5 rounded-xl justify-center transition-all">
-                        <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3C6.477 3 2 6.463 2 10.691c0 2.72 1.8 5.108 4.516 6.467-.197.735-.714 2.666-.818 3.08-.128.512.188.504.395.367.163-.108 2.592-1.76 3.637-2.477.733.104 1.49.16 2.27.16 5.523 0 10-3.463 10-7.691S17.523 3 12 3z"/></svg>
+                      <button onClick={e => { e.stopPropagation(); navigator.clipboard.writeText(d.contact_kakao); alert(`카카오톡 ID: ${d.contact_kakao} (복사됨)`); }} className="flex items-center gap-1 flex-1 bg-[#FEE500] hover:bg-[#e6cf00] text-[#3C1E1E] text-[11px] md:text-[12px] font-bold py-1.5 md:py-2.5 rounded-lg md:rounded-xl justify-center transition-all">
+                        <svg className="w-3 h-3 md:w-4 md:h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3C6.477 3 2 6.463 2 10.691c0 2.72 1.8 5.108 4.516 6.467-.197.735-.714 2.666-.818 3.08-.128.512.188.504.395.367.163-.108 2.592-1.76 3.637-2.477.733.104 1.49.16 2.27.16 5.523 0 10-3.463 10-7.691S17.523 3 12 3z"/></svg>
                         카톡
                       </button>
                     )}
                     {d.contact_telegram && (
-                      <a href={`https://t.me/${d.contact_telegram}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 flex-1 bg-[#229ED9] hover:bg-[#1a8bc2] text-white text-[12px] font-bold py-2.5 rounded-xl justify-center transition-all">
-                        <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.2-.08-.06-.19-.04-.28-.02-.12.02-2.02 1.28-5.7 3.77-.54.37-1.03.55-1.47.54-.48-.01-1.41-.27-2.1-.5-.84-.28-1.51-.43-1.45-.91.03-.25.38-.51 1.05-.78 4.12-1.79 6.87-2.97 8.26-3.54 3.93-1.62 4.75-1.9 5.28-1.91.12 0 .38.03.55.17.14.12.18.28.2.45-.01.06-.01.24-.02.38z"/></svg>
+                      <a href={`https://t.me/${d.contact_telegram}`} target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()} className="flex items-center gap-1 flex-1 bg-[#229ED9] hover:bg-[#1a8bc2] text-white text-[11px] md:text-[12px] font-bold py-1.5 md:py-2.5 rounded-lg md:rounded-xl justify-center transition-all">
+                        <svg className="w-3 h-3 md:w-4 md:h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.2-.08-.06-.19-.04-.28-.02-.12.02-2.02 1.28-5.7 3.77-.54.37-1.03.55-1.47.54-.48-.01-1.41-.27-2.1-.5-.84-.28-1.51-.43-1.45-.91.03-.25.38-.51 1.05-.78 4.12-1.79 6.87-2.97 8.26-3.54 3.93-1.62 4.75-1.9 5.28-1.91.12 0 .38.03.55.17.14.12.18.28.2.45-.01.06-.01.24-.02.38z"/></svg>
                         텔레
                       </a>
                     )}
