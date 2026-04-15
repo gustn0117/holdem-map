@@ -177,7 +177,7 @@ export default function Home() {
               <div className="absolute bottom-0 left-0 right-0 h-3 bg-linear-to-t from-white to-transparent z-10 pointer-events-none" />
               <div className="ticker-scroll px-4">
                 {[...jobs, ...jobs].map((job, i) => (
-                  <Link key={`${job.id}-${i}`} href={`/jobs/${job.id}`} className="flex items-center gap-3 py-2.5 group">
+                  <Link key={`${job.id}-${i}`} href="/jobs" className="flex items-center gap-3 py-2.5 group">
                     {job.photo ? (
                       <img src={job.photo} alt={job.nickname} className="w-10 h-10 rounded-lg object-cover shrink-0" />
                     ) : (
