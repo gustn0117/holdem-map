@@ -45,6 +45,7 @@ export default function JobWritePage() {
     type: "구직",
     nickname: "",
     role: "딜러",
+    gender: "",
     experience: "",
     areas: [] as string[],
     contact_kakao: "",
@@ -97,6 +98,7 @@ export default function JobWritePage() {
         type: form.type,
         nickname: form.nickname,
         role: form.role,
+        gender: form.gender,
         experience: form.experience,
         areas: form.areas,
         contact_type: "복수",
@@ -161,6 +163,19 @@ export default function JobWritePage() {
             <div>
               <label className="text-sub text-sm font-semibold block mb-2">{form.type === "구인" ? "담당자 닉네임 *" : "닉네임 *"}</label>
               <input className={inputClass} value={form.nickname} onChange={e => set("nickname", e.target.value)} placeholder={form.type === "구인" ? "담당자 닉네임" : "닉네임을 입력하세요"} />
+            </div>
+          </div>
+
+          {/* Gender */}
+          <div>
+            <label className="text-sub text-sm font-semibold block mb-2">{form.type === "구인" ? "선호 성별" : "성별"} <span className="text-muted font-normal">(선택)</span></label>
+            <div className="flex gap-2">
+              {[{ v: "", l: "무관" }, { v: "남", l: "남" }, { v: "여", l: "여" }].map(g => (
+                <button key={g.v} type="button" onClick={() => set("gender", g.v)}
+                  className={`flex-1 py-2.5 rounded-xl text-[13px] font-semibold border transition-all ${form.gender === g.v ? "bg-accent text-white border-accent" : "border-border-custom text-sub"}`}>
+                  {g.l}
+                </button>
+              ))}
             </div>
           </div>
 
