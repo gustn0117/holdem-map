@@ -19,10 +19,10 @@ const SORTS = [
 ];
 
 interface DealerProfile {
-  id: string; nickname: string; status: string; status_updated_at: string;
+  id: string; nickname: string; role: string; status: string; status_updated_at: string;
   experience: string; areas: string[]; bio: string; avatar: string;
   contact_kakao: string; contact_telegram: string; contact_phone: string;
-  created_at: string;
+  created_at: string; gender: string;
 }
 
 export default function JobsPage() {
@@ -54,6 +54,7 @@ export default function JobsPage() {
         .map(job => ({
           id: job.user_id || job.id,
           nickname: job.nickname,
+          role: job.role || "딜러",
           status: "지금 가능",
           status_updated_at: job.created_at,
           experience: job.experience,
@@ -64,6 +65,7 @@ export default function JobsPage() {
           contact_telegram: "",
           contact_phone: "",
           created_at: job.created_at,
+          gender: (job as any).gender || "",
         }));
 
       // Parse contact field for job dealers
@@ -90,7 +92,11 @@ export default function JobsPage() {
     if (filterRegion !== "전체") result = result.filter(d => d.areas && d.areas.length > 0 && d.areas.some((a: string) => a.includes(filterRegion)));
     if (filterDistrict !== "전체") result = result.filter(d => d.areas && d.areas.some((a: string) => a.includes(filterDistrict)));
     if (filterStatus !== "전체") result = result.filter(d => d.status === filterStatus);
-    if (filterGender !== "전체") result = result.filter((d: any) => d.gender === filterGender);
+    if (filterGender !== "전체") result = result.filter(d => d.gender === filterGender);
+    if (filterRole !== "전체") {
+      if (filterRole === "매니저") result = result.filter(d => d.role === "매니저" || d.role === "플로어");
+      else result = result.filter(d => d.role === filterRole);
+    }
 
     // Sort: 지금 가능 > 예약 가능 > 일하는 중 > 미설정, then by update time
     const statusOrder: Record<string, number> = { "지금 가능": 0, "예약 가능": 1, "일하는 중": 2 };
@@ -177,10 +183,12 @@ export default function JobsPage() {
         </div>
 
         {/* Tabs */}
-        <div className="flex items-center gap-3 mb-5">
-          <div className="flex bg-white rounded-lg p-1 card-shadow">
-            <button onClick={() => setTab("dealer")} className={`px-5 py-2 rounded-md text-[13px] font-semibold transition-all ${tab === "dealer" ? "bg-accent text-white" : "text-sub"}`}>딜러 찾기</button>
-            <button onClick={() => setTab("jobs")} className={`px-5 py-2 rounded-md text-[13px] font-semibold transition-all ${tab === "jobs" ? "bg-accent text-white" : "text-sub"}`}>구인/구직글</button>
+        <div className="flex items-center gap-3 mb-5 overflow-x-auto hide-scrollbar">
+          <div className="flex bg-white rounded-lg p-1 card-shadow shrink-0">
+            <button onClick={() => { setTab("dealer"); setFilterRole("전체"); }} className={`px-3 md:px-5 py-2 rounded-md text-[12px] md:text-[13px] font-semibold transition-all whitespace-nowrap ${tab === "dealer" && filterRole === "전체" ? "bg-accent text-white" : "text-sub"}`}>딜러 찾기</button>
+            <button onClick={() => { setTab("dealer"); setFilterRole("서빙"); }} className={`px-3 md:px-5 py-2 rounded-md text-[12px] md:text-[13px] font-semibold transition-all whitespace-nowrap ${tab === "dealer" && filterRole === "서빙" ? "bg-accent text-white" : "text-sub"}`}>서빙 찾기</button>
+            <button onClick={() => { setTab("dealer"); setFilterRole("매니저"); }} className={`px-3 md:px-5 py-2 rounded-md text-[12px] md:text-[13px] font-semibold transition-all whitespace-nowrap ${tab === "dealer" && (filterRole === "매니저" || filterRole === "플로어") ? "bg-accent text-white" : "text-sub"}`}>매니저/플로어</button>
+            <button onClick={() => setTab("jobs")} className={`px-3 md:px-5 py-2 rounded-md text-[12px] md:text-[13px] font-semibold transition-all whitespace-nowrap ${tab === "jobs" ? "bg-accent text-white" : "text-sub"}`}>구인/구직글</button>
           </div>
           <button onClick={() => setShowFilter(!showFilter)} className={`card-shadow px-4 py-2 rounded-lg text-[13px] font-semibold flex items-center gap-1.5 transition-all ${
             (filterRegion !== "전체" || filterStatus !== "전체") ? "bg-accent text-white" : "bg-white text-sub"

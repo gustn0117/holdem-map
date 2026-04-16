@@ -162,7 +162,7 @@ export default function Home() {
                   </span>
                   <span className="text-red-500 text-[12px] font-extrabold">실시간</span>
                 </div>
-                <h3 className="text-surface text-[15px] font-extrabold">구인구직</h3>
+                <Link href="/jobs" className="text-surface text-[15px] font-extrabold hover:text-accent transition-colors">구인구직</Link>
               </div>
               <div className="flex items-center gap-2">
                 <Link href="/jobs/write" className="text-white text-[11px] font-bold bg-accent px-2.5 py-1 rounded-full">등록하기</Link>
@@ -218,9 +218,12 @@ export default function Home() {
                   <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500" />
                 </span>
                 <span className="text-red-500 text-[12px] font-extrabold">LIVE</span>
-                <h3 className="text-surface text-[14px] font-extrabold">진행중인 토너/대회/레이크</h3>
+                <Link href="/live" className="text-surface text-[14px] font-extrabold hover:text-accent transition-colors">진행중인 토너/대회/레이크</Link>
               </div>
-              <Link href="/live" className="text-accent text-[12px] font-semibold">전체보기 →</Link>
+              <div className="flex items-center gap-2">
+                <Link href="/live" className="text-white text-[11px] font-bold bg-accent px-2.5 py-1 rounded-full">등록하기</Link>
+                <Link href="/live" className="text-accent text-[12px] font-semibold">전체보기 →</Link>
+              </div>
             </div>
           </div>
           {liveGames.length > 0 ? (
