@@ -33,10 +33,7 @@ export default function LoginPage() {
       <main className="flex-1 flex items-center justify-center px-4 py-12">
         <div className="w-full max-w-[400px]">
           <div className="text-center mb-8">
-            <svg className="w-12 h-12 mx-auto mb-4" viewBox="0 0 36 36" fill="none">
-              <rect width="36" height="36" rx="8" fill="#03C75A" />
-              <path d="M10 10h4v6.5l8-6.5h4v16h-4v-6.5l-8 6.5h-4V10z" fill="#DC2626" />
-            </svg>
+            <img src="/logo.png" alt="홀덤맵KOREA" className="h-12 w-auto mx-auto mb-4" />
             <h1 className="text-2xl font-black text-surface">로그인</h1>
             <p className="text-muted text-sm mt-1">홀덤맵KOREA에 오신 것을 환영합니다</p>
           </div>

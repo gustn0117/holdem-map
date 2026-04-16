@@ -70,12 +70,8 @@ export default function Header() {
       <header className="sticky top-0 z-50 bg-white border-b border-border-custom">
         <div className="w-full mx-auto px-5 md:px-10 h-14 flex items-center justify-between relative" style={{ maxWidth: "1400px" }}>
           {/* Left: Logo */}
-          <Link href="/" className="flex items-center gap-1.5 shrink-0 relative z-10 group">
-            <svg className="w-8 h-8" viewBox="0 0 36 36" fill="none">
-              <rect width="36" height="36" rx="8" fill="#03C75A" />
-              <path d="M10 10h4v6.5l8-6.5h4v16h-4v-6.5l-8 6.5h-4V10z" fill="#DC2626" />
-            </svg>
-            <span className="text-[19px] font-black text-surface leading-none">홀덤맵<span className="text-accent">KOREA</span></span>
+          <Link href="/" className="shrink-0 relative z-10">
+            <img src="/logo.png" alt="홀덤맵KOREA" className="h-8 md:h-9 w-auto" />
           </Link>
 
           {/* Right: Nav */}
@@ -254,10 +250,7 @@ export default function Header() {
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
             </button>
             <div className="text-center mb-5">
-              <svg className="w-12 h-12 mx-auto mb-3" viewBox="0 0 36 36" fill="none">
-                <rect width="36" height="36" rx="8" fill="#03C75A" />
-                <path d="M10 10h4v6.5l8-6.5h4v16h-4v-6.5l-8 6.5h-4V10z" fill="#DC2626" />
-              </svg>
+              <img src="/logo.png" alt="홀덤맵KOREA" className="h-12 w-auto mx-auto mb-3" />
               <h3 className="text-surface text-lg font-black">홀덤맵KOREA 앱 설치</h3>
               <p className="text-muted text-sm mt-1">홈 화면에 추가하여 앱처럼 사용하세요</p>
             </div>

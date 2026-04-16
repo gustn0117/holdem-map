@@ -61,10 +61,7 @@ export default function RegisterPage() {
         <div className="w-full max-w-[440px]">
           {/* Logo */}
           <div className="text-center mb-6">
-            <svg className="w-12 h-12 mx-auto mb-3" viewBox="0 0 36 36" fill="none">
-              <rect width="36" height="36" rx="8" fill="#03C75A" />
-              <path d="M10 10h4v6.5l8-6.5h4v16h-4v-6.5l-8 6.5h-4V10z" fill="#DC2626" />
-            </svg>
+            <img src="/logo.png" alt="홀덤맵KOREA" className="h-12 w-auto mx-auto mb-3" />
             <h1 className="text-2xl font-black text-surface">회원가입</h1>
             {/* Step indicator */}
             <div className="flex items-center justify-center gap-2 mt-3">
