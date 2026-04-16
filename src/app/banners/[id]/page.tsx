@@ -10,6 +10,7 @@ import { supabase } from "@/lib/supabase";
 interface Banner {
   id: string; position: string; image: string; link: string;
   title: string; description: string; contact: string; active: boolean;
+  detail_images: string[];
 }
 
 export default function BannerDetailPage() {
@@ -61,6 +62,18 @@ export default function BannerDetailPage() {
                 <div className="mb-6">
                   <p className="text-[13px] text-muted mb-2">상세 안내</p>
                   <p className="text-sub text-[15px] leading-relaxed whitespace-pre-wrap bg-[#f9f9f9] rounded-xl p-5">{banner.description}</p>
+                </div>
+              )}
+
+              {/* Detail images gallery */}
+              {banner.detail_images && banner.detail_images.length > 0 && (
+                <div className="mb-6">
+                  <p className="text-[13px] text-muted mb-2">상세 이미지</p>
+                  <div className="space-y-3">
+                    {banner.detail_images.map((img, i) => (
+                      <img key={i} src={img} alt="" className="w-full rounded-xl" />
+                    ))}
+                  </div>
                 </div>
               )}
 

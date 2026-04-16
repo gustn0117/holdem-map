@@ -106,9 +106,9 @@ export default function AdminPage() {
 
   const refreshBanners = () => api.getBanners().then(setBanners);
 
-  const handleBannerSave = async (id: string, image: string, link: string, title?: string, description?: string, contact?: string) => {
+  const handleBannerSave = async (id: string, image: string, link: string, title?: string, description?: string, contact?: string, detail_images?: string[]) => {
     setBannerSaving(id);
-    try { await api.updateBanner(id, { image, link, title, description, contact } as any); await refreshBanners(); } catch { alert("저장 실패"); }
+    try { await api.updateBanner(id, { image, link, title, description, contact, detail_images } as any); await refreshBanners(); } catch { alert("저장 실패"); }
     setBannerSaving(null);
   };
 
@@ -741,14 +741,15 @@ function AdminModal({ modal, stores, saving, onClose, onSave }: {
 
 // ─── Banner Editor ───
 function BannerEditor({ banner, label, size, saving, onSave }: {
-  banner: import("@/types").Banner & { title?: string; description?: string; contact?: string };
+  banner: import("@/types").Banner & { title?: string; description?: string; contact?: string; detail_images?: string[] };
   label: string;
   size: string;
   saving: boolean;
-  onSave: (id: string, image: string, link: string, title?: string, description?: string, contact?: string) => void;
+  onSave: (id: string, image: string, link: string, title?: string, description?: string, contact?: string, detail_images?: string[]) => void;
 }) {
   const [image, setImage] = useState(banner.image || "");
   const [link, setLink] = useState(banner.link || "");
+  const [detailImages, setDetailImages] = useState<string[]>(banner.detail_images || []);
   const [title, setTitle] = useState(banner.title || "");
   const [description, setDescription] = useState(banner.description || "");
   const [contact, setContact] = useState(banner.contact || "");
@@ -761,7 +762,7 @@ function BannerEditor({ banner, label, size, saving, onSave }: {
           <h4 className="text-surface font-bold text-base">{label}</h4>
           <p className="text-muted text-sm mt-0.5">권장 사이즈: <span className="text-accent font-semibold">{size}</span></p>
         </div>
-        <button onClick={() => onSave(banner.id, image, link, title, description, contact)} disabled={saving}
+        <button onClick={() => onSave(banner.id, image, link, title, description, contact, detailImages)} disabled={saving}
           className="bg-accent hover:bg-accent-hover text-white text-sm font-bold px-5 py-2 rounded-lg transition-all disabled:opacity-50">
           {saving ? "저장 중..." : "저장"}
         </button>
@@ -788,6 +789,26 @@ function BannerEditor({ banner, label, size, saving, onSave }: {
         <div>
           <label className="text-sub text-sm font-medium block mb-2">외부 링크 URL <span className="text-muted font-normal">(선택, 상세 페이지 대신 바로 이동)</span></label>
           <input className={inputClass} value={link} onChange={e => setLink(e.target.value)} placeholder="https://example.com" />
+        </div>
+
+        <div>
+          <label className="text-sub text-sm font-medium block mb-2">상세 페이지 이미지 <span className="text-muted font-normal">(최대 5장)</span></label>
+          <div className="space-y-2">
+            {detailImages.map((img, i) => (
+              <div key={i} className="flex items-center gap-2">
+                <img src={img} alt="" className="w-16 h-16 object-cover rounded-lg" />
+                <button onClick={() => setDetailImages(prev => prev.filter((_, j) => j !== i))} className="text-red-400 text-[12px] font-semibold hover:text-red-500">삭제</button>
+              </div>
+            ))}
+            {detailImages.length < 5 && (
+              <ImageUpload
+                value=""
+                onChange={v => { if (v) setDetailImages(prev => [...prev, v]); }}
+                folder="banners-detail"
+                label="이미지 추가"
+              />
+            )}
+          </div>
         </div>
       </div>
     </div>
