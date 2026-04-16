@@ -35,7 +35,7 @@ export default function JobsPage() {
   const [filterDistrict, setFilterDistrict] = useState("전체");
   const [filterGender, setFilterGender] = useState("전체");
   const [filterStatus, setFilterStatus] = useState("전체");
-  const [filterRole, setFilterRole] = useState("전체");
+  const [filterRole, setFilterRole] = useState("딜러");
   const [sortBy, setSortBy] = useState("available");
   const [showFilter, setShowFilter] = useState(false);
 
@@ -185,7 +185,7 @@ export default function JobsPage() {
         {/* Tabs */}
         <div className="flex items-center gap-3 mb-5 overflow-x-auto hide-scrollbar">
           <div className="flex bg-white rounded-lg p-1 card-shadow shrink-0">
-            <button onClick={() => { setTab("dealer"); setFilterRole("전체"); }} className={`px-3 md:px-5 py-2 rounded-md text-[12px] md:text-[13px] font-semibold transition-all whitespace-nowrap ${tab === "dealer" && filterRole === "전체" ? "bg-accent text-white" : "text-sub"}`}>딜러 찾기</button>
+            <button onClick={() => { setTab("dealer"); setFilterRole("딜러"); }} className={`px-3 md:px-5 py-2 rounded-md text-[12px] md:text-[13px] font-semibold transition-all whitespace-nowrap ${tab === "dealer" && filterRole === "딜러" ? "bg-accent text-white" : "text-sub"}`}>딜러 찾기</button>
             <button onClick={() => { setTab("dealer"); setFilterRole("서빙"); }} className={`px-3 md:px-5 py-2 rounded-md text-[12px] md:text-[13px] font-semibold transition-all whitespace-nowrap ${tab === "dealer" && filterRole === "서빙" ? "bg-accent text-white" : "text-sub"}`}>서빙 찾기</button>
             <button onClick={() => { setTab("dealer"); setFilterRole("매니저"); }} className={`px-3 md:px-5 py-2 rounded-md text-[12px] md:text-[13px] font-semibold transition-all whitespace-nowrap ${tab === "dealer" && (filterRole === "매니저" || filterRole === "플로어") ? "bg-accent text-white" : "text-sub"}`}>매니저/플로어</button>
             <button onClick={() => setTab("jobs")} className={`px-3 md:px-5 py-2 rounded-md text-[12px] md:text-[13px] font-semibold transition-all whitespace-nowrap ${tab === "jobs" ? "bg-accent text-white" : "text-sub"}`}>구인/구직글</button>
