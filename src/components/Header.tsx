@@ -68,10 +68,10 @@ export default function Header() {
   return (
     <>
       <header className="sticky top-0 z-50 bg-white border-b border-border-custom">
-        <div className="w-full mx-auto px-5 md:px-10 h-16 flex items-center justify-between relative" style={{ maxWidth: "1400px" }}>
+        <div className="w-full mx-auto px-5 md:px-10 h-18 flex items-center justify-between relative" style={{ maxWidth: "1400px" }}>
           {/* Left: Logo */}
           <Link href="/" className="shrink-0 relative z-10">
-            <img src="/logo.png" alt="홀덤맵KOREA" style={{ height: "44px" }} />
+            <img src="/logo.png" alt="홀덤맵KOREA" style={{ height: "52px" }} />
           </Link>
 
           {/* Right: Nav */}
