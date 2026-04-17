@@ -108,7 +108,7 @@ export default function JobsPage() {
       return new Date(b.status_updated_at || b.created_at || 0).getTime() - new Date(a.status_updated_at || a.created_at || 0).getTime();
     });
     return result;
-  }, [dealers, filterRegion, filterDistrict, filterStatus, filterGender, sortBy]);
+  }, [dealers, filterRegion, filterDistrict, filterStatus, filterGender, filterRole, sortBy]);
 
   const filteredJobs = useMemo(() => {
     let result = jobs;

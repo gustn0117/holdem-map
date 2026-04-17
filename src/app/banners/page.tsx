@@ -39,8 +39,8 @@ export default function BannersPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             {banners.map(b => (
               <Link key={b.id} href={`/banners/${b.id}`} className="bg-white rounded-2xl card-shadow overflow-hidden hover:card-shadow-hover transition-all group">
-                <div className="bg-[#f5f6f8] overflow-hidden">
-                  <img src={b.image} alt={b.title || ""} className="w-full h-auto block group-hover:scale-105 transition-transform" />
+                <div className="aspect-[4/1] bg-[#f5f6f8] overflow-hidden">
+                  <img src={b.image} alt={b.title || ""} className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
                 </div>
                 <div className="p-5">
                   <h2 className="text-surface text-[17px] font-bold mb-1">{b.title || "제목 없음"}</h2>
