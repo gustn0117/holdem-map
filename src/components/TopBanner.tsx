@@ -47,7 +47,7 @@ export default function TopBanner() {
           <div className="relative overflow-hidden rounded-xl">
             {/* Mobile: always /banners, PC: link or detail */}
             <Link href="/banners" className="block md:hidden">
-              <img src={current.image} alt="" className="w-full h-11 object-cover rounded-xl" />
+              <img src={current.image} alt="" className="w-full h-14 object-cover rounded-xl" />
             </Link>
             {current.link ? (
               <a href={current.link} target="_blank" rel="noopener noreferrer" className="hidden md:block">
@@ -65,7 +65,7 @@ export default function TopBanner() {
             )}
           </div>
         ) : (
-          <Link href="/banners" className="ad-pattern h-11 md:h-16 flex items-center justify-center rounded-xl">
+          <Link href="/banners" className="ad-pattern h-14 md:h-16 flex items-center justify-center rounded-xl">
             <p className="text-muted text-[12px]">광고 영역</p>
           </Link>
         )}
