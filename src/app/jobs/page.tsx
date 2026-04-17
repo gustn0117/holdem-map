@@ -174,9 +174,9 @@ export default function JobsPage() {
             </div>
             <div className="flex gap-2 shrink-0">
               {user ? (
-                <Link href="/jobs/write" className="bg-accent hover:bg-accent-hover text-white text-sm font-bold px-5 py-2.5 rounded-lg transition-all">등록하기</Link>
+                <Link href="/jobs/write" className="bg-accent hover:bg-accent-hover text-white text-[12px] md:text-sm font-bold px-4 md:px-5 py-2.5 rounded-lg transition-all whitespace-nowrap">딜러/서빙/매니저/플로어 구인구직 등록하기</Link>
               ) : (
-                <Link href="/register" className="bg-accent hover:bg-accent-hover text-white text-sm font-bold px-5 py-2.5 rounded-lg transition-all">가입하고 등록</Link>
+                <Link href="/register" className="bg-accent hover:bg-accent-hover text-white text-[12px] md:text-sm font-bold px-4 md:px-5 py-2.5 rounded-lg transition-all whitespace-nowrap">딜러/서빙/매니저/플로어 구인구직 등록하기</Link>
               )}
             </div>
           </div>
