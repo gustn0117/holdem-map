@@ -264,19 +264,19 @@ export default function Home() {
 
         {/* 이벤트 배너 */}
         <section className="px-4 pb-2 pt-3">
-          <Link href="/promotions" className="block rounded-2xl overflow-hidden relative group">
+          <Link href="/promotions" className="block rounded-2xl overflow-hidden relative group h-24">
             <div className="absolute inset-0 bg-linear-to-br from-[#1a2744] via-[#1e3a8a] to-[#2563eb]" />
-            <div className="absolute inset-0 opacity-[0.05]" style={{ backgroundImage: "radial-gradient(circle, white 1px, transparent 1px)", backgroundSize: "20px 20px" }} />
-            <div className="relative p-4 flex items-center gap-3">
-              <div className="w-11 h-11 rounded-xl bg-white/15 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
-                <svg className="w-5.5 h-5.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="absolute inset-0 opacity-[0.08]" style={{ backgroundImage: "radial-gradient(circle, white 1px, transparent 1px)", backgroundSize: "20px 20px" }} />
+            <div className="relative h-full px-5 flex items-center gap-3">
+              <div className="w-12 h-12 rounded-xl bg-white/15 flex items-center justify-center shrink-0 border border-white/20 group-hover:scale-110 transition-transform">
+                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" />
                 </svg>
               </div>
               <div className="flex-1 min-w-0">
                 <span className="text-[9px] font-black text-blue-300 bg-blue-400/20 px-1.5 py-0.5 rounded-full uppercase">EVENT</span>
-                <p className="text-white text-[15px] font-black leading-tight mt-0.5">진행중인 이벤트</p>
-                <p className="text-white/50 text-[11px]">특별 혜택과 프로모션을 확인하세요</p>
+                <p className="text-white text-[16px] font-black leading-tight mt-1">진행중인 이벤트</p>
+                <p className="text-white/60 text-[11px] mt-0.5">특별 혜택과 프로모션을 확인하세요</p>
               </div>
               <div className="w-8 h-8 rounded-full bg-white/15 flex items-center justify-center shrink-0 group-hover:bg-white/25 transition-all">
                 <svg className="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" /></svg>
@@ -324,19 +324,19 @@ export default function Home() {
 
         {/* 4. 무료 토너먼트 배너 */}
         <section className="px-4 pb-5">
-          <Link href="/tournament" className="block rounded-2xl overflow-hidden relative group">
+          <Link href="/tournament" className="block rounded-2xl overflow-hidden relative group h-24">
             <div className="absolute inset-0 bg-linear-to-br from-[#002a15] via-[#00693a] to-[#00874a]" />
-            <div className="absolute inset-0 opacity-[0.05]" style={{ backgroundImage: "radial-gradient(circle, white 1px, transparent 1px)", backgroundSize: "20px 20px" }} />
-            <div className="relative p-4 flex items-center gap-3">
-              <div className="w-11 h-11 rounded-xl bg-white/15 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
-                <svg className="w-5.5 h-5.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="absolute inset-0 opacity-[0.08]" style={{ backgroundImage: "radial-gradient(circle, white 1px, transparent 1px)", backgroundSize: "20px 20px" }} />
+            <div className="relative h-full px-5 flex items-center gap-3">
+              <div className="w-12 h-12 rounded-xl bg-white/15 flex items-center justify-center shrink-0 border border-white/20 group-hover:scale-110 transition-transform">
+                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 4v4M8 4v4M4 8h16M12 14v3m-4-1.5h8M6 20h12a2 2 0 002-2V8a2 2 0 00-2-2H6a2 2 0 00-2 2v10a2 2 0 002 2z" />
                 </svg>
               </div>
               <div className="flex-1 min-w-0">
                 <span className="text-[9px] font-black text-yellow-300 bg-yellow-400/15 px-1.5 py-0.5 rounded-full border border-yellow-400/20 uppercase">FREE</span>
-                <p className="text-white text-[15px] font-black leading-tight mt-0.5">무료 토너먼트 신청</p>
-                <p className="text-white/50 text-[11px]">가입만 하면 무료 참가 + 바인권 지급</p>
+                <p className="text-white text-[16px] font-black leading-tight mt-1">무료 토너먼트 신청</p>
+                <p className="text-white/60 text-[11px] mt-0.5">가입만 하면 무료 참가 + 바인권 지급</p>
               </div>
               <div className="w-8 h-8 rounded-full bg-white/15 flex items-center justify-center shrink-0 group-hover:bg-white/25 transition-all">
                 <svg className="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" /></svg>

@@ -7,21 +7,28 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { supabase } from "@/lib/supabase";
 
-interface Banner {
-  id: string; position: string; image: string; link: string;
-  title: string; description: string; contact: string; active: boolean;
-  detail_images: string[];
+interface Promotion {
+  id: string; title: string; content: string; image: string;
+  link: string; badge: string; active: boolean;
+  start_date: string; end_date: string;
 }
 
-export default function BannerDetailPage() {
+const BADGE_COLORS: Record<string, string> = {
+  "HOT": "bg-red-500 text-white",
+  "NEW": "bg-accent text-white",
+  "EVENT": "bg-blue-500 text-white",
+  "SALE": "bg-amber-500 text-white",
+};
+
+export default function PromotionDetailPage() {
   const { id } = useParams();
-  const [banner, setBanner] = useState<Banner | null>(null);
+  const [promo, setPromo] = useState<Promotion | null>(null);
   const [loading, setLoading] = useState(true);
   const [lightbox, setLightbox] = useState<string | null>(null);
 
   useEffect(() => {
-    supabase.from("banners").select("*").eq("id", id).single()
-      .then(({ data }) => { setBanner(data); setLoading(false); });
+    supabase.from("promotions").select("*").eq("id", id).single()
+      .then(({ data }) => { setPromo(data); setLoading(false); });
   }, [id]);
 
   useEffect(() => {
@@ -38,11 +45,11 @@ export default function BannerDetailPage() {
     </div>
   );
 
-  if (!banner) return (
+  if (!promo) return (
     <div className="flex flex-col min-h-screen pb-16 md:pb-0"><Header />
       <div className="flex-1 flex items-center justify-center text-center"><div>
-        <h1 className="text-2xl font-bold text-surface mb-3">배너를 찾을 수 없습니다</h1>
-        <Link href="/banners" className="text-accent font-semibold">목록으로</Link>
+        <h1 className="text-2xl font-bold text-surface mb-3">이벤트를 찾을 수 없습니다</h1>
+        <Link href="/promotions" className="text-accent font-semibold">목록으로</Link>
       </div></div>
       <Footer />
     </div>
@@ -53,49 +60,37 @@ export default function BannerDetailPage() {
       <Header />
       <main className="w-full mx-auto px-5 md:px-10 py-8 flex-1" style={{ maxWidth: "1400px" }}>
         <div className="max-w-3xl mx-auto">
-          <Link href="/banners" className="inline-flex items-center gap-1.5 text-muted hover:text-accent text-sm font-medium mb-6 transition-colors">
+          <Link href="/promotions" className="inline-flex items-center gap-1.5 text-muted hover:text-accent text-sm font-medium mb-6 transition-colors">
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
-            배너 목록
+            이벤트 목록
           </Link>
 
           <div className="bg-white rounded-2xl card-shadow overflow-hidden">
-            {/* 이미지 영역 (상단) */}
-            {banner.image && (
-              <div className="bg-[#f5f6f8] cursor-zoom-in" onClick={() => setLightbox(banner.image)}>
-                <img src={banner.image} alt={banner.title || ""} className="w-full h-auto object-contain max-h-96" />
+            {promo.image && (
+              <div className="bg-[#f5f6f8] cursor-zoom-in" onClick={() => setLightbox(promo.image)}>
+                <img src={promo.image} alt={promo.title || ""} className="w-full h-auto object-contain max-h-96" />
               </div>
             )}
-            {banner.detail_images && banner.detail_images.length > 0 && (
-              <div className="p-4 md:p-6 border-b border-border-custom">
-                <div className="grid grid-cols-2 gap-2 md:gap-3">
-                  {banner.detail_images.map((img, i) => (
-                    <img key={i} src={img} alt="" onClick={() => setLightbox(img)}
-                      className="w-full aspect-square object-cover rounded-xl cursor-zoom-in hover:opacity-90 transition-opacity" />
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* 텍스트 영역 (하단) */}
             <div className="p-6 md:p-8">
-              <h1 className="text-2xl md:text-3xl font-black text-surface mb-4">{banner.title || "제목 없음"}</h1>
+              <div className="flex items-center gap-2 mb-3">
+                {promo.badge && (
+                  <span className={`text-[10px] font-black px-3 py-1 rounded-full ${BADGE_COLORS[promo.badge] || "bg-gray-500 text-white"}`}>{promo.badge}</span>
+                )}
+                {promo.start_date && promo.end_date && (
+                  <span className="text-[12px] text-muted">{promo.start_date} ~ {promo.end_date}</span>
+                )}
+              </div>
+              <h1 className="text-2xl md:text-3xl font-black text-surface mb-4">{promo.title || "제목 없음"}</h1>
 
-              {banner.description && (
+              {promo.content && (
                 <div className="mb-6">
                   <p className="text-[13px] text-muted mb-2">상세 안내</p>
-                  <p className="text-sub text-[15px] leading-relaxed whitespace-pre-wrap bg-[#f9f9f9] rounded-xl p-5">{banner.description}</p>
+                  <p className="text-sub text-[15px] leading-relaxed whitespace-pre-wrap bg-[#f9f9f9] rounded-xl p-5">{promo.content}</p>
                 </div>
               )}
 
-              {banner.contact && (
-                <div className="mb-6">
-                  <p className="text-[13px] text-muted mb-2">연락처</p>
-                  <p className="text-surface text-[15px] font-semibold bg-[#f9f9f9] rounded-xl p-4">{banner.contact}</p>
-                </div>
-              )}
-
-              {banner.link && (
-                <a href={banner.link} target="_blank" rel="noopener noreferrer"
+              {promo.link && (
+                <a href={promo.link} target="_blank" rel="noopener noreferrer"
                   className="block w-full bg-accent hover:bg-accent-hover text-white font-bold py-3.5 rounded-xl text-center transition-all">
                   바로가기
                 </a>
