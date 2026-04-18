@@ -16,7 +16,7 @@ export default function ContactPage() {
     e.preventDefault();
     setSaving(true);
     const { error } = await supabase.from("inquiries").insert({
-      name: form.name, phone: form.phone, store_name: form.storeName, region: form.region, message: form.message,
+      name: form.name, phone: form.phone, store_name: form.storeName, store_address: form.storeAddress, region: form.region, message: form.message,
     });
     setSaving(false);
     if (error) { alert("문의 등록에 실패했습니다. 다시 시도해주세요."); return; }

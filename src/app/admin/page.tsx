@@ -11,7 +11,19 @@ import ImageUpload from "@/components/ImageUpload";
 
 import { supabase } from "@/lib/supabase";
 
-type Tab = "stores" | "events" | "notices" | "banners" | "shorts" | "users" | "live" | "promotions";
+type Tab = "stores" | "events" | "notices" | "banners" | "shorts" | "users" | "live" | "promotions" | "inquiries";
+
+interface Inquiry {
+  id: string;
+  name: string;
+  phone: string;
+  store_name: string;
+  store_address: string | null;
+  region: string;
+  message: string;
+  status: string;
+  created_at: string;
+}
 const ADMIN_PASSWORD = "1234";
 const inputClass = "w-full bg-white border border-border-custom rounded-xl px-4 py-3 text-base text-surface focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/10 transition-all placeholder:text-muted";
 
@@ -40,8 +52,44 @@ export default function AdminPage() {
   const [liveGames, setLiveGames] = useState<any[]>([]);
   const [promotions, setPromotions] = useState<any[]>([]);
   const [users, setUsers] = useState<Profile[]>([]);
+  const [inquiries, setInquiries] = useState<Inquiry[]>([]);
 
-  useEffect(() => { api.getBanners().then(setBanners); api.getAllShorts().then(setShorts); refreshUsers(); refreshLiveGames(); refreshPromotions(); }, []);
+  useEffect(() => { api.getBanners().then(setBanners); api.getAllShorts().then(setShorts); refreshUsers(); refreshLiveGames(); refreshPromotions(); refreshInquiries(); }, []);
+
+  const refreshInquiries = async () => {
+    const { data } = await supabase.from("inquiries").select("*").order("created_at", { ascending: false });
+    setInquiries((data as Inquiry[]) || []);
+  };
+
+  const handleInquiryApprove = async (inq: Inquiry) => {
+    setModal({
+      type: "create",
+      tab: "stores",
+      data: {
+        name: inq.store_name,
+        address: inq.store_address || "",
+        phone: inq.phone || "",
+        region: inq.region,
+        description: inq.message || "",
+        hours: "",
+        tags: "",
+        is_recommended: "false",
+        _inquiryId: inq.id,
+      },
+    });
+  };
+
+  const handleInquiryReject = async (id: string) => {
+    if (!confirm("이 문의를 반려 처리하시겠습니까?")) return;
+    await supabase.from("inquiries").update({ status: "rejected" }).eq("id", id);
+    refreshInquiries();
+  };
+
+  const handleInquiryDelete = async (id: string) => {
+    if (!confirm("이 문의를 삭제하시겠습니까?")) return;
+    await supabase.from("inquiries").delete().eq("id", id);
+    refreshInquiries();
+  };
 
   const refreshLiveGames = async () => {
     const { data } = await supabase.from("live_games").select("*").order("created_at", { ascending: false });
@@ -121,6 +169,7 @@ export default function AdminPage() {
     { key: "users", label: "회원", count: users.length },
     { key: "live", label: "실시간", count: liveGames.length },
     { key: "promotions", label: "이벤트", count: promotions.length },
+    { key: "inquiries", label: "매장 문의", count: inquiries.filter(i => i.status === "pending").length },
   ];
 
   const refreshShorts = () => api.getAllShorts().then(setShorts);
@@ -176,6 +225,11 @@ export default function AdminPage() {
         if (modal.type === "create") await api.createStore(payload);
         else await api.updateStore(formData.id as string, payload);
         refreshStores();
+        const inquiryId = formData._inquiryId as string | undefined;
+        if (inquiryId) {
+          await supabase.from("inquiries").update({ status: "approved" }).eq("id", inquiryId);
+          refreshInquiries();
+        }
       } else if (modal?.tab === "events") {
         const payload = {
           store_id: formData.store_id as string,
@@ -292,13 +346,15 @@ export default function AdminPage() {
         {/* Action bar */}
         <div className="flex items-center justify-between mb-5">
           <h2 className="text-lg font-bold text-surface">{tabs.find(t => t.key === activeTab)?.label} 관리</h2>
-          <button
-            onClick={() => setModal({ type: "create", tab: activeTab })}
-            className="bg-accent hover:bg-accent-hover text-white px-5 py-2.5 rounded-full text-sm font-semibold shadow-lg shadow-accent/20 flex items-center gap-2"
-          >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
-            새로 등록
-          </button>
+          {activeTab !== "inquiries" && (
+            <button
+              onClick={() => setModal({ type: "create", tab: activeTab })}
+              className="bg-accent hover:bg-accent-hover text-white px-5 py-2.5 rounded-full text-sm font-semibold shadow-lg shadow-accent/20 flex items-center gap-2"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
+              새로 등록
+            </button>
+          )}
         </div>
 
         {/* Store Table */}
@@ -582,6 +638,53 @@ export default function AdminPage() {
                 </div>
               ))}
             </div>
+          </div>
+        )}
+
+        {/* Inquiries management */}
+        {activeTab === "inquiries" && (
+          <div className="bg-white rounded-2xl border border-border-custom overflow-hidden">
+            {inquiries.length === 0 ? (
+              <div className="text-center py-12 text-muted text-sm">접수된 매장 문의가 없습니다</div>
+            ) : inquiries.map(inq => (
+              <div key={inq.id} className="px-5 py-4 border-b border-border-custom last:border-b-0">
+                <div className="flex items-start justify-between gap-4 mb-3">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-1.5 flex-wrap">
+                      <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${
+                        inq.status === "approved" ? "bg-accent-light text-accent" :
+                        inq.status === "rejected" ? "bg-red-50 text-red-500" :
+                        "bg-yellow-50 text-yellow-700"
+                      }`}>{inq.status === "approved" ? "승인됨" : inq.status === "rejected" ? "반려됨" : "대기중"}</span>
+                      <span className="bg-accent/10 text-accent text-[11px] font-semibold px-2 py-0.5 rounded">{inq.region}</span>
+                      <span className="text-muted text-[11px]">{inq.created_at?.slice(0, 16).replace("T", " ")}</span>
+                    </div>
+                    <p className="text-surface text-[15px] font-bold truncate">{inq.store_name}</p>
+                    {inq.store_address && <p className="text-sub text-[13px] mt-0.5 truncate">📍 {inq.store_address}</p>}
+                    <p className="text-muted text-[12px] mt-0.5">신청자: {inq.name} · {inq.phone}</p>
+                    {inq.message && <p className="text-sub text-[13px] mt-2 bg-[#f9f9f9] rounded-lg p-3 whitespace-pre-wrap">{inq.message}</p>}
+                  </div>
+                </div>
+                <div className="flex gap-2 justify-end">
+                  {inq.status === "pending" && (
+                    <>
+                      <button onClick={() => handleInquiryApprove(inq)}
+                        className="text-[12px] font-semibold px-3 py-1.5 rounded-lg bg-accent text-white hover:bg-accent-hover transition-all">
+                        매장 등록하기
+                      </button>
+                      <button onClick={() => handleInquiryReject(inq.id)}
+                        className="text-[12px] font-semibold px-3 py-1.5 rounded-lg bg-yellow-50 text-yellow-700 hover:bg-yellow-100 transition-all">
+                        반려
+                      </button>
+                    </>
+                  )}
+                  <button onClick={() => handleInquiryDelete(inq.id)}
+                    className="text-[12px] font-semibold px-3 py-1.5 rounded-lg bg-[#f5f6f8] text-muted hover:bg-red-50 hover:text-red-500 transition-all">
+                    삭제
+                  </button>
+                </div>
+              </div>
+            ))}
           </div>
         )}
 
