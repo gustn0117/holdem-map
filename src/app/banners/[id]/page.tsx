@@ -17,11 +17,20 @@ export default function BannerDetailPage() {
   const { id } = useParams();
   const [banner, setBanner] = useState<Banner | null>(null);
   const [loading, setLoading] = useState(true);
+  const [lightbox, setLightbox] = useState<string | null>(null);
 
   useEffect(() => {
     supabase.from("banners").select("*").eq("id", id).single()
       .then(({ data }) => { setBanner(data); setLoading(false); });
   }, [id]);
+
+  useEffect(() => {
+    if (!lightbox) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setLightbox(null); };
+    window.addEventListener("keydown", onKey);
+    document.body.style.overflow = "hidden";
+    return () => { window.removeEventListener("keydown", onKey); document.body.style.overflow = ""; };
+  }, [lightbox]);
 
   if (loading) return (
     <div className="flex flex-col min-h-screen pb-16 md:pb-0"><Header />
@@ -51,7 +60,7 @@ export default function BannerDetailPage() {
 
           <div className="bg-white rounded-2xl card-shadow overflow-hidden">
             {banner.image && (
-              <div className="bg-[#f5f6f8]">
+              <div className="bg-[#f5f6f8] cursor-zoom-in" onClick={() => setLightbox(banner.image)}>
                 <img src={banner.image} alt={banner.title || ""} className="w-full h-auto object-contain max-h-96" />
               </div>
             )}
@@ -69,9 +78,10 @@ export default function BannerDetailPage() {
               {banner.detail_images && banner.detail_images.length > 0 && (
                 <div className="mb-6">
                   <p className="text-[13px] text-muted mb-2">상세 이미지</p>
-                  <div className="space-y-3">
+                  <div className="grid grid-cols-2 gap-2 md:gap-3">
                     {banner.detail_images.map((img, i) => (
-                      <img key={i} src={img} alt="" className="w-full rounded-xl" />
+                      <img key={i} src={img} alt="" onClick={() => setLightbox(img)}
+                        className="w-full aspect-square object-cover rounded-xl cursor-zoom-in hover:opacity-90 transition-opacity" />
                     ))}
                   </div>
                 </div>
@@ -95,6 +105,15 @@ export default function BannerDetailPage() {
         </div>
       </main>
       <Footer />
+
+      {lightbox && (
+        <div className="fixed inset-0 z-[100] bg-black/90 flex items-center justify-center p-4" onClick={() => setLightbox(null)}>
+          <button onClick={() => setLightbox(null)} className="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors">
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+          </button>
+          <img src={lightbox} alt="" className="max-w-full max-h-full object-contain" onClick={(e) => e.stopPropagation()} />
+        </div>
+      )}
     </div>
   );
 }
