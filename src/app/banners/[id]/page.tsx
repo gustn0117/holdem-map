@@ -61,8 +61,8 @@ export default function BannerDetailPage() {
           <div className="bg-white rounded-2xl card-shadow overflow-hidden">
             {/* 이미지 영역 (상단) */}
             {banner.image && (
-              <div className="bg-[#f5f6f8] cursor-zoom-in" onClick={() => setLightbox(banner.image)}>
-                <img src={banner.image} alt={banner.title || ""} className="w-full h-auto object-contain max-h-96" />
+              <div className="cursor-zoom-in" onClick={() => setLightbox(banner.image)}>
+                <img src={banner.image} alt={banner.title || ""} className="w-full h-auto block" />
               </div>
             )}
             {banner.detail_images && banner.detail_images.length > 0 && (

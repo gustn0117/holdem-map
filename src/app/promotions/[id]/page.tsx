@@ -67,8 +67,8 @@ export default function PromotionDetailPage() {
 
           <div className="bg-white rounded-2xl card-shadow overflow-hidden">
             {promo.image && (
-              <div className="bg-[#f5f6f8] cursor-zoom-in" onClick={() => setLightbox(promo.image)}>
-                <img src={promo.image} alt={promo.title || ""} className="w-full h-auto object-contain max-h-96" />
+              <div className="cursor-zoom-in" onClick={() => setLightbox(promo.image)}>
+                <img src={promo.image} alt={promo.title || ""} className="w-full h-auto block" />
               </div>
             )}
             <div className="p-6 md:p-8">
