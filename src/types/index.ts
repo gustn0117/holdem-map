@@ -57,6 +57,11 @@ export interface Short {
   created_at?: string;
 }
 
+export interface BannerLink {
+  label: string;
+  url: string;
+}
+
 export interface Banner {
   id: string;
   position: string;
@@ -64,6 +69,7 @@ export interface Banner {
   link: string;
   active: boolean;
   updated_at?: string;
+  links?: BannerLink[];
 }
 
 export interface Notice {

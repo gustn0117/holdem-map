@@ -154,9 +154,9 @@ export default function AdminPage() {
 
   const refreshBanners = () => api.getBanners().then(setBanners);
 
-  const handleBannerSave = async (id: string, image: string, link: string, title?: string, description?: string, contact?: string, detail_images?: string[]) => {
+  const handleBannerSave = async (id: string, image: string, link: string, title?: string, description?: string, contact?: string, detail_images?: string[], links?: import("@/types").BannerLink[]) => {
     setBannerSaving(id);
-    try { await api.updateBanner(id, { image, link, title, description, contact, detail_images } as any); await refreshBanners(); } catch { alert("저장 실패"); }
+    try { await api.updateBanner(id, { image, link, title, description, contact, detail_images, links } as any); await refreshBanners(); } catch { alert("저장 실패"); }
     setBannerSaving(null);
   };
 
@@ -841,11 +841,11 @@ function AdminModal({ modal, stores, saving, onClose, onSave }: {
 
 // ─── Banner Editor ───
 function BannerEditor({ banner, label, size, saving, onSave }: {
-  banner: import("@/types").Banner & { title?: string; description?: string; contact?: string; detail_images?: string[] };
+  banner: import("@/types").Banner & { title?: string; description?: string; contact?: string; detail_images?: string[]; links?: import("@/types").BannerLink[] };
   label: string;
   size: string;
   saving: boolean;
-  onSave: (id: string, image: string, link: string, title?: string, description?: string, contact?: string, detail_images?: string[]) => void;
+  onSave: (id: string, image: string, link: string, title?: string, description?: string, contact?: string, detail_images?: string[], links?: import("@/types").BannerLink[]) => void;
 }) {
   const [image, setImage] = useState(banner.image || "");
   const [link, setLink] = useState(banner.link || "");
@@ -853,6 +853,7 @@ function BannerEditor({ banner, label, size, saving, onSave }: {
   const [title, setTitle] = useState(banner.title || "");
   const [description, setDescription] = useState(banner.description || "");
   const [contact, setContact] = useState(banner.contact || "");
+  const [links, setLinks] = useState<import("@/types").BannerLink[]>(banner.links || []);
   const inputClass = "w-full bg-white border border-border-custom rounded-xl px-4 py-3 text-base text-surface focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/10 transition-all placeholder:text-muted";
 
   return (
@@ -862,7 +863,7 @@ function BannerEditor({ banner, label, size, saving, onSave }: {
           <h4 className="text-surface font-bold text-base">{label}</h4>
           <p className="text-muted text-sm mt-0.5">권장 사이즈: <span className="text-accent font-semibold">{size}</span></p>
         </div>
-        <button onClick={() => onSave(banner.id, image, link, title, description, contact, detailImages)} disabled={saving}
+        <button onClick={() => onSave(banner.id, image, link, title, description, contact, detailImages, links)} disabled={saving}
           className="bg-accent hover:bg-accent-hover text-white text-sm font-bold px-5 py-2 rounded-lg transition-all disabled:opacity-50">
           {saving ? "저장 중..." : "저장"}
         </button>
@@ -889,6 +890,20 @@ function BannerEditor({ banner, label, size, saving, onSave }: {
         <div>
           <label className="text-sub text-sm font-medium block mb-2">외부 링크 URL <span className="text-muted font-normal">(선택, 상세 페이지 대신 바로 이동)</span></label>
           <input className={inputClass} value={link} onChange={e => setLink(e.target.value)} placeholder="https://example.com" />
+        </div>
+
+        <div>
+          <label className="text-sub text-sm font-medium block mb-2">상세 페이지 링크 버튼 <span className="text-muted font-normal">(선택, 여러 개 추가 가능)</span></label>
+          <div className="space-y-2">
+            {links.map((l, i) => (
+              <div key={i} className="flex items-center gap-2">
+                <input className={inputClass + " flex-1"} value={l.label} onChange={e => setLinks(prev => prev.map((p, j) => j === i ? { ...p, label: e.target.value } : p))} placeholder="버튼 이름 (예: 예약하기)" />
+                <input className={inputClass + " flex-[2]"} value={l.url} onChange={e => setLinks(prev => prev.map((p, j) => j === i ? { ...p, url: e.target.value } : p))} placeholder="https://example.com" />
+                <button onClick={() => setLinks(prev => prev.filter((_, j) => j !== i))} className="text-red-400 text-[12px] font-semibold hover:text-red-500 px-2">삭제</button>
+              </div>
+            ))}
+            <button onClick={() => setLinks(prev => [...prev, { label: "", url: "" }])} className="text-accent text-[13px] font-semibold hover:underline">+ 링크 버튼 추가</button>
+          </div>
         </div>
 
         <div>
