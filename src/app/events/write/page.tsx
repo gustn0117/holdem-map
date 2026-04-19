@@ -9,6 +9,10 @@ import ImageUpload from "@/components/ImageUpload";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
 
+const DEFAULT_NOTICE = `※ 본 페이지는 이벤트 정보 안내용이며, 실제 진행 및 참여는 각 업장에서 개별적으로 이루어집니다.
+※ 본 사이트는 운영·모집·정산 등에 관여하지 않으며, 이용은 업장 기준에 따릅니다.
+※ 관련 법령에 위반될 수 있는 행위는 지원하지 않습니다.`;
+
 export default function EventWritePage() {
   const router = useRouter();
   const { user, profile } = useAuth();
@@ -24,7 +28,7 @@ export default function EventWritePage() {
     buy_in: "",
     image: "",
     description: "",
-    details: "",
+    details: DEFAULT_NOTICE,
   });
 
   const set = (key: string, value: string) => setForm(prev => ({ ...prev, [key]: value }));
@@ -170,8 +174,9 @@ export default function EventWritePage() {
           </div>
 
           <div>
-            <label className="text-sub text-sm font-semibold block mb-2">상세 정보 <span className="text-muted font-normal">(선택)</span></label>
-            <textarea className={inputClass + " resize-none"} rows={5} value={form.details} onChange={e => set("details", e.target.value)} placeholder="룰, 시간표, 참가 방법, 문의처 등" />
+            <label className="text-sub text-sm font-semibold block mb-2">상세 정보 / 유의사항</label>
+            <p className="text-muted text-xs mb-2">아래 안내 문구는 자동 삽입되어 있습니다. 내용을 추가하거나 위쪽에 룰/시간표/문의처 등을 적어주세요.</p>
+            <textarea className={inputClass + " resize-none"} rows={8} value={form.details} onChange={e => set("details", e.target.value)} placeholder="룰, 시간표, 참가 방법, 문의처 등" />
           </div>
 
           <div className="flex gap-3 pt-2">

@@ -73,7 +73,12 @@ export default function TournamentPage() {
             </div>
             <div>
               <p className="text-surface font-bold mb-1">⚠️ 유의사항</p>
-              <p className="text-muted text-[13px] md:text-[14px]">참가 신청은 매장별 정원 내에서 선착순으로 마감됩니다. 현장 확인을 위해 본인 신분증을 지참해 주세요.</p>
+              <div className="text-muted text-[13px] md:text-[14px] space-y-1.5">
+                <p>참가 신청은 매장별 정원 내에서 선착순으로 마감됩니다. 현장 확인을 위해 본인 신분증을 지참해 주세요.</p>
+                <p className="pt-1.5 border-t border-border-custom/60 mt-2 text-[12px] md:text-[13px]">※ 본 토너먼트는 홀덤맵KOREA와 무관하며, 각 업장에서 개별적으로 진행됩니다.</p>
+                <p className="text-[12px] md:text-[13px]">※ 본 사이트는 운영·모집·정산 등에 관여하지 않으며, 이용은 업장 기준에 따릅니다.</p>
+                <p className="text-[12px] md:text-[13px]">※ 관련 법령에 위반될 수 있는 행위는 지원하지 않습니다.</p>
+              </div>
             </div>
           </div>
         </div>

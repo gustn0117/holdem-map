@@ -13,6 +13,10 @@ import { supabase } from "@/lib/supabase";
 
 type Tab = "stores" | "events" | "notices" | "banners" | "shorts" | "users" | "live" | "promotions" | "inquiries";
 
+const EVENT_DEFAULT_NOTICE = `※ 본 페이지는 이벤트 정보 안내용이며, 실제 진행 및 참여는 각 업장에서 개별적으로 이루어집니다.
+※ 본 사이트는 운영·모집·정산 등에 관여하지 않으며, 이용은 업장 기준에 따릅니다.
+※ 관련 법령에 위반될 수 있는 행위는 지원하지 않습니다.`;
+
 interface Inquiry {
   id: string;
   name: string;
@@ -736,7 +740,13 @@ function AdminModal({ modal, stores, saving, onClose, onSave }: {
   onClose: () => void;
   onSave: (data: Record<string, unknown>) => void;
 }) {
-  const [form, setForm] = useState<Record<string, unknown>>(modal.data || {});
+  const [form, setForm] = useState<Record<string, unknown>>(() => {
+    const initial = modal.data || {};
+    if (modal.tab === "events" && modal.type === "create" && !initial.details) {
+      return { ...initial, details: EVENT_DEFAULT_NOTICE };
+    }
+    return initial;
+  });
   const set = (key: string, value: unknown) => setForm(prev => ({ ...prev, [key]: value }));
 
   return (
