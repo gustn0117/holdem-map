@@ -11,12 +11,27 @@ import Select from "@/components/Select";
 import ImageUpload from "@/components/ImageUpload";
 import { useAuth } from "@/contexts/AuthContext";
 
+const AVATAR_ROLES = [
+  { key: "dealer", label: "딜러" },
+  { key: "server", label: "서빙" },
+  { key: "manager", label: "매니저" },
+  { key: "floor", label: "플로어" },
+] as const;
+
+const AVATAR_GENDERS = [
+  { key: "male", label: "남자" },
+  { key: "female", label: "여자" },
+] as const;
+
 export default function JobWritePage() {
   const router = useRouter();
   const { user, profile } = useAuth();
   const [saving, setSaving] = useState(false);
   const [areaSearch, setAreaSearch] = useState("");
   const [expandedRegion, setExpandedRegion] = useState<string | null>(null);
+  const [avatarOpen, setAvatarOpen] = useState(false);
+  const [avatarGender, setAvatarGender] = useState<"male" | "female">("male");
+  const [avatarRole, setAvatarRole] = useState<"dealer" | "server" | "manager" | "floor">("dealer");
 
   if (!user) {
     return (
@@ -284,8 +299,27 @@ export default function JobWritePage() {
             </div>
           </div>
 
-          {/* Photo */}
-          <ImageUpload value={form.photo} onChange={v => set("photo", v)} folder="jobs" label="프로필 사진" aspect="aspect-square max-w-[160px]" hint="선택" />
+          {/* Photo + Avatar */}
+          <div>
+            <label className="text-sub text-sm font-semibold block mb-2">프로필 사진 <span className="text-muted font-normal">(선택)</span></label>
+            <div className="flex items-start gap-4 flex-wrap">
+              <ImageUpload value={form.photo} onChange={v => set("photo", v)} folder="jobs" label="" aspect="aspect-square max-w-[160px]" hint="사진 업로드" />
+              <button type="button" onClick={() => setAvatarOpen(true)}
+                className="shrink-0 w-40 h-40 rounded-xl border-2 border-dashed border-accent/30 bg-accent/5 hover:bg-accent/10 text-accent text-[13px] font-semibold flex flex-col items-center justify-center gap-2 transition-all">
+                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+                아바타 선택
+              </button>
+              {form.photo && (
+                <div className="shrink-0 relative">
+                  <img src={form.photo} alt="" className="w-40 h-40 object-cover rounded-xl border border-border-custom" />
+                  <button type="button" onClick={() => set("photo", "")}
+                    className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-red-500 text-white flex items-center justify-center shadow-md hover:bg-red-600">
+                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" /></svg>
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
 
           {/* Message */}
           <div>
@@ -306,6 +340,50 @@ export default function JobWritePage() {
         </form>
       </main>
       <Footer />
+
+      {/* Avatar picker modal */}
+      {avatarOpen && (
+        <div className="fixed inset-0 z-[100] flex items-end md:items-center justify-center" onClick={() => setAvatarOpen(false)}>
+          <div className="absolute inset-0 bg-black/50" />
+          <div className="relative bg-white w-full md:max-w-2xl max-h-[85vh] rounded-t-3xl md:rounded-3xl overflow-hidden flex flex-col" onClick={e => e.stopPropagation()}>
+            <div className="px-5 py-4 border-b border-border-custom flex items-center justify-between">
+              <h3 className="text-surface text-lg font-black">아바타 선택</h3>
+              <button onClick={() => setAvatarOpen(false)} className="text-muted hover:text-surface">
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+              </button>
+            </div>
+            <div className="px-5 pt-4 pb-2 flex gap-2">
+              {AVATAR_GENDERS.map(g => (
+                <button key={g.key} type="button" onClick={() => setAvatarGender(g.key)}
+                  className={`px-4 py-1.5 rounded-full text-[13px] font-semibold transition-all ${avatarGender === g.key ? "bg-accent text-white" : "bg-bg text-sub"}`}>
+                  {g.label}
+                </button>
+              ))}
+            </div>
+            <div className="px-5 pb-3 flex gap-2 flex-wrap">
+              {AVATAR_ROLES.map(r => (
+                <button key={r.key} type="button" onClick={() => setAvatarRole(r.key)}
+                  className={`px-3 py-1.5 rounded-lg text-[12px] font-semibold transition-all ${avatarRole === r.key ? "bg-accent text-white" : "bg-bg text-sub"}`}>
+                  {r.label}
+                </button>
+              ))}
+            </div>
+            <div className="flex-1 overflow-y-auto px-5 pb-6">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                {[1, 2, 3, 4].map(i => {
+                  const url = `/avatars/${avatarGender}-${avatarRole}/${i}.png`;
+                  return (
+                    <button key={i} type="button" onClick={() => { set("photo", url); setAvatarOpen(false); }}
+                      className="aspect-square rounded-2xl overflow-hidden border-2 border-border-custom hover:border-accent transition-all bg-bg">
+                      <img src={url} alt="" className="w-full h-full object-cover" />
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
