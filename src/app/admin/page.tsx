@@ -162,13 +162,13 @@ export default function AdminPage() {
 
   const tabs: { key: Tab; label: string; count: number }[] = [
     { key: "stores", label: "매장", count: stores.length },
-    { key: "events", label: "이벤트", count: events.length },
+    { key: "events", label: "대회/이벤트", count: events.length },
+    { key: "promotions", label: "프로모션", count: promotions.length },
     { key: "notices", label: "공지", count: notices.length },
     { key: "banners", label: "배너 광고", count: banners.filter(b => b.image).length },
     { key: "shorts", label: "숏츠", count: shorts.length },
     { key: "users", label: "회원", count: users.length },
     { key: "live", label: "실시간", count: liveGames.length },
-    { key: "promotions", label: "이벤트", count: promotions.length },
     { key: "inquiries", label: "매장 문의", count: inquiries.filter(i => i.status === "pending").length },
   ];
 
@@ -768,7 +768,7 @@ function AdminModal({ modal, stores, saving, onClose, onSave }: {
         {modal.tab === "events" && (
           <div className="space-y-5">
             <div>
-              <label className="text-sub text-sm font-medium block mb-2">이벤트 제목 *</label>
+              <label className="text-sub text-sm font-medium block mb-2">대회/이벤트 제목 *</label>
               <input className={inputClass} value={(form.title as string) || ""} onChange={e => set("title", e.target.value)} placeholder="예: 주말 GTD 토너먼트" />
             </div>
             <div>
