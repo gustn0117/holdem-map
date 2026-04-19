@@ -103,9 +103,9 @@ export default function MarketPage() {
 
 function ListingCard({ listing: l }: { listing: any }) {
   return (
-    <div className="bg-white rounded-2xl card-shadow overflow-hidden hover:card-shadow-hover transition-all">
+    <Link href={`/market/${l.id}`} className="block bg-white rounded-2xl card-shadow overflow-hidden hover:card-shadow-hover transition-all group">
       {l.images?.[0] ? (
-        <div className="h-44 bg-[#f5f6f8] overflow-hidden"><img src={l.images[0]} alt="" className="w-full h-full object-cover" /></div>
+        <div className="h-44 bg-[#f5f6f8] overflow-hidden"><img src={l.images[0]} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" /></div>
       ) : (
         <div className="h-32 bg-[#f5f6f8] flex items-center justify-center">
           <svg className="w-10 h-10 text-[#ddd]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5" /></svg>
@@ -119,15 +119,14 @@ function ListingCard({ listing: l }: { listing: any }) {
           <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${l.status === "모집중" ? "bg-emerald-100 text-emerald-700" : "bg-gray-100 text-gray-600"}`}>{l.status}</span>
           {l.is_featured && <span className="text-[10px] font-bold text-red-500">추천</span>}
         </div>
-        <h3 className="text-surface text-[16px] font-bold mb-1">{l.title}</h3>
+        <h3 className="text-surface text-[16px] font-bold mb-1 group-hover:text-accent transition-colors">{l.title}</h3>
         <p className="text-sub text-[13px] mb-2">{l.region} {l.address && `· ${l.address}`}</p>
         <p className="text-accent text-[15px] font-black mb-3">{l.price}</p>
         {l.description && <p className="text-muted text-[13px] line-clamp-2 mb-3">{l.description}</p>}
-        <div className="flex gap-2">
-          <button className="flex-1 bg-accent hover:bg-accent-hover text-white text-[13px] font-bold py-2.5 rounded-xl transition-all">상세보기</button>
-          {l.contact && <button className="flex-1 border border-border-custom text-sub text-[13px] font-semibold py-2.5 rounded-xl hover:bg-[#f5f6f8] transition-all">문의하기</button>}
+        <div className="text-center text-accent text-[13px] font-semibold pt-2 border-t border-border-custom">
+          자세히 보기 →
         </div>
       </div>
-    </div>
+    </Link>
   );
 }
