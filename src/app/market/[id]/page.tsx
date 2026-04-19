@@ -7,15 +7,17 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import LinkifyText from "@/components/LinkifyText";
 import { supabase } from "@/lib/supabase";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface Listing {
-  id: string; type: string; title: string; region: string; address: string;
+  id: string; user_id: string | null; type: string; title: string; region: string; address: string;
   price: string; description: string; images: string[]; contact: string;
   status: string; is_featured: boolean; created_at: string; is_hidden?: boolean;
 }
 
 export default function MarketDetailPage() {
   const { id } = useParams();
+  const { user } = useAuth();
   const [listing, setListing] = useState<Listing | null>(null);
   const [loading, setLoading] = useState(true);
   const [lightbox, setLightbox] = useState<string | null>(null);
@@ -57,10 +59,19 @@ export default function MarketDetailPage() {
       <Header />
       <main className="w-full mx-auto px-5 md:px-10 py-8 flex-1" style={{ maxWidth: "1400px" }}>
         <div className="max-w-3xl mx-auto">
-          <Link href="/market" className="inline-flex items-center gap-1.5 text-muted hover:text-accent text-sm font-medium mb-6 transition-colors">
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
-            대관/매매 목록
-          </Link>
+          <div className="flex items-center justify-between mb-6">
+            <Link href="/market" className="inline-flex items-center gap-1.5 text-muted hover:text-accent text-sm font-medium transition-colors">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
+              대관/매매 목록
+            </Link>
+            {user && listing.user_id === user.id && (
+              <Link href={`/market/${listing.id}/edit`}
+                className="inline-flex items-center gap-1.5 bg-accent hover:bg-accent-hover text-white text-sm font-bold px-4 py-2 rounded-lg transition-all">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
+                수정
+              </Link>
+            )}
+          </div>
 
           <div className="bg-white rounded-2xl card-shadow overflow-hidden mb-6">
             {/* Images */}
