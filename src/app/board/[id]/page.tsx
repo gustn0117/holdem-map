@@ -23,7 +23,7 @@ interface Comment {
 export default function BoardDetailPage() {
   const { id } = useParams();
   const router = useRouter();
-  const { user, profile } = useAuth();
+  const { user, profile, refreshProfile } = useAuth();
   const [post, setPost] = useState<Post | null>(null);
   const [comments, setComments] = useState<Comment[]>([]);
   const [commentText, setCommentText] = useState("");
@@ -72,7 +72,8 @@ export default function BoardDetailPage() {
       await supabase.from("posts").update(newCount).eq("id", post.id);
       setPost(p => p ? { ...p, ...newCount } : p);
       setUserReaction(type);
-      await addPoints(supabase, user.id, "reaction");
+      const pt = await addPoints(supabase, user.id, "reaction");
+      if (pt.success) await refreshProfile();
     }
   };
 
@@ -90,7 +91,9 @@ export default function BoardDetailPage() {
     if (error) { alert("댓글 등록에 실패했습니다."); return; }
     if (data) setComments([...comments, data]);
     setCommentText("");
-    await addPoints(supabase, user.id, "comment");
+    const pt = await addPoints(supabase, user.id, "comment");
+    if (pt.success) await refreshProfile();
+    else if (pt.message) console.warn("포인트 미적립:", pt.message);
   };
 
   const handleDelete = async () => {

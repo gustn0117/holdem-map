@@ -15,7 +15,7 @@ export default function BoardWritePage() {
   const [content, setContent] = useState("");
   const [image, setImage] = useState("");
   const [loading, setLoading] = useState(false);
-  const { user, profile } = useAuth();
+  const { user, profile, refreshProfile } = useAuth();
   const router = useRouter();
 
   if (!user) {
@@ -60,7 +60,12 @@ export default function BoardWritePage() {
     });
     if (error) { alert("작성에 실패했습니다."); setLoading(false); return; }
     const pt = await addPoints(supabase, user.id, "post");
-    if (!pt.success && pt.message) alert(pt.message);
+    if (pt.success && pt.added) {
+      await refreshProfile();
+      alert(`게시글이 등록되었습니다. +${pt.added} 포인트 적립!`);
+    } else if (pt.message) {
+      alert(`게시글은 등록되었습니다. (포인트 미적립: ${pt.message})`);
+    }
     router.push("/board");
   };
 

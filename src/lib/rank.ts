@@ -40,28 +40,52 @@ export async function addPoints(
   supabase: any,
   userId: string,
   type: "post" | "comment" | "reaction"
-): Promise<{ success: boolean; message?: string }> {
+): Promise<{ success: boolean; message?: string; added?: number }> {
+  if (!userId) return { success: false, message: "로그인이 필요합니다." };
   const rule = POINT_RULES[type];
   const today = new Date().toISOString().slice(0, 10);
 
-  const { data: profile } = await supabase.from("profiles").select("points, daily_post_points, daily_comment_points, daily_reaction_points, daily_post_count, daily_comment_count, daily_reaction_count, last_points_reset").eq("id", userId).single();
-  if (!profile) return { success: false };
+  const { data: profile, error: fetchErr } = await supabase
+    .from("profiles")
+    .select("points, daily_post_points, daily_comment_points, daily_reaction_points, daily_post_count, daily_comment_count, daily_reaction_count, last_points_reset")
+    .eq("id", userId)
+    .maybeSingle();
+
+  if (fetchErr) return { success: false, message: `프로필 조회 실패: ${fetchErr.message}` };
+  if (!profile) return { success: false, message: "프로필이 존재하지 않습니다." };
 
   const isNewDay = profile.last_points_reset !== today;
   const dailyPoints = isNewDay ? 0 : (profile[`daily_${type}_points`] || 0);
   const dailyCount = isNewDay ? 0 : (profile[`daily_${type}_count`] || 0);
 
-  if (dailyCount >= rule.countLimit) return { success: false, message: `1일 ${type === "post" ? "게시글" : type === "comment" ? "댓글" : "추천/비추천"} 한도 초과` };
+  if (dailyCount >= rule.countLimit) {
+    return { success: false, message: `1일 ${type === "post" ? "게시글" : type === "comment" ? "댓글" : "추천/비추천"} 한도 초과` };
+  }
 
-  const addedPoints = Math.min(rule.points, rule.dailyLimit - dailyPoints);
+  const addedPoints = Math.max(0, Math.min(rule.points, rule.dailyLimit - dailyPoints));
+  if (addedPoints === 0) {
+    return { success: false, message: "오늘 포인트 일일 한도에 도달했습니다." };
+  }
 
-  await supabase.from("profiles").update({
+  // 새 날이면 전체 daily 리셋, 기존 날이면 해당 타입만 증가
+  const updatePayload: Record<string, unknown> = {
     points: (profile.points || 0) + addedPoints,
-    [`daily_${type}_points`]: dailyPoints + addedPoints,
-    [`daily_${type}_count`]: dailyCount + 1,
     last_points_reset: today,
-    ...(isNewDay ? { daily_post_points: type === "post" ? addedPoints : 0, daily_comment_points: type === "comment" ? addedPoints : 0, daily_reaction_points: type === "reaction" ? addedPoints : 0, daily_post_count: type === "post" ? 1 : 0, daily_comment_count: type === "comment" ? 1 : 0, daily_reaction_count: type === "reaction" ? 1 : 0 } : {}),
-  }).eq("id", userId);
+  };
+  if (isNewDay) {
+    updatePayload.daily_post_points = type === "post" ? addedPoints : 0;
+    updatePayload.daily_comment_points = type === "comment" ? addedPoints : 0;
+    updatePayload.daily_reaction_points = type === "reaction" ? addedPoints : 0;
+    updatePayload.daily_post_count = type === "post" ? 1 : 0;
+    updatePayload.daily_comment_count = type === "comment" ? 1 : 0;
+    updatePayload.daily_reaction_count = type === "reaction" ? 1 : 0;
+  } else {
+    updatePayload[`daily_${type}_points`] = dailyPoints + addedPoints;
+    updatePayload[`daily_${type}_count`] = dailyCount + 1;
+  }
 
-  return { success: true };
+  const { error: updateErr } = await supabase.from("profiles").update(updatePayload).eq("id", userId);
+  if (updateErr) return { success: false, message: `포인트 적립 실패: ${updateErr.message}` };
+
+  return { success: true, added: addedPoints };
 }
