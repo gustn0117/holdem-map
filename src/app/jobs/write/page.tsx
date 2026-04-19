@@ -371,11 +371,11 @@ export default function JobWritePage() {
             <div className="flex-1 overflow-y-auto px-5 pb-6">
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                 {[1, 2, 3, 4].map(i => {
-                  const url = `/avatars/${avatarGender}-${avatarRole}/${i}.png`;
+                  const url = `/avatars/${avatarGender}-${avatarRole}/${i}.png?v=2`;
                   return (
                     <button key={i} type="button" onClick={() => { set("photo", url); setAvatarOpen(false); }}
                       className="aspect-square rounded-2xl overflow-hidden border-2 border-border-custom hover:border-accent transition-all bg-bg">
-                      <img src={url} alt="" className="w-full h-full object-cover" />
+                      <img src={url} alt="" className="w-full h-full object-contain p-2" />
                     </button>
                   );
                 })}
