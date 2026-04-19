@@ -5,10 +5,12 @@ import Link from "next/link";
 import Header from "@/components/Header";
 import Select from "@/components/Select";
 import Footer from "@/components/Footer";
+import ImageUpload from "@/components/ImageUpload";
 import { supabase } from "@/lib/supabase";
 
 export default function ContactPage() {
   const [form, setForm] = useState({ name: "", phone: "", storeName: "", storeAddress: "", region: "서울", message: "" });
+  const [images, setImages] = useState<string[]>([]);
   const [submitted, setSubmitted] = useState(false);
   const [saving, setSaving] = useState(false);
   const set = (key: string, value: string) => setForm(prev => ({ ...prev, [key]: value }));
@@ -16,7 +18,7 @@ export default function ContactPage() {
     e.preventDefault();
     setSaving(true);
     const { error } = await supabase.from("inquiries").insert({
-      name: form.name, phone: form.phone, store_name: form.storeName, store_address: form.storeAddress, region: form.region, message: form.message,
+      name: form.name, phone: form.phone, store_name: form.storeName, store_address: form.storeAddress, region: form.region, message: form.message, store_images: images,
     });
     setSaving(false);
     if (error) { alert("문의 등록에 실패했습니다. 다시 시도해주세요."); return; }
@@ -87,8 +89,30 @@ export default function ContactPage() {
             <label className="text-sub text-sm font-semibold block mb-2">문의 내용</label>
             <textarea className={inputClass + " resize-none"} rows={5} value={form.message} onChange={e => set("message", e.target.value)} placeholder="매장 소개, 문의 사항 등을 자유롭게 작성해주세요" />
           </div>
-          <button type="submit" className="w-full bg-accent text-dark font-bold py-4 rounded-xl shadow-lg shadow-accent/25 hover:shadow-accent/40 transition-all text-base">
-            문의 접수하기
+          <div>
+            <label className="text-sub text-sm font-semibold block mb-2">매장 사진 <span className="text-muted font-normal">(선택, 최대 5장)</span></label>
+            <div className="space-y-2">
+              {images.map((img, i) => (
+                <div key={i} className="flex items-center gap-3 bg-bg rounded-xl p-3">
+                  <img src={img} alt="" className="w-20 h-20 object-cover rounded-lg" />
+                  <button type="button" onClick={() => setImages(prev => prev.filter((_, j) => j !== i))}
+                    className="ml-auto text-red-500 text-sm font-semibold hover:text-red-600 px-3 py-1.5">삭제</button>
+                </div>
+              ))}
+              {images.length < 5 && (
+                <ImageUpload
+                  value=""
+                  onChange={v => { if (v) setImages(prev => [...prev, v]); }}
+                  folder="inquiries"
+                  label={images.length === 0 ? "사진 업로드" : "사진 추가"}
+                  aspect="aspect-video"
+                  hint={`${images.length}/5`}
+                />
+              )}
+            </div>
+          </div>
+          <button type="submit" disabled={saving} className="w-full bg-accent text-dark font-bold py-4 rounded-xl shadow-lg shadow-accent/25 hover:shadow-accent/40 transition-all text-base disabled:opacity-50">
+            {saving ? "접수 중..." : "문의 접수하기"}
           </button>
           <p className="text-muted text-sm text-center">접수 후 1~2 영업일 내 연락드립니다</p>
         </form>

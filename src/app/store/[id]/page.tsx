@@ -100,6 +100,20 @@ export default function StorePage() {
           </div>
         </div>
 
+        {/* Images */}
+        {store.images && store.images.length > 0 && (
+          <div className="bg-card rounded-xl p-6 border border-border-custom mb-8">
+            <h2 className="text-surface font-bold text-xl mb-5">매장 사진</h2>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+              {store.images.map((img, i) => (
+                <a key={i} href={img} target="_blank" rel="noopener noreferrer" className="block aspect-[4/3] rounded-xl overflow-hidden bg-bg hover:opacity-90 transition-opacity">
+                  <img src={img} alt={`${store.name} ${i + 1}`} className="w-full h-full object-cover" />
+                </a>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* Description */}
         <div className="bg-card rounded-xl p-8 border border-border-custom mb-8">
           <h2 className="text-surface font-bold text-xl mb-4">매장 소개</h2>

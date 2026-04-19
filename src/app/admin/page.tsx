@@ -22,6 +22,7 @@ interface Inquiry {
   region: string;
   message: string;
   status: string;
+  store_images: string[] | null;
   created_at: string;
 }
 const ADMIN_PASSWORD = "1234";
@@ -74,6 +75,7 @@ export default function AdminPage() {
         hours: "",
         tags: "",
         is_recommended: "false",
+        images: inq.store_images || [],
         _inquiryId: inq.id,
       },
     });
@@ -216,7 +218,7 @@ export default function AdminPage() {
           phone: (formData.phone as string) || "",
           hours: (formData.hours as string) || "",
           description: (formData.description as string) || "",
-          images: [] as string[],
+          images: (formData.images as string[]) || [],
           lat, lng,
           region: formData.region as string,
           tags: (formData.tags as string).split(",").map((t: string) => t.trim()).filter(Boolean),
@@ -664,6 +666,15 @@ export default function AdminPage() {
                     {inq.store_address && <p className="text-sub text-[13px] mt-0.5 truncate">📍 {inq.store_address}</p>}
                     <p className="text-muted text-[12px] mt-0.5">신청자: {inq.name} · {inq.phone}</p>
                     {inq.message && <p className="text-sub text-[13px] mt-2 bg-[#f9f9f9] rounded-lg p-3 whitespace-pre-wrap">{inq.message}</p>}
+                    {inq.store_images && inq.store_images.length > 0 && (
+                      <div className="flex gap-2 mt-2 flex-wrap">
+                        {inq.store_images.map((img, i) => (
+                          <a key={i} href={img} target="_blank" rel="noopener noreferrer" className="block">
+                            <img src={img} alt="" className="w-20 h-20 object-cover rounded-lg border border-border-custom hover:opacity-80 transition-opacity" />
+                          </a>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 </div>
                 <div className="flex gap-2 justify-end">
@@ -762,6 +773,27 @@ function AdminModal({ modal, stores, saving, onClose, onSave }: {
             <div>
               <label className="text-sub text-sm font-medium block mb-2">매장 소개</label>
               <textarea className={inputClass + " resize-none"} rows={4} value={(form.description as string) || ""} onChange={e => set("description", e.target.value)} placeholder="매장에 대한 소개를 입력하세요" />
+            </div>
+            <div>
+              <label className="text-sub text-sm font-medium block mb-2">매장 사진 <span className="text-muted font-normal">(최대 5장)</span></label>
+              <div className="space-y-2">
+                {((form.images as string[]) || []).map((img, i) => (
+                  <div key={i} className="flex items-center gap-3 bg-[#f9f9f9] rounded-lg p-2.5">
+                    <img src={img} alt="" className="w-16 h-16 object-cover rounded-lg" />
+                    <button type="button" onClick={() => set("images", ((form.images as string[]) || []).filter((_, j) => j !== i))}
+                      className="ml-auto text-red-500 text-[12px] font-semibold hover:text-red-600 px-2">삭제</button>
+                  </div>
+                ))}
+                {((form.images as string[]) || []).length < 5 && (
+                  <ImageUpload
+                    value=""
+                    onChange={v => { if (v) set("images", [...((form.images as string[]) || []), v]); }}
+                    folder="stores"
+                    label={((form.images as string[]) || []).length === 0 ? "사진 업로드" : "사진 추가"}
+                    aspect="aspect-video"
+                  />
+                )}
+              </div>
             </div>
           </div>
         )}
