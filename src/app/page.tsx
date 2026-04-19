@@ -105,12 +105,15 @@ export default function Home() {
 
   const RecommendedSection = () => (
     <div className="rounded-2xl overflow-hidden card-shadow bg-white">
-      <div className="px-5 py-4 border-b border-border-custom flex items-center gap-2">
-        <span className="w-6 h-6 rounded bg-accent flex items-center justify-center text-white text-[11px] font-bold">★</span>
-        <h3 className="text-surface font-bold text-[15px]">추천 매장</h3>
-      </div>
+      <Link href="/recommended" className="px-5 py-4 border-b border-border-custom flex items-center justify-between gap-2 hover:bg-bg transition group">
+        <div className="flex items-center gap-2">
+          <span className="w-6 h-6 rounded bg-accent flex items-center justify-center text-white text-[11px] font-bold">★</span>
+          <h3 className="text-surface font-bold text-[15px] group-hover:text-accent transition-colors">추천 매장</h3>
+        </div>
+        <span className="text-accent text-[12px] font-semibold">더보기 →</span>
+      </Link>
       <div className="p-2">
-        {recommendedStores.map((store, i) => (
+        {recommendedStores.slice(0, 5).map((store, i) => (
           <Link key={store.id} href={`/store/${store.id}`} className="flex items-center gap-3 px-3 py-3 rounded-xl hover:bg-bg transition group">
             <span className={`w-6 h-6 rounded flex items-center justify-center text-[11px] font-black shrink-0 ${i === 0 ? "bg-accent text-white" : "bg-bg text-muted"}`}>{i + 1}</span>
             <div className="flex-1 min-w-0">
