@@ -42,6 +42,11 @@ export default function NoticeDetailPage() {
             <h1 className="text-2xl md:text-3xl font-extrabold text-surface mb-4">{notice.title}</h1>
             <p className="text-muted text-base">{notice.date}</p>
           </div>
+          {notice.image && (
+            <div className="border-b border-border-custom">
+              <img src={notice.image} alt={notice.title} className="w-full h-auto block" />
+            </div>
+          )}
           <div className="p-8 md:p-10">
             <p className="text-sub text-lg leading-relaxed whitespace-pre-wrap">{notice.content}</p>
           </div>

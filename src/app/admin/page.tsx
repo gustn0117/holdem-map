@@ -252,6 +252,7 @@ export default function AdminPage() {
           title: formData.title as string,
           content: formData.content as string,
           date: formData.date as string || new Date().toISOString().slice(0, 10),
+          image: (formData.image as string) || "",
         };
         if (modal.type === "create") await api.createNotice(payload);
         else await api.updateNotice(formData.id as string, payload);
@@ -825,6 +826,7 @@ function AdminModal({ modal, stores, saving, onClose, onSave }: {
               <label className="text-sub text-sm font-medium block mb-2">내용 *</label>
               <textarea className={inputClass + " resize-none"} rows={6} value={(form.content as string) || ""} onChange={e => set("content", e.target.value)} placeholder="공지사항 내용을 입력하세요" />
             </div>
+            <ImageUpload value={(form.image as string) || ""} onChange={v => set("image", v)} folder="notices" label="이미지" hint="선택" />
           </div>
         )}
 

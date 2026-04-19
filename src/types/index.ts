@@ -77,5 +77,6 @@ export interface Notice {
   title: string;
   content: string;
   date: string;
+  image?: string;
   created_at?: string;
 }
