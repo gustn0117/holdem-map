@@ -4,19 +4,31 @@ import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { useEvents } from "@/hooks/useData";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function EventsPage() {
   const { events, loading } = useEvents();
-  const sortedEvents = [...events].sort(
-    (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
-  );
+  const { user } = useAuth();
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const sortedEvents = [...events].sort((a, b) => {
+    const aEnd = new Date(a.end_date || a.date).getTime();
+    const bEnd = new Date(b.end_date || b.date).getTime();
+    const aUpcoming = aEnd >= today.getTime();
+    const bUpcoming = bEnd >= today.getTime();
+    if (aUpcoming && !bUpcoming) return -1;
+    if (!aUpcoming && bUpcoming) return 1;
+    const aStart = new Date(a.date).getTime();
+    const bStart = new Date(b.date).getTime();
+    return aUpcoming ? aStart - bStart : bStart - aStart;
+  });
 
   return (
     <div className="flex flex-col min-h-screen pb-16 md:pb-0">
       <Header />
 
       <main className="flex-1 max-w-4xl mx-auto px-4 py-10 w-full">
-        <div className="flex items-end justify-between mb-10">
+        <div className="flex items-end justify-between mb-6">
           <div>
             <h1 className="text-3xl font-bold text-surface">대회 / 이벤트</h1>
             <p className="text-muted text-base mt-2">다가오는 홀덤 대회 일정을 확인하세요</p>
@@ -24,6 +36,17 @@ export default function EventsPage() {
           <span className="text-muted text-base">
             총 <span className="text-accent font-bold text-xl">{sortedEvents.length}</span>개
           </span>
+        </div>
+
+        <div className="mb-8 flex justify-end">
+          {user ? (
+            <Link href="/events/write" className="inline-flex items-center gap-2 bg-accent hover:bg-accent-hover text-white text-sm font-bold px-5 py-2.5 rounded-xl shadow-lg shadow-accent/20 transition-all">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" /></svg>
+              대회 등록하기
+            </Link>
+          ) : (
+            <Link href="/login" className="text-accent text-sm font-semibold hover:underline">로그인 후 대회 등록하기 →</Link>
+          )}
         </div>
 
         {loading ? (

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { useStores, useEvents, useNotices } from "@/hooks/useData";
+import { useStores, useNotices } from "@/hooks/useData";
 import { Store } from "@/types";
 import * as api from "@/lib/api";
 import { geocodeAddress } from "@/lib/geocode";
@@ -45,8 +45,9 @@ export default function AdminPage() {
   const [modal, setModal] = useState<{ type: "create" | "edit"; tab: Tab; data?: Record<string, unknown> } | null>(null);
   const [saving, setSaving] = useState(false);
   const { stores, refresh: refreshStores } = useStores();
-  const { events, refresh: refreshEvents } = useEvents();
   const { notices, refresh: refreshNotices } = useNotices();
+  const [events, setEvents] = useState<import("@/types").Event[]>([]);
+  const refreshEvents = async () => { const data = await api.getAllEvents(); setEvents(data); };
   const [banners, setBanners] = useState<import("@/types").Banner[]>([]);
   const [bannerSaving, setBannerSaving] = useState<string | null>(null);
   const [shorts, setShorts] = useState<import("@/types").Short[]>([]);
@@ -55,7 +56,7 @@ export default function AdminPage() {
   const [users, setUsers] = useState<Profile[]>([]);
   const [inquiries, setInquiries] = useState<Inquiry[]>([]);
 
-  useEffect(() => { api.getBanners().then(setBanners); api.getAllShorts().then(setShorts); refreshUsers(); refreshLiveGames(); refreshPromotions(); refreshInquiries(); }, []);
+  useEffect(() => { api.getBanners().then(setBanners); api.getAllShorts().then(setShorts); refreshUsers(); refreshLiveGames(); refreshPromotions(); refreshInquiries(); refreshEvents(); }, []);
 
   const refreshInquiries = async () => {
     const { data } = await supabase.from("inquiries").select("*").order("created_at", { ascending: false });
@@ -164,7 +165,7 @@ export default function AdminPage() {
 
   const tabs: { key: Tab; label: string; count: number }[] = [
     { key: "stores", label: "매장", count: stores.length },
-    { key: "events", label: "대회/이벤트", count: events.length },
+    { key: "events", label: "대회/이벤트", count: events.filter(e => e.status === "pending").length },
     { key: "promotions", label: "프로모션", count: promotions.length },
     { key: "notices", label: "공지", count: notices.length },
     { key: "banners", label: "배너 광고", count: banners.filter(b => b.image).length },
@@ -246,6 +247,7 @@ export default function AdminPage() {
           details: (formData.details as string) || "",
           buy_in: (formData.buy_in as string) || "",
           location: (formData.location as string) || "",
+          status: (formData.status as string) || "approved",
         };
         if (modal.type === "create") await api.createEvent(payload);
         else await api.updateEvent(formData.id as string, payload);
@@ -405,22 +407,38 @@ export default function AdminPage() {
               <table className="w-full">
                 <thead>
                   <tr className="border-b border-border-custom">
+                    <th className="text-left text-muted text-sm font-medium px-5 py-4">상태</th>
                     <th className="text-left text-muted text-sm font-medium px-5 py-4">제목</th>
-                    <th className="text-left text-muted text-sm font-medium px-5 py-4">매장</th>
+                    <th className="text-left text-muted text-sm font-medium px-5 py-4 hidden md:table-cell">장소</th>
                     <th className="text-left text-muted text-sm font-medium px-5 py-4 hidden md:table-cell">날짜</th>
-                    <th className="text-left text-muted text-sm font-medium px-5 py-4 hidden md:table-cell">상금</th>
+                    <th className="text-left text-muted text-sm font-medium px-5 py-4 hidden md:table-cell">신청자</th>
                     <th className="text-right text-muted text-sm font-medium px-5 py-4">관리</th>
                   </tr>
                 </thead>
                 <tbody>
                   {events.map((event) => (
                     <tr key={event.id} className="border-b border-border-custom/50 hover:bg-gray-50 transition-colors">
+                      <td className="px-5 py-3">
+                        <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${
+                          event.status === "approved" ? "bg-accent-light text-accent" :
+                          event.status === "rejected" ? "bg-red-50 text-red-500" :
+                          "bg-yellow-50 text-yellow-700"
+                        }`}>{event.status === "approved" ? "승인" : event.status === "rejected" ? "반려" : "대기"}</span>
+                      </td>
                       <td className="px-5 py-3"><p className="text-surface text-base font-semibold">{event.title}</p></td>
-                      <td className="px-5 py-3"><p className="text-muted/50 text-sm">{event.store_name}</p></td>
-                      <td className="px-5 py-3 hidden md:table-cell"><p className="text-muted/50 text-sm">{event.date} {event.time}</p></td>
-                      <td className="px-5 py-3 hidden md:table-cell"><span className="text-gold text-sm font-medium">{event.prize || "-"}</span></td>
+                      <td className="px-5 py-3 hidden md:table-cell"><p className="text-muted/80 text-sm truncate max-w-48">{event.location || event.store_name}</p></td>
+                      <td className="px-5 py-3 hidden md:table-cell"><p className="text-muted/80 text-sm">{event.date}{event.end_date ? ` ~ ${event.end_date}` : ""} {event.time}</p></td>
+                      <td className="px-5 py-3 hidden md:table-cell"><p className="text-muted/80 text-sm">{event.submitter_nickname || (event.submitted_by ? "회원" : "관리자")}</p></td>
                       <td className="px-5 py-3 text-right">
-                        <div className="flex items-center justify-end gap-3">
+                        <div className="flex items-center justify-end gap-2 flex-wrap">
+                          {event.status === "pending" && (
+                            <>
+                              <button onClick={async () => { await api.updateEvent(event.id, { status: "approved" }); refreshEvents(); }}
+                                className="text-[12px] font-semibold px-3 py-1.5 rounded-lg bg-accent text-white hover:bg-accent-hover transition-all">승인</button>
+                              <button onClick={async () => { await api.updateEvent(event.id, { status: "rejected" }); refreshEvents(); }}
+                                className="text-[12px] font-semibold px-3 py-1.5 rounded-lg bg-yellow-50 text-yellow-700 hover:bg-yellow-100 transition-all">반려</button>
+                            </>
+                          )}
                           <button onClick={() => setModal({ type: "edit", tab: "events", data: event as unknown as Record<string, unknown> })} className="text-muted hover:text-accent text-sm transition-colors">수정</button>
                           <button onClick={() => handleDelete("events", event.id)} className="text-muted hover:text-red text-sm transition-colors">삭제</button>
                         </div>

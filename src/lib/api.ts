@@ -34,7 +34,17 @@ export async function getEvents(): Promise<Event[]> {
   const { data, error } = await supabase
     .from("events")
     .select("*")
+    .eq("status", "approved")
     .order("date", { ascending: true });
+  if (error) throw error;
+  return data || [];
+}
+
+export async function getAllEvents(): Promise<Event[]> {
+  const { data, error } = await supabase
+    .from("events")
+    .select("*")
+    .order("created_at", { ascending: false });
   if (error) throw error;
   return data || [];
 }
@@ -44,6 +54,7 @@ export async function getEventsByStore(storeId: string): Promise<Event[]> {
     .from("events")
     .select("*")
     .eq("store_id", storeId)
+    .eq("status", "approved")
     .order("date", { ascending: true });
   if (error) throw error;
   return data || [];

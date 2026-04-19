@@ -29,6 +29,9 @@ export interface Event {
   details?: string;
   buy_in?: string;
   location?: string;
+  status?: string;
+  submitted_by?: string | null;
+  submitter_nickname?: string;
   created_at?: string;
 }
 
