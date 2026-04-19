@@ -333,7 +333,7 @@ export default function JobWritePage() {
             ) : (
               <div className="flex flex-wrap gap-4">
                 <div className="w-40">
-                  <p className="text-muted text-[13px] font-semibold h-6 mb-2 invisible">.</p>
+                  <p className="text-sub text-sm font-semibold block mb-2 invisible">사진 업로드</p>
                   <button type="button" onClick={() => {
                     if (form.gender) setAvatarGender(GENDER_TO_KEY[form.gender] || "male");
                     if (form.role) setAvatarRole(ROLE_TO_KEY[form.role] || "dealer");

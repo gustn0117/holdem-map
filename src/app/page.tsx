@@ -40,7 +40,11 @@ export default function Home() {
   const sideBanners = banners.filter(b => b.position.startsWith("side")).sort((a, b) => a.position.localeCompare(b.position));
   const filteredStores = selectedRegion === "전체" ? stores : stores.filter((s) => s.region === selectedRegion);
   const recommendedStores = stores.filter((s) => s.is_recommended);
-  const upcomingEvents = events.slice(0, 3);
+  const todayMs = new Date().setHours(0, 0, 0, 0);
+  const upcomingEvents = [...events]
+    .filter(e => new Date(e.end_date || e.date).getTime() >= todayMs)
+    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+    .slice(0, 3);
 
   const timeAgo = (date: string) => {
     if (!date) return "";

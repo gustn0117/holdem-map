@@ -96,8 +96,17 @@ export default function TournamentPage() {
 
         {/* Event list */}
         <h2 className="text-xl font-black text-surface mb-5">참가 가능한 토너먼트</h2>
+        {(() => {
+          const todayMs = new Date().setHours(0, 0, 0, 0);
+          const upcoming = [...events]
+            .filter(e => new Date(e.end_date || e.date).getTime() >= todayMs)
+            .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+          if (upcoming.length === 0) {
+            return <div className="bg-white rounded-2xl card-shadow py-16 text-center text-muted">다가오는 토너먼트가 없습니다</div>;
+          }
+          return (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {events.map(event => {
+          {upcoming.map(event => {
             const d = new Date(event.date);
             const isApplied = applied.includes(event.id);
             return (
@@ -132,6 +141,8 @@ export default function TournamentPage() {
             );
           })}
         </div>
+          );
+        })()}
       </main>
       <Footer />
     </div>
