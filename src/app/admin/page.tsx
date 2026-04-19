@@ -11,7 +11,26 @@ import ImageUpload from "@/components/ImageUpload";
 
 import { supabase } from "@/lib/supabase";
 
-type Tab = "stores" | "events" | "notices" | "banners" | "shorts" | "users" | "live" | "promotions" | "inquiries" | "board";
+type Tab = "stores" | "events" | "notices" | "banners" | "shorts" | "users" | "live" | "promotions" | "inquiries" | "board" | "market";
+
+interface MarketListing {
+  id: string;
+  user_id: string | null;
+  type: string;
+  title: string;
+  region: string;
+  address: string;
+  price: string;
+  description: string;
+  images: string[];
+  contact: string;
+  status: string;
+  is_featured: boolean;
+  is_hidden?: boolean;
+  hidden_reason?: string;
+  report_count?: number;
+  created_at: string;
+}
 
 interface Post {
   id: string;
@@ -90,8 +109,36 @@ export default function AdminPage() {
   const [noticePostSaving, setNoticePostSaving] = useState(false);
   const [expandedPostId, setExpandedPostId] = useState<string | null>(null);
   const [postComments, setPostComments] = useState<Record<string, PostComment[]>>({});
+  const [marketListings, setMarketListings] = useState<MarketListing[]>([]);
 
-  useEffect(() => { api.getBanners().then(setBanners); api.getAllShorts().then(setShorts); refreshUsers(); refreshLiveGames(); refreshPromotions(); refreshInquiries(); refreshEvents(); refreshPosts(); }, []);
+  useEffect(() => { api.getBanners().then(setBanners); api.getAllShorts().then(setShorts); refreshUsers(); refreshLiveGames(); refreshPromotions(); refreshInquiries(); refreshEvents(); refreshPosts(); refreshMarket(); }, []);
+
+  const refreshMarket = async () => {
+    const { data } = await supabase.from("market_listings").select("*").order("is_featured", { ascending: false }).order("created_at", { ascending: false });
+    setMarketListings((data as MarketListing[]) || []);
+  };
+
+  const handleMarketDelete = async (id: string) => {
+    if (!confirm("이 매물을 삭제하시겠습니까?")) return;
+    await supabase.from("market_listings").delete().eq("id", id);
+    refreshMarket();
+  };
+
+  const handleMarketToggleHide = async (id: string, isHidden: boolean) => {
+    await supabase.from("market_listings").update({ is_hidden: !isHidden, hidden_reason: !isHidden ? "관리자 숨김" : null }).eq("id", id);
+    refreshMarket();
+  };
+
+  const handleMarketToggleFeatured = async (id: string, isFeatured: boolean) => {
+    await supabase.from("market_listings").update({ is_featured: !isFeatured }).eq("id", id);
+    refreshMarket();
+  };
+
+  const handleMarketToggleStatus = async (id: string, status: string) => {
+    const next = status === "모집중" ? "거래완료" : "모집중";
+    await supabase.from("market_listings").update({ status: next }).eq("id", id);
+    refreshMarket();
+  };
 
   const refreshPosts = async () => {
     const { data } = await supabase.from("posts").select("*").order("pinned", { ascending: false }).order("created_at", { ascending: false });
@@ -268,6 +315,7 @@ export default function AdminPage() {
     { key: "live", label: "실시간", count: liveGames.length },
     { key: "inquiries", label: "매장 문의", count: inquiries.filter(i => i.status === "pending").length },
     { key: "board", label: "자유게시판", count: posts.filter(p => p.status === "hidden").length },
+    { key: "market", label: "대관/매매", count: marketListings.length },
   ];
 
   const refreshShorts = () => api.getAllShorts().then(setShorts);
@@ -358,6 +406,25 @@ export default function AdminPage() {
         if (modal.type === "create") await api.createNotice(payload);
         else await api.updateNotice(formData.id as string, payload);
         refreshNotices();
+      } else if (modal?.tab === "market") {
+        const payload = {
+          type: (formData.type as string) || "매매",
+          title: formData.title as string,
+          region: (formData.region as string) || "서울",
+          address: (formData.address as string) || "",
+          price: (formData.price as string) || "협의",
+          description: (formData.description as string) || "",
+          images: (formData.images as string[]) || [],
+          contact: (formData.contact as string) || "",
+          is_featured: Boolean(formData.is_featured),
+          status: (formData.status as string) || "모집중",
+        };
+        if (modal.type === "create") {
+          await supabase.from("market_listings").insert({ ...payload, user_id: null });
+        } else {
+          await supabase.from("market_listings").update(payload).eq("id", formData.id as string);
+        }
+        refreshMarket();
       }
       setModal(null);
     } catch {
@@ -895,6 +962,60 @@ export default function AdminPage() {
           </div>
         )}
 
+        {/* Market management */}
+        {activeTab === "market" && (
+          <div className="bg-white rounded-2xl border border-border-custom overflow-hidden">
+            {marketListings.length === 0 ? (
+              <div className="text-center py-12 text-muted text-sm">등록된 매물이 없습니다</div>
+            ) : marketListings.map(l => (
+              <div key={l.id} className={`border-b border-border-custom last:border-b-0 ${l.is_hidden ? "bg-red-50/30" : ""}`}>
+                <div className="px-5 py-4 flex items-start justify-between gap-4">
+                  <Link href={`/market/${l.id}`} target="_blank" className="flex-1 min-w-0 hover:bg-[#f9f9f9] -m-2 p-2 rounded-lg transition-colors">
+                    <div className="flex items-center gap-2 mb-1.5 flex-wrap">
+                      {l.is_hidden && <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-red-100 text-red-600">⚠️ 숨김</span>}
+                      {l.is_featured && <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-red-50 text-red-500">⭐ 추천</span>}
+                      <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${
+                        l.type === "매매" ? "bg-red-100 text-red-600" :
+                        l.type === "대관" ? "bg-blue-100 text-blue-600" :
+                        "bg-amber-100 text-amber-700"
+                      }`}>{l.type}</span>
+                      <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${l.status === "모집중" ? "bg-emerald-100 text-emerald-700" : "bg-gray-100 text-gray-600"}`}>{l.status || "모집중"}</span>
+                      {(l.report_count ?? 0) > 0 && <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-yellow-50 text-yellow-700">🚨 신고 {l.report_count}</span>}
+                      <span className="text-muted text-[11px]">{l.region}</span>
+                      <span className="text-muted text-[11px]">{l.created_at?.slice(0, 10)}</span>
+                    </div>
+                    <p className="text-surface text-[14px] font-bold truncate">{l.title}</p>
+                    <p className="text-accent text-[13px] font-bold mt-0.5">{l.price}</p>
+                    <p className="text-muted text-[12px] truncate mt-0.5">{l.address} · {l.description}</p>
+                  </Link>
+                  <div className="shrink-0 flex flex-col gap-1.5">
+                    <button onClick={() => setModal({ type: "edit", tab: "market", data: { ...l, images: l.images || [] } as unknown as Record<string, unknown> })}
+                      className="text-[12px] font-semibold px-3 py-1.5 rounded-lg bg-bg text-sub hover:bg-accent-light hover:text-accent transition-all">
+                      수정
+                    </button>
+                    <button onClick={() => handleMarketToggleFeatured(l.id, l.is_featured)}
+                      className={`text-[12px] font-semibold px-3 py-1.5 rounded-lg transition-all ${l.is_featured ? "bg-yellow-50 text-yellow-700 hover:bg-yellow-100" : "bg-bg text-sub hover:bg-red-50 hover:text-red-500"}`}>
+                      {l.is_featured ? "추천 해제" : "추천"}
+                    </button>
+                    <button onClick={() => handleMarketToggleStatus(l.id, l.status || "모집중")}
+                      className="text-[12px] font-semibold px-3 py-1.5 rounded-lg bg-bg text-sub hover:bg-accent-light hover:text-accent transition-all">
+                      {l.status === "모집중" ? "거래완료" : "모집중으로"}
+                    </button>
+                    <button onClick={() => handleMarketToggleHide(l.id, l.is_hidden || false)}
+                      className={`text-[12px] font-semibold px-3 py-1.5 rounded-lg transition-all ${l.is_hidden ? "bg-accent text-white hover:bg-accent-hover" : "bg-red-50 text-red-500 hover:bg-red-100"}`}>
+                      {l.is_hidden ? "공개" : "숨기기"}
+                    </button>
+                    <button onClick={() => handleMarketDelete(l.id)}
+                      className="text-[12px] font-semibold px-3 py-1.5 rounded-lg bg-red-50 text-red-500 hover:bg-red-100 transition-all">
+                      삭제
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
         {/* Notice post modal */}
         {noticePostOpen && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -1108,6 +1229,85 @@ function AdminModal({ modal, stores, saving, onClose, onSave }: {
               <textarea className={inputClass + " resize-none"} rows={6} value={(form.content as string) || ""} onChange={e => set("content", e.target.value)} placeholder="공지사항 내용을 입력하세요" />
             </div>
             <ImageUpload value={(form.image as string) || ""} onChange={v => set("image", v)} folder="notices" label="이미지" hint="선택" />
+          </div>
+        )}
+
+        {modal.tab === "market" && (
+          <div className="space-y-5">
+            <div>
+              <label className="text-sub text-sm font-medium block mb-2">거래 유형 *</label>
+              <div className="flex gap-2">
+                {["매매", "대관", "단기운영"].map(t => (
+                  <button key={t} type="button" onClick={() => set("type", t)}
+                    className={`flex-1 py-2.5 rounded-xl text-[13px] font-semibold transition-all border ${(form.type as string) === t ? "bg-accent text-white border-accent" : "border-border-custom text-sub"}`}>
+                    {t}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div>
+              <label className="text-sub text-sm font-medium block mb-2">매물명 *</label>
+              <input className={inputClass} value={(form.title as string) || ""} onChange={e => set("title", e.target.value)} placeholder="예: 강남 홀덤펍 매매" />
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="text-sub text-sm font-medium block mb-2">지역 *</label>
+                <Select value={(form.region as string) || "서울"} onChange={v => set("region", v)} options={[
+                  { value: "서울", label: "서울" }, { value: "경기", label: "경기" }, { value: "인천", label: "인천" },
+                ]} />
+              </div>
+              <div>
+                <label className="text-sub text-sm font-medium block mb-2">상세 주소</label>
+                <input className={inputClass} value={(form.address as string) || ""} onChange={e => set("address", e.target.value)} placeholder="예: 강남구 역삼동" />
+              </div>
+            </div>
+            <div>
+              <label className="text-sub text-sm font-medium block mb-2">가격</label>
+              <input className={inputClass} value={(form.price as string) || ""} onChange={e => set("price", e.target.value)} placeholder="예: 권리금 3000만 / 1일 30만 / 협의" />
+            </div>
+            <div>
+              <label className="text-sub text-sm font-medium block mb-2">상세 내용</label>
+              <textarea className={inputClass + " resize-none"} rows={5} value={(form.description as string) || ""} onChange={e => set("description", e.target.value)} placeholder="매장 규모, 시설 현황, 운영 가능 시간 등" />
+            </div>
+            <div>
+              <label className="text-sub text-sm font-medium block mb-2">연락처</label>
+              <input className={inputClass} value={(form.contact as string) || ""} onChange={e => set("contact", e.target.value)} placeholder="카카오톡 ID 또는 전화번호" />
+            </div>
+            <div>
+              <label className="text-sub text-sm font-medium block mb-2">매물 사진 <span className="text-muted font-normal">(최대 8장)</span></label>
+              <div className="space-y-2">
+                {((form.images as string[]) || []).map((img, i) => (
+                  <div key={i} className="flex items-center gap-3 bg-[#f9f9f9] rounded-lg p-2.5">
+                    <img src={img} alt="" className="w-16 h-16 object-cover rounded-lg" />
+                    <button type="button" onClick={() => set("images", ((form.images as string[]) || []).filter((_, j) => j !== i))}
+                      className="ml-auto text-red-500 text-[12px] font-semibold hover:text-red-600 px-2">삭제</button>
+                  </div>
+                ))}
+                {((form.images as string[]) || []).length < 8 && (
+                  <ImageUpload
+                    value=""
+                    onChange={v => { if (v) set("images", [...((form.images as string[]) || []), v]); }}
+                    folder="market"
+                    label={((form.images as string[]) || []).length === 0 ? "사진 업로드" : "사진 추가"}
+                    aspect="aspect-video"
+                  />
+                )}
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="text-sub text-sm font-medium block mb-2">상태</label>
+                <Select value={(form.status as string) || "모집중"} onChange={v => set("status", v)} options={[
+                  { value: "모집중", label: "모집중" }, { value: "거래완료", label: "거래완료" },
+                ]} />
+              </div>
+              <div>
+                <label className="text-sub text-sm font-medium block mb-2">추천 매물</label>
+                <Select value={form.is_featured ? "true" : "false"} onChange={v => set("is_featured", v === "true")} options={[
+                  { value: "false", label: "아니오" }, { value: "true", label: "예" },
+                ]} />
+              </div>
+            </div>
           </div>
         )}
 
