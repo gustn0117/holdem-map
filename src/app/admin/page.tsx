@@ -234,10 +234,11 @@ export default function AdminPage() {
         }
       } else if (modal?.tab === "events") {
         const payload = {
-          store_id: formData.store_id as string,
-          store_name: stores.find(s => s.id === formData.store_id)?.name || "",
+          store_id: null,
+          store_name: (formData.location as string) || "",
           title: formData.title as string,
           date: formData.date as string,
+          end_date: (formData.end_date as string) || "",
           time: formData.time as string,
           description: (formData.description as string) || "",
           prize: (formData.prize as string) || undefined,
@@ -805,13 +806,18 @@ function AdminModal({ modal, stores, saving, onClose, onSave }: {
               <input className={inputClass} value={(form.title as string) || ""} onChange={e => set("title", e.target.value)} placeholder="예: 주말 GTD 토너먼트" />
             </div>
             <div>
-              <label className="text-sub text-sm font-medium block mb-2">매장 선택 *</label>
-              <Select value={(form.store_id as string) || ""} onChange={v => set("store_id", v)} placeholder="매장을 선택하세요" options={stores.map(s => ({ value: s.id, label: s.name }))} />
+              <label className="text-sub text-sm font-medium block mb-2">장소 *</label>
+              <input className={inputClass} value={(form.location as string) || ""} onChange={e => set("location", e.target.value)} placeholder="예: OO호텔 그랜드볼룸, 서울 강남구 ○○로 123" />
+              <p className="text-muted text-xs mt-1.5">매장/호텔/대관장 등 대회가 열리는 장소</p>
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
-                <label className="text-sub text-sm font-medium block mb-2">날짜 *</label>
+                <label className="text-sub text-sm font-medium block mb-2">시작일 *</label>
                 <input className={inputClass} type="date" value={(form.date as string) || ""} onChange={e => set("date", e.target.value)} />
+              </div>
+              <div>
+                <label className="text-sub text-sm font-medium block mb-2">종료일 <span className="text-muted font-normal">(선택)</span></label>
+                <input className={inputClass} type="date" value={(form.end_date as string) || ""} onChange={e => set("end_date", e.target.value)} />
               </div>
               <div>
                 <label className="text-sub text-sm font-medium block mb-2">시간 *</label>
@@ -829,10 +835,6 @@ function AdminModal({ modal, stores, saving, onClose, onSave }: {
               </div>
             </div>
             <ImageUpload value={(form.image as string) || ""} onChange={v => set("image", v)} folder="events" label="대회 이미지" hint="선택" />
-            <div>
-              <label className="text-sub text-sm font-medium block mb-2">장소</label>
-              <input className={inputClass} value={(form.location as string) || ""} onChange={e => set("location", e.target.value)} placeholder="대회 장소 (매장과 다를 경우)" />
-            </div>
             <div>
               <label className="text-sub text-sm font-medium block mb-2">간단 설명</label>
               <textarea className={inputClass + " resize-none"} rows={3} value={(form.description as string) || ""} onChange={e => set("description", e.target.value)} placeholder="대회 간략 소개" />

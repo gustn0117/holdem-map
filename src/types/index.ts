@@ -17,10 +17,11 @@ export interface Store {
 
 export interface Event {
   id: string;
-  store_id: string;
+  store_id: string | null;
   store_name: string;
   title: string;
   date: string;
+  end_date?: string;
   time: string;
   description: string;
   prize?: string;

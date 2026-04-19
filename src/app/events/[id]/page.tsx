@@ -80,17 +80,25 @@ export default function EventDetailPage() {
             )}
           </div>
           <h1 className="text-3xl md:text-4xl font-extrabold text-surface mb-4 leading-tight">{event.title}</h1>
-          <Link href={`/store/${event.store_id}`} className="text-accent hover:text-accent-light text-lg font-medium transition-colors">
-            {event.store_name} →
-          </Link>
+          {event.location && (
+            <p className="text-accent text-lg font-medium">📍 {event.location}</p>
+          )}
         </div>
 
         {/* Info Cards */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
           <div className="bg-card rounded-xl p-5 border border-border-custom text-center">
             <p className="text-muted text-sm mb-1">날짜</p>
-            <p className="text-surface text-lg font-bold">{eventDate.getMonth() + 1}월 {eventDate.getDate()}일</p>
-            <p className="text-muted text-sm">({dayNames[eventDate.getDay()]}요일)</p>
+            {event.end_date && event.end_date !== event.date ? (
+              <p className="text-surface text-base font-bold leading-tight">
+                {eventDate.getMonth() + 1}.{eventDate.getDate()}<br />~ {new Date(event.end_date).getMonth() + 1}.{new Date(event.end_date).getDate()}
+              </p>
+            ) : (
+              <>
+                <p className="text-surface text-lg font-bold">{eventDate.getMonth() + 1}월 {eventDate.getDate()}일</p>
+                <p className="text-muted text-sm">({dayNames[eventDate.getDay()]}요일)</p>
+              </>
+            )}
           </div>
           <div className="bg-card rounded-xl p-5 border border-border-custom text-center">
             <p className="text-muted text-sm mb-1">시간</p>
@@ -132,16 +140,18 @@ export default function EventDetailPage() {
           </div>
         )}
 
-        {/* Store Link */}
-        <div className="bg-card rounded-xl border border-border-custom p-8 mb-10 flex items-center justify-between">
-          <div>
-            <p className="text-muted text-sm mb-1">주최 매장</p>
-            <p className="text-surface text-lg font-bold">{event.store_name}</p>
+        {/* Store Link (연결된 매장이 있을 때만) */}
+        {event.store_id && (
+          <div className="bg-card rounded-xl border border-border-custom p-8 mb-10 flex items-center justify-between">
+            <div>
+              <p className="text-muted text-sm mb-1">주최 매장</p>
+              <p className="text-surface text-lg font-bold">{event.store_name}</p>
+            </div>
+            <Link href={`/store/${event.store_id}`} className="bg-accent text-dark text-sm font-bold px-6 py-3 rounded-full shadow-lg shadow-accent/20 hover:shadow-accent/40 transition-all">
+              매장 보기
+            </Link>
           </div>
-          <Link href={`/store/${event.store_id}`} className="bg-accent text-dark text-sm font-bold px-6 py-3 rounded-full shadow-lg shadow-accent/20 hover:shadow-accent/40 transition-all">
-            매장 보기
-          </Link>
-        </div>
+        )}
 
         {/* Back */}
         <div className="text-center">
