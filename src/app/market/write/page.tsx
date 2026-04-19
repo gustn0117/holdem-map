@@ -8,6 +8,7 @@ import Footer from "@/components/Footer";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
 import ImageUpload from "@/components/ImageUpload";
+import { classifyContent, formatFilterMessage } from "@/lib/contentFilter";
 
 const TYPES = ["매매", "대관", "단기운영"];
 const REGIONS = ["서울", "경기", "인천"];
@@ -57,6 +58,11 @@ export default function MarketWritePage() {
     e.preventDefault();
     if (!form.title || !form.region) {
       alert("필수 항목을 모두 입력해주세요.");
+      return;
+    }
+    const filter = classifyContent(`${form.title}\n${form.description}\n${form.address}`);
+    if (filter.action === "block") {
+      alert(formatFilterMessage(filter));
       return;
     }
     setSaving(true);

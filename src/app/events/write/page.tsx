@@ -8,6 +8,7 @@ import Footer from "@/components/Footer";
 import ImageUpload from "@/components/ImageUpload";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
+import { classifyContent, formatFilterMessage } from "@/lib/contentFilter";
 
 const DEFAULT_NOTICE = `※ 본 페이지는 이벤트 정보 안내용이며, 실제 진행 및 참여는 각 업장에서 개별적으로 이루어집니다.
 ※ 본 사이트는 운영·모집·정산 등에 관여하지 않으며, 이용은 업장 기준에 따릅니다.
@@ -61,6 +62,11 @@ export default function EventWritePage() {
     if (!form.time) missing.push("시간");
     if (missing.length > 0) {
       alert(`다음 항목을 입력해주세요: ${missing.join(", ")}`);
+      return;
+    }
+    const filter = classifyContent(`${form.title}\n${form.location}\n${form.description}\n${form.details}`);
+    if (filter.action === "block") {
+      alert(formatFilterMessage(filter));
       return;
     }
     setSaving(true);

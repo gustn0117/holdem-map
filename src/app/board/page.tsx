@@ -22,7 +22,7 @@ export default function BoardPage() {
 
   useEffect(() => {
     (async () => {
-      const { data } = await supabase.from("posts").select("*").order("created_at", { ascending: false });
+      const { data } = await supabase.from("posts").select("*").eq("status", "approved").order("created_at", { ascending: false });
       const list = (data || []) as Post[];
 
       // Fetch comment counts

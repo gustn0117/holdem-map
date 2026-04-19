@@ -23,6 +23,9 @@ interface Post {
   views: number;
   pinned: boolean;
   image?: string;
+  status?: string;
+  hidden_reason?: string;
+  report_count?: number;
   created_at: string;
 }
 
@@ -92,6 +95,12 @@ export default function AdminPage() {
 
   const handlePostTogglePin = async (id: string, pinned: boolean) => {
     await supabase.from("posts").update({ pinned: !pinned }).eq("id", id);
+    refreshPosts();
+  };
+
+  const handlePostToggleStatus = async (id: string, status: string) => {
+    const newStatus = status === "approved" ? "hidden" : "approved";
+    await supabase.from("posts").update({ status: newStatus, hidden_reason: newStatus === "hidden" ? "관리자 숨김" : null }).eq("id", id);
     refreshPosts();
   };
 
@@ -226,7 +235,7 @@ export default function AdminPage() {
     { key: "users", label: "회원", count: users.length },
     { key: "live", label: "실시간", count: liveGames.length },
     { key: "inquiries", label: "매장 문의", count: inquiries.filter(i => i.status === "pending").length },
-    { key: "board", label: "자유게시판", count: posts.length },
+    { key: "board", label: "자유게시판", count: posts.filter(p => p.status === "hidden").length },
   ];
 
   const refreshShorts = () => api.getAllShorts().then(setShorts);
@@ -788,18 +797,25 @@ export default function AdminPage() {
             {posts.length === 0 ? (
               <div className="text-center py-12 text-muted text-sm">등록된 게시글이 없습니다</div>
             ) : posts.map(p => (
-              <div key={p.id} className="px-5 py-4 border-b border-border-custom last:border-b-0 flex items-start justify-between gap-4">
+              <div key={p.id} className={`px-5 py-4 border-b border-border-custom last:border-b-0 flex items-start justify-between gap-4 ${p.status === "hidden" ? "bg-red-50/30" : ""}`}>
                 <Link href={`/board/${p.id}`} target="_blank" className="flex-1 min-w-0 hover:bg-[#f9f9f9] -m-2 p-2 rounded-lg transition-colors">
                   <div className="flex items-center gap-2 mb-1.5 flex-wrap">
+                    {p.status === "hidden" && <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-red-100 text-red-600">⚠️ 숨김</span>}
                     {p.pinned && <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-accent text-white">📌 공지</span>}
                     {p.category && <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-bg text-sub">{p.category}</span>}
+                    {(p.report_count ?? 0) > 0 && <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-yellow-50 text-yellow-700">🚨 신고 {p.report_count}</span>}
                     <span className="text-muted text-[11px]">{p.nickname} · 조회 {p.views}</span>
                     <span className="text-muted text-[11px]">{p.created_at?.slice(0, 10)}</span>
                   </div>
                   <p className="text-surface text-[14px] font-bold truncate">{p.title}</p>
                   <p className="text-muted text-[12px] truncate mt-0.5">{p.content}</p>
+                  {p.hidden_reason && <p className="text-red-500 text-[11px] mt-1">숨김 사유: {p.hidden_reason}</p>}
                 </Link>
                 <div className="shrink-0 flex flex-col gap-1.5">
+                  <button onClick={() => handlePostToggleStatus(p.id, p.status || "approved")}
+                    className={`text-[12px] font-semibold px-3 py-1.5 rounded-lg transition-all ${p.status === "hidden" ? "bg-accent text-white hover:bg-accent-hover" : "bg-red-50 text-red-500 hover:bg-red-100"}`}>
+                    {p.status === "hidden" ? "복구" : "숨기기"}
+                  </button>
                   <button onClick={() => handlePostTogglePin(p.id, p.pinned)}
                     className={`text-[12px] font-semibold px-3 py-1.5 rounded-lg transition-all ${p.pinned ? "bg-yellow-50 text-yellow-700 hover:bg-yellow-100" : "bg-bg text-sub hover:bg-accent-light hover:text-accent"}`}>
                     {p.pinned ? "공지 해제" : "공지 고정"}

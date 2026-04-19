@@ -8,6 +8,7 @@ import { supabase } from "@/lib/supabase";
 import Link from "next/link";
 import ImageUpload from "@/components/ImageUpload";
 import { addPoints, POINT_RULES } from "@/lib/rank";
+import { classifyContent, formatFilterMessage } from "@/lib/contentFilter";
 
 export default function BoardWritePage() {
   const [title, setTitle] = useState("");
@@ -43,6 +44,11 @@ export default function BoardWritePage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!title.trim() || !content.trim()) return;
+    const filter = classifyContent(`${title}\n${content}`);
+    if (filter.action === "block") {
+      alert(formatFilterMessage(filter));
+      return;
+    }
     setLoading(true);
     const { error } = await supabase.from("posts").insert({
       user_id: user.id,
@@ -50,6 +56,7 @@ export default function BoardWritePage() {
       title: title.trim(),
       content: content.trim(),
       image,
+      status: "approved",
     });
     if (error) { alert("작성에 실패했습니다."); setLoading(false); return; }
     const pt = await addPoints(supabase, user.id, "post");

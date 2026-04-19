@@ -8,6 +8,7 @@ import Footer from "@/components/Footer";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
 import { addPoints } from "@/lib/rank";
+import { classifyContent, formatFilterMessage } from "@/lib/contentFilter";
 
 interface Post {
   id: string; user_id: string; nickname: string; title: string; content: string;
@@ -78,6 +79,11 @@ export default function BoardDetailPage() {
   const handleComment = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!commentText.trim() || !user) return;
+    const filter = classifyContent(commentText);
+    if (filter.action === "block") {
+      alert(formatFilterMessage(filter));
+      return;
+    }
     const { data, error } = await supabase.from("comments").insert({
       post_id: id, user_id: user.id, nickname: profile?.nickname || "익명", content: commentText.trim(),
     }).select().single();

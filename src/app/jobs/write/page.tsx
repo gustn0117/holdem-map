@@ -10,6 +10,7 @@ import { regionData, allRegions } from "@/data/areas";
 import Select from "@/components/Select";
 import ImageUpload from "@/components/ImageUpload";
 import { useAuth } from "@/contexts/AuthContext";
+import { classifyContent, formatFilterMessage } from "@/lib/contentFilter";
 
 const AVATAR_ROLES = [
   { key: "dealer", label: "딜러", gradient: "from-emerald-50 to-teal-100" },
@@ -110,6 +111,11 @@ export default function JobWritePage() {
     if (form.contact_phone?.trim()) contacts.push(`전화: ${form.contact_phone.trim()}`);
     if (contacts.length === 0) {
       alert("연락처를 하나 이상 입력해주세요. (카카오톡, 텔레그램, 전화번호 중 택1)");
+      return;
+    }
+    const filter = classifyContent(`${form.experience}\n${form.message}\n${form.store_name}`);
+    if (filter.action === "block") {
+      alert(formatFilterMessage(filter));
       return;
     }
     setSaving(true);

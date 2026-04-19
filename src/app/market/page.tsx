@@ -23,7 +23,7 @@ export default function MarketPage() {
   const [filterRegion, setFilterRegion] = useState("전체");
 
   useEffect(() => {
-    supabase.from("market_listings").select("*").order("is_featured", { ascending: false }).order("created_at", { ascending: false })
+    supabase.from("market_listings").select("*").eq("is_hidden", false).order("is_featured", { ascending: false }).order("created_at", { ascending: false })
       .then(({ data }) => { setListings(data || []); setLoading(false); });
   }, []);
 

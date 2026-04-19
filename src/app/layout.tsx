@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import TopBanner from "@/components/TopBanner";
 import Providers from "@/components/Providers";
+import AgeGate from "@/components/AgeGate";
 
 export const metadata: Metadata = {
   title: "홀덤맵KOREA - 전국 홀덤 매장 지도·정보 플랫폼",
@@ -26,6 +27,7 @@ export default function RootLayout({
       </head>
       <body className="min-h-full">
         <Providers>
+          <AgeGate />
           <TopBanner />
           {children}
         </Providers>
