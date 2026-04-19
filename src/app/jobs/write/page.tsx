@@ -331,20 +331,25 @@ export default function JobWritePage() {
                 </div>
               </div>
             ) : (
-              <div className="grid grid-cols-2 gap-3 max-w-md">
-                <button type="button" onClick={() => {
-                  if (form.gender) setAvatarGender(GENDER_TO_KEY[form.gender] || "male");
-                  if (form.role) setAvatarRole(ROLE_TO_KEY[form.role] || "dealer");
-                  setAvatarOpen(true);
-                }}
-                  className="group aspect-square rounded-2xl border-2 border-dashed border-accent/40 bg-linear-to-br from-accent/5 to-accent/10 hover:from-accent/10 hover:to-accent/15 hover:border-accent/60 text-accent font-bold flex flex-col items-center justify-center gap-2 transition-all">
-                  <div className="w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center group-hover:scale-110 transition-transform">
-                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
-                  </div>
-                  <span className="text-[14px]">아바타 선택</span>
-                  <span className="text-[11px] text-accent/60 font-normal">캐릭터 32종</span>
-                </button>
-                <ImageUpload value={form.photo} onChange={v => set("photo", v)} folder="jobs" label="사진 업로드" aspect="aspect-square" hint="내 사진 업로드" />
+              <div className="flex flex-wrap gap-4">
+                <div className="w-40">
+                  <p className="text-muted text-[13px] font-semibold h-6 mb-2 invisible">.</p>
+                  <button type="button" onClick={() => {
+                    if (form.gender) setAvatarGender(GENDER_TO_KEY[form.gender] || "male");
+                    if (form.role) setAvatarRole(ROLE_TO_KEY[form.role] || "dealer");
+                    setAvatarOpen(true);
+                  }}
+                    className="group w-40 h-40 rounded-2xl border-2 border-dashed border-accent/40 bg-linear-to-br from-accent/5 to-accent/10 hover:from-accent/10 hover:to-accent/15 hover:border-accent/60 text-accent font-bold flex flex-col items-center justify-center gap-2 transition-all">
+                    <div className="w-11 h-11 rounded-full bg-accent/10 flex items-center justify-center group-hover:scale-110 transition-transform">
+                      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+                    </div>
+                    <span className="text-[14px]">아바타 선택</span>
+                    <span className="text-[11px] text-accent/60 font-normal">캐릭터 32종</span>
+                  </button>
+                </div>
+                <div className="w-40">
+                  <ImageUpload value={form.photo} onChange={v => set("photo", v)} folder="jobs" label="사진 업로드" aspect="w-40 h-40" hint="내 사진" />
+                </div>
               </div>
             )}
           </div>
