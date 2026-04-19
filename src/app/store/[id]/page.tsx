@@ -6,6 +6,7 @@ import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import StoreMap from "@/components/StoreMap";
+import LinkifyText from "@/components/LinkifyText";
 import { getStore, getEventsByStore } from "@/lib/api";
 import { Store, Event } from "@/types";
 
@@ -117,7 +118,7 @@ export default function StorePage() {
         {/* Description */}
         <div className="bg-card rounded-xl p-8 border border-border-custom mb-8">
           <h2 className="text-surface font-bold text-xl mb-4">매장 소개</h2>
-          <p className="text-sub text-base leading-relaxed">{store.description}</p>
+          <LinkifyText text={store.description} className="text-sub text-base leading-relaxed block" />
         </div>
 
         {/* Events */}

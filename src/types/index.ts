@@ -32,6 +32,7 @@ export interface Event {
   status?: string;
   submitted_by?: string | null;
   submitter_nickname?: string;
+  is_international?: boolean;
   created_at?: string;
 }
 

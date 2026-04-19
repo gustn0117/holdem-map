@@ -310,6 +310,7 @@ export default function AdminPage() {
           details: (formData.details as string) || "",
           buy_in: (formData.buy_in as string) || "",
           location: (formData.location as string) || "",
+          is_international: Boolean(formData.is_international),
           status: (formData.status as string) || "approved",
         };
         if (modal.type === "create") await api.createEvent(payload);
@@ -973,6 +974,19 @@ function AdminModal({ modal, stores, saving, onClose, onSave }: {
             <div>
               <label className="text-sub text-sm font-medium block mb-2">대회/이벤트 제목 *</label>
               <input className={inputClass} value={(form.title as string) || ""} onChange={e => set("title", e.target.value)} placeholder="예: 주말 GTD 토너먼트" />
+            </div>
+            <div>
+              <label className="text-sub text-sm font-medium block mb-2">국내/해외 *</label>
+              <div className="flex gap-2">
+                <button type="button" onClick={() => set("is_international", false)}
+                  className={`flex-1 py-2.5 rounded-xl text-[14px] font-semibold border transition-all ${!form.is_international ? "bg-accent text-white border-accent" : "border-border-custom text-sub"}`}>
+                  🇰🇷 국내
+                </button>
+                <button type="button" onClick={() => set("is_international", true)}
+                  className={`flex-1 py-2.5 rounded-xl text-[14px] font-semibold border transition-all ${form.is_international ? "bg-accent text-white border-accent" : "border-border-custom text-sub"}`}>
+                  🌏 해외
+                </button>
+              </div>
             </div>
             <div>
               <label className="text-sub text-sm font-medium block mb-2">장소 *</label>

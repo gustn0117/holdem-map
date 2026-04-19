@@ -30,9 +30,10 @@ export default function EventWritePage() {
     image: "",
     description: "",
     details: DEFAULT_NOTICE,
+    is_international: false,
   });
 
-  const set = (key: string, value: string) => setForm(prev => ({ ...prev, [key]: value }));
+  const set = (key: string, value: string | boolean) => setForm(prev => ({ ...prev, [key]: value }));
 
   if (!user) {
     return (
@@ -83,6 +84,7 @@ export default function EventWritePage() {
       image: form.image || null,
       description: form.description || null,
       details: form.details || null,
+      is_international: form.is_international,
       status: "pending",
       submitted_by: user.id,
       submitter_nickname: profile?.nickname || "",
@@ -138,6 +140,20 @@ export default function EventWritePage() {
           <div>
             <label className="text-sub text-sm font-semibold block mb-2">대회 제목 *</label>
             <input className={inputClass} value={form.title} onChange={e => set("title", e.target.value)} placeholder="예: 2026 봄 홀덤 챔피언십" />
+          </div>
+
+          <div>
+            <label className="text-sub text-sm font-semibold block mb-2">국내/해외 *</label>
+            <div className="flex gap-2">
+              <button type="button" onClick={() => set("is_international", false)}
+                className={`flex-1 py-2.5 rounded-xl text-[14px] font-semibold border transition-all ${!form.is_international ? "bg-accent text-white border-accent" : "border-border-custom text-sub"}`}>
+                🇰🇷 국내
+              </button>
+              <button type="button" onClick={() => set("is_international", true)}
+                className={`flex-1 py-2.5 rounded-xl text-[14px] font-semibold border transition-all ${form.is_international ? "bg-accent text-white border-accent" : "border-border-custom text-sub"}`}>
+                🌏 해외
+              </button>
+            </div>
           </div>
 
           <div>

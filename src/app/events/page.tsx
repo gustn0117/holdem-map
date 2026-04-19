@@ -1,17 +1,52 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { useEvents } from "@/hooks/useData";
 import { useAuth } from "@/contexts/AuthContext";
 
+type RegionTab = "all" | "domestic" | "international";
+type SortKey = "date" | "recent" | "prize";
+
+const parsePrizeKRW = (s?: string): number => {
+  if (!s) return 0;
+  const txt = s.replace(/[\s,₩원]/g, "");
+  const m = txt.match(/([\d.]+)\s*(억|만|천|백)?/);
+  if (!m) return 0;
+  const n = parseFloat(m[1]);
+  const unit = m[2];
+  if (unit === "억") return n * 1e8;
+  if (unit === "만") return n * 1e4;
+  if (unit === "천") return n * 1e3;
+  if (unit === "백") return n * 1e2;
+  return n;
+};
+
 export default function EventsPage() {
   const { events, loading } = useEvents();
   const { user } = useAuth();
+  const [regionTab, setRegionTab] = useState<RegionTab>("all");
+  const [sortKey, setSortKey] = useState<SortKey>("date");
+
   const today = new Date();
   today.setHours(0, 0, 0, 0);
-  const sortedEvents = [...events].sort((a, b) => {
+
+  const filteredEvents = events.filter(e => {
+    if (regionTab === "all") return true;
+    if (regionTab === "international") return !!e.is_international;
+    return !e.is_international;
+  });
+
+  const sortedEvents = [...filteredEvents].sort((a, b) => {
+    if (sortKey === "recent") {
+      return new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime();
+    }
+    if (sortKey === "prize") {
+      return parsePrizeKRW(b.prize) - parsePrizeKRW(a.prize);
+    }
+    // date (default): upcoming first by start date, then past desc
     const aEnd = new Date(a.end_date || a.date).getTime();
     const bEnd = new Date(b.end_date || b.date).getTime();
     const aUpcoming = aEnd >= today.getTime();
@@ -22,6 +57,12 @@ export default function EventsPage() {
     const bStart = new Date(b.date).getTime();
     return aUpcoming ? aStart - bStart : bStart - aStart;
   });
+
+  const counts = {
+    all: events.length,
+    domestic: events.filter(e => !e.is_international).length,
+    international: events.filter(e => e.is_international).length,
+  };
 
   return (
     <div className="flex flex-col min-h-screen pb-16 md:pb-0">
@@ -38,11 +79,38 @@ export default function EventsPage() {
           </span>
         </div>
 
-        <div className="mb-8 flex justify-end">
+        {/* Region tabs */}
+        <div className="flex bg-bg rounded-xl p-1 mb-4">
+          {([
+            { k: "all" as RegionTab, l: `전체 ${counts.all}` },
+            { k: "domestic" as RegionTab, l: `🇰🇷 국내 ${counts.domestic}` },
+            { k: "international" as RegionTab, l: `🌏 해외 ${counts.international}` },
+          ]).map(t => (
+            <button key={t.k} onClick={() => setRegionTab(t.k)}
+              className={`flex-1 py-2.5 rounded-lg text-[13px] md:text-[14px] font-bold transition-all ${regionTab === t.k ? "bg-white text-accent shadow-sm" : "text-muted"}`}>
+              {t.l}
+            </button>
+          ))}
+        </div>
+
+        {/* Sort + register */}
+        <div className="mb-8 flex items-center justify-between gap-3 flex-wrap">
+          <div className="flex gap-1.5">
+            {([
+              { k: "date" as SortKey, l: "빠른 날짜순" },
+              { k: "recent" as SortKey, l: "최신 등록순" },
+              { k: "prize" as SortKey, l: "상금순" },
+            ]).map(s => (
+              <button key={s.k} onClick={() => setSortKey(s.k)}
+                className={`px-3.5 py-1.5 rounded-full text-[12px] font-semibold border transition-all ${sortKey === s.k ? "bg-accent text-white border-accent" : "bg-white text-sub border-border-custom hover:border-accent/40"}`}>
+                {s.l}
+              </button>
+            ))}
+          </div>
           {user ? (
             <Link href="/events/write" className="inline-flex items-center gap-2 bg-accent hover:bg-accent-hover text-white text-sm font-bold px-5 py-2.5 rounded-xl shadow-lg shadow-accent/20 transition-all">
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" /></svg>
-              대회 등록하기
+              대회 등록
             </Link>
           ) : (
             <Link href="/login" className="text-accent text-sm font-semibold hover:underline">로그인 후 대회 등록하기 →</Link>
@@ -90,7 +158,12 @@ export default function EventsPage() {
                       {/* Content */}
                       <div className="flex-1 min-w-0">
                         <div className="flex items-start justify-between gap-3">
-                          <div>
+                          <div className="min-w-0">
+                            <div className="flex items-center gap-2 flex-wrap mb-1">
+                              <span className={`text-[10px] font-black px-2 py-0.5 rounded-full ${event.is_international ? "bg-blue-50 text-blue-600" : "bg-green-50 text-green-700"}`}>
+                                {event.is_international ? "🌏 해외" : "🇰🇷 국내"}
+                              </span>
+                            </div>
                             <h2 className="text-surface font-bold text-xl group-hover:text-accent transition-colors">{event.title}</h2>
                             {(event.location || event.store_name) && (
                               <p className="text-accent text-sm mt-1">📍 {event.location || event.store_name}</p>

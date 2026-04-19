@@ -99,6 +99,7 @@ export default function TournamentPage() {
         {(() => {
           const todayMs = new Date().setHours(0, 0, 0, 0);
           const upcoming = [...events]
+            .filter(e => !e.submitted_by) // 회원 제출 대회 제외 (관리자 공식 토너먼트만)
             .filter(e => new Date(e.end_date || e.date).getTime() >= todayMs)
             .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
           if (upcoming.length === 0) {
