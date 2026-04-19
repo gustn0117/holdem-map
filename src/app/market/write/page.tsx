@@ -140,10 +140,28 @@ export default function MarketWritePage() {
                 placeholder="매장 규모, 시설 현황, 운영 가능 시간 등 상세 정보를 입력하세요" />
             </div>
 
-            {/* Images */}
+            {/* Images - multiple */}
             <div>
-              <label className="text-sub text-sm font-semibold mb-2 block">사진</label>
-              <ImageUpload value={form.images[0] || ""} onChange={v => set("images", v ? [v] : [])} folder="market" label="매장 사진" />
+              <label className="text-sub text-sm font-semibold mb-2 block">매장 사진 <span className="text-muted font-normal">(최대 8장)</span></label>
+              <div className="space-y-2">
+                {form.images.length > 0 && (
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                    {form.images.map((img, i) => (
+                      <div key={i} className="relative aspect-video rounded-lg overflow-hidden border border-border-custom bg-bg group">
+                        <img src={img} alt="" className="w-full h-full object-cover" />
+                        <button type="button" onClick={() => set("images", form.images.filter((_, j) => j !== i))}
+                          className="absolute top-1.5 right-1.5 w-6 h-6 rounded-full bg-red-500 text-white flex items-center justify-center shadow-md opacity-90 hover:opacity-100 hover:bg-red-600 transition-all">
+                          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" /></svg>
+                        </button>
+                        {i === 0 && <span className="absolute bottom-1.5 left-1.5 bg-accent text-white text-[10px] font-bold px-1.5 py-0.5 rounded">대표</span>}
+                      </div>
+                    ))}
+                  </div>
+                )}
+                {form.images.length < 8 && (
+                  <ImageUpload value="" onChange={v => v && set("images", [...form.images, v])} folder="market" label={form.images.length === 0 ? "사진 업로드" : "사진 추가"} aspect="aspect-video" hint={`${form.images.length}/8`} />
+                )}
+              </div>
             </div>
 
             {/* Contact */}

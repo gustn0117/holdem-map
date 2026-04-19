@@ -11,7 +11,20 @@ import ImageUpload from "@/components/ImageUpload";
 
 import { supabase } from "@/lib/supabase";
 
-type Tab = "stores" | "events" | "notices" | "banners" | "shorts" | "users" | "live" | "promotions" | "inquiries";
+type Tab = "stores" | "events" | "notices" | "banners" | "shorts" | "users" | "live" | "promotions" | "inquiries" | "board";
+
+interface Post {
+  id: string;
+  user_id: string | null;
+  nickname: string;
+  title: string;
+  content: string;
+  category?: string;
+  views: number;
+  pinned: boolean;
+  image?: string;
+  created_at: string;
+}
 
 const EVENT_DEFAULT_NOTICE = `※ 본 페이지는 이벤트 정보 안내용이며, 실제 진행 및 참여는 각 업장에서 개별적으로 이루어집니다.
 ※ 본 사이트는 운영·모집·정산 등에 관여하지 않으며, 이용은 업장 기준에 따릅니다.
@@ -59,8 +72,44 @@ export default function AdminPage() {
   const [promotions, setPromotions] = useState<any[]>([]);
   const [users, setUsers] = useState<Profile[]>([]);
   const [inquiries, setInquiries] = useState<Inquiry[]>([]);
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [noticePostOpen, setNoticePostOpen] = useState(false);
+  const [noticePostForm, setNoticePostForm] = useState({ title: "", content: "", image: "" });
+  const [noticePostSaving, setNoticePostSaving] = useState(false);
 
-  useEffect(() => { api.getBanners().then(setBanners); api.getAllShorts().then(setShorts); refreshUsers(); refreshLiveGames(); refreshPromotions(); refreshInquiries(); refreshEvents(); }, []);
+  useEffect(() => { api.getBanners().then(setBanners); api.getAllShorts().then(setShorts); refreshUsers(); refreshLiveGames(); refreshPromotions(); refreshInquiries(); refreshEvents(); refreshPosts(); }, []);
+
+  const refreshPosts = async () => {
+    const { data } = await supabase.from("posts").select("*").order("pinned", { ascending: false }).order("created_at", { ascending: false });
+    setPosts((data as Post[]) || []);
+  };
+
+  const handlePostDelete = async (id: string) => {
+    if (!confirm("이 글을 삭제하시겠습니까? 복구할 수 없습니다.")) return;
+    await supabase.from("posts").delete().eq("id", id);
+    refreshPosts();
+  };
+
+  const handlePostTogglePin = async (id: string, pinned: boolean) => {
+    await supabase.from("posts").update({ pinned: !pinned }).eq("id", id);
+    refreshPosts();
+  };
+
+  const handleNoticePostSubmit = async () => {
+    if (!noticePostForm.title.trim() || !noticePostForm.content.trim()) { alert("제목과 내용을 입력하세요."); return; }
+    setNoticePostSaving(true);
+    await supabase.from("posts").insert({
+      user_id: null, nickname: "관리자",
+      title: noticePostForm.title.trim(),
+      content: noticePostForm.content.trim(),
+      image: noticePostForm.image || null,
+      category: "공지", pinned: true, views: 0,
+    });
+    setNoticePostSaving(false);
+    setNoticePostForm({ title: "", content: "", image: "" });
+    setNoticePostOpen(false);
+    refreshPosts();
+  };
 
   const refreshInquiries = async () => {
     const { data } = await supabase.from("inquiries").select("*").order("created_at", { ascending: false });
@@ -177,6 +226,7 @@ export default function AdminPage() {
     { key: "users", label: "회원", count: users.length },
     { key: "live", label: "실시간", count: liveGames.length },
     { key: "inquiries", label: "매장 문의", count: inquiries.filter(i => i.status === "pending").length },
+    { key: "board", label: "자유게시판", count: posts.length },
   ];
 
   const refreshShorts = () => api.getAllShorts().then(setShorts);
@@ -356,13 +406,22 @@ export default function AdminPage() {
         {/* Action bar */}
         <div className="flex items-center justify-between mb-5">
           <h2 className="text-lg font-bold text-surface">{tabs.find(t => t.key === activeTab)?.label} 관리</h2>
-          {activeTab !== "inquiries" && (
+          {activeTab !== "inquiries" && activeTab !== "board" && (
             <button
               onClick={() => setModal({ type: "create", tab: activeTab })}
               className="bg-accent hover:bg-accent-hover text-white px-5 py-2.5 rounded-full text-sm font-semibold shadow-lg shadow-accent/20 flex items-center gap-2"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
               새로 등록
+            </button>
+          )}
+          {activeTab === "board" && (
+            <button
+              onClick={() => setNoticePostOpen(true)}
+              className="bg-accent hover:bg-accent-hover text-white px-5 py-2.5 rounded-full text-sm font-semibold shadow-lg shadow-accent/20 flex items-center gap-2"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5h14v14H5z M12 8v8m-4-4h8" /></svg>
+              📌 공지글 작성
             </button>
           )}
         </div>
@@ -720,6 +779,72 @@ export default function AdminPage() {
                 </div>
               </div>
             ))}
+          </div>
+        )}
+
+        {/* Board management */}
+        {activeTab === "board" && (
+          <div className="bg-white rounded-2xl border border-border-custom overflow-hidden">
+            {posts.length === 0 ? (
+              <div className="text-center py-12 text-muted text-sm">등록된 게시글이 없습니다</div>
+            ) : posts.map(p => (
+              <div key={p.id} className="px-5 py-4 border-b border-border-custom last:border-b-0 flex items-start justify-between gap-4">
+                <Link href={`/board/${p.id}`} target="_blank" className="flex-1 min-w-0 hover:bg-[#f9f9f9] -m-2 p-2 rounded-lg transition-colors">
+                  <div className="flex items-center gap-2 mb-1.5 flex-wrap">
+                    {p.pinned && <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-accent text-white">📌 공지</span>}
+                    {p.category && <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-bg text-sub">{p.category}</span>}
+                    <span className="text-muted text-[11px]">{p.nickname} · 조회 {p.views}</span>
+                    <span className="text-muted text-[11px]">{p.created_at?.slice(0, 10)}</span>
+                  </div>
+                  <p className="text-surface text-[14px] font-bold truncate">{p.title}</p>
+                  <p className="text-muted text-[12px] truncate mt-0.5">{p.content}</p>
+                </Link>
+                <div className="shrink-0 flex flex-col gap-1.5">
+                  <button onClick={() => handlePostTogglePin(p.id, p.pinned)}
+                    className={`text-[12px] font-semibold px-3 py-1.5 rounded-lg transition-all ${p.pinned ? "bg-yellow-50 text-yellow-700 hover:bg-yellow-100" : "bg-bg text-sub hover:bg-accent-light hover:text-accent"}`}>
+                    {p.pinned ? "공지 해제" : "공지 고정"}
+                  </button>
+                  <button onClick={() => handlePostDelete(p.id)}
+                    className="text-[12px] font-semibold px-3 py-1.5 rounded-lg bg-red-50 text-red-500 hover:bg-red-100 transition-all">
+                    삭제
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Notice post modal */}
+        {noticePostOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={() => setNoticePostOpen(false)} />
+            <div className="relative bg-white rounded-3xl p-8 border border-border-custom w-full max-w-xl max-h-[85vh] overflow-y-auto">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-surface font-bold text-2xl">📌 공지글 작성</h2>
+                <button onClick={() => setNoticePostOpen(false)} className="text-muted hover:text-accent">
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+                </button>
+              </div>
+              <p className="text-muted text-xs mb-5">자유게시판 상단에 고정됩니다. 작성자는 '관리자'로 표시됩니다.</p>
+              <div className="space-y-4">
+                <div>
+                  <label className="text-sub text-sm font-medium block mb-2">제목 *</label>
+                  <input className={inputClass} value={noticePostForm.title} onChange={e => setNoticePostForm(p => ({ ...p, title: e.target.value }))} placeholder="공지사항 제목" />
+                </div>
+                <div>
+                  <label className="text-sub text-sm font-medium block mb-2">내용 *</label>
+                  <textarea className={inputClass + " resize-none"} rows={8} value={noticePostForm.content} onChange={e => setNoticePostForm(p => ({ ...p, content: e.target.value }))} placeholder="공지 내용을 입력하세요" />
+                </div>
+                <ImageUpload value={noticePostForm.image} onChange={v => setNoticePostForm(p => ({ ...p, image: v }))} folder="posts" label="이미지" hint="선택" />
+                <div className="flex gap-3 pt-2">
+                  <button onClick={() => setNoticePostOpen(false)} className="flex-1 bg-gray-100 border border-border-custom text-muted hover:text-accent px-4 py-3 rounded-xl text-base font-medium transition-colors">취소</button>
+                  <button onClick={handleNoticePostSubmit} disabled={noticePostSaving}
+                    className="flex-1 bg-accent hover:bg-accent-hover text-white px-4 py-3 rounded-xl text-base font-bold shadow-lg shadow-accent/20 disabled:opacity-50 transition-all">
+                    {noticePostSaving ? "등록 중..." : "공지글 등록"}
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
         )}
 
