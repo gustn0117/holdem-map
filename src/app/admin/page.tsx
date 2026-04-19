@@ -11,7 +11,24 @@ import ImageUpload from "@/components/ImageUpload";
 
 import { supabase } from "@/lib/supabase";
 
-type Tab = "stores" | "events" | "notices" | "banners" | "shorts" | "users" | "live" | "promotions" | "inquiries" | "board" | "market";
+type Tab = "stores" | "events" | "notices" | "banners" | "shorts" | "users" | "live" | "promotions" | "inquiries" | "board" | "market" | "trade";
+
+interface TradeItemRow {
+  id: string;
+  user_id: string | null;
+  nickname: string;
+  title: string;
+  category: string;
+  price: string;
+  condition: string;
+  description: string;
+  images: string[];
+  region: string;
+  contact: string;
+  status: string;
+  views: number;
+  created_at: string;
+}
 
 interface MarketListing {
   id: string;
@@ -110,8 +127,28 @@ export default function AdminPage() {
   const [expandedPostId, setExpandedPostId] = useState<string | null>(null);
   const [postComments, setPostComments] = useState<Record<string, PostComment[]>>({});
   const [marketListings, setMarketListings] = useState<MarketListing[]>([]);
+  const [tradeItems, setTradeItems] = useState<TradeItemRow[]>([]);
 
-  useEffect(() => { api.getBanners().then(setBanners); api.getAllShorts().then(setShorts); refreshUsers(); refreshLiveGames(); refreshPromotions(); refreshInquiries(); refreshEvents(); refreshPosts(); refreshMarket(); }, []);
+  useEffect(() => { api.getBanners().then(setBanners); api.getAllShorts().then(setShorts); refreshUsers(); refreshLiveGames(); refreshPromotions(); refreshInquiries(); refreshEvents(); refreshPosts(); refreshMarket(); refreshTrade(); }, []);
+
+  const refreshTrade = async () => {
+    const { data } = await supabase.from("trade_items").select("*").order("created_at", { ascending: false });
+    setTradeItems((data as TradeItemRow[]) || []);
+  };
+
+  const handleTradeDelete = async (id: string) => {
+    if (!confirm("이 상품을 삭제하시겠습니까?")) return;
+    await supabase.from("trade_items").delete().eq("id", id);
+    refreshTrade();
+  };
+
+  const handleTradeStatus = async (id: string, status: string) => {
+    const order = ["판매중", "예약중", "판매완료"];
+    const idx = order.indexOf(status);
+    const next = order[(idx + 1) % order.length];
+    await supabase.from("trade_items").update({ status: next }).eq("id", id);
+    refreshTrade();
+  };
 
   const refreshMarket = async () => {
     const { data } = await supabase.from("market_listings").select("*").order("is_featured", { ascending: false }).order("created_at", { ascending: false });
@@ -316,6 +353,7 @@ export default function AdminPage() {
     { key: "inquiries", label: "매장 문의", count: inquiries.filter(i => i.status === "pending").length },
     { key: "board", label: "자유게시판", count: posts.filter(p => p.status === "hidden").length },
     { key: "market", label: "대관/매매", count: marketListings.length },
+    { key: "trade", label: "중고거래", count: tradeItems.length },
   ];
 
   const refreshShorts = () => api.getAllShorts().then(setShorts);
@@ -425,6 +463,24 @@ export default function AdminPage() {
           await supabase.from("market_listings").update(payload).eq("id", formData.id as string);
         }
         refreshMarket();
+      } else if (modal?.tab === "trade") {
+        const payload = {
+          title: formData.title as string,
+          category: (formData.category as string) || "기타",
+          price: (formData.price as string) || "협의",
+          condition: (formData.condition as string) || "중고",
+          description: (formData.description as string) || "",
+          images: (formData.images as string[]) || [],
+          region: (formData.region as string) || "",
+          contact: (formData.contact as string) || "",
+          status: (formData.status as string) || "판매중",
+        };
+        if (modal.type === "create") {
+          await supabase.from("trade_items").insert({ ...payload, user_id: null, nickname: "관리자", views: 0 });
+        } else {
+          await supabase.from("trade_items").update(payload).eq("id", formData.id as string);
+        }
+        refreshTrade();
       }
       setModal(null);
     } catch {
@@ -1016,6 +1072,50 @@ export default function AdminPage() {
           </div>
         )}
 
+        {/* Trade management */}
+        {activeTab === "trade" && (
+          <div className="bg-white rounded-2xl border border-border-custom overflow-hidden">
+            {tradeItems.length === 0 ? (
+              <div className="text-center py-12 text-muted text-sm">등록된 중고거래 상품이 없습니다</div>
+            ) : tradeItems.map(t => (
+              <div key={t.id} className="border-b border-border-custom last:border-b-0">
+                <div className="px-5 py-4 flex items-start justify-between gap-4">
+                  <Link href={`/trade/${t.id}`} target="_blank" className="flex-1 min-w-0 hover:bg-[#f9f9f9] -m-2 p-2 rounded-lg transition-colors">
+                    <div className="flex items-center gap-2 mb-1.5 flex-wrap">
+                      <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${
+                        t.status === "판매중" ? "bg-emerald-100 text-emerald-700" :
+                        t.status === "예약중" ? "bg-yellow-100 text-yellow-700" :
+                        "bg-gray-200 text-gray-500"
+                      }`}>{t.status || "판매중"}</span>
+                      <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-bg text-sub">{t.category}</span>
+                      <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-bg text-sub">{t.condition}</span>
+                      <span className="text-muted text-[11px]">{t.nickname} · 조회 {t.views || 0}</span>
+                      <span className="text-muted text-[11px]">{t.created_at?.slice(0, 10)}</span>
+                    </div>
+                    <p className="text-surface text-[14px] font-bold truncate">{t.title}</p>
+                    <p className="text-accent text-[13px] font-bold mt-0.5">{t.price}</p>
+                    <p className="text-muted text-[12px] truncate mt-0.5">{t.region} · {t.description}</p>
+                  </Link>
+                  <div className="shrink-0 flex flex-col gap-1.5">
+                    <button onClick={() => setModal({ type: "edit", tab: "trade", data: { ...t, images: t.images || [] } as unknown as Record<string, unknown> })}
+                      className="text-[12px] font-semibold px-3 py-1.5 rounded-lg bg-bg text-sub hover:bg-accent-light hover:text-accent transition-all">
+                      수정
+                    </button>
+                    <button onClick={() => handleTradeStatus(t.id, t.status || "판매중")}
+                      className="text-[12px] font-semibold px-3 py-1.5 rounded-lg bg-bg text-sub hover:bg-accent-light hover:text-accent transition-all">
+                      상태 변경
+                    </button>
+                    <button onClick={() => handleTradeDelete(t.id)}
+                      className="text-[12px] font-semibold px-3 py-1.5 rounded-lg bg-red-50 text-red-500 hover:bg-red-100 transition-all">
+                      삭제
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
         {/* Notice post modal */}
         {noticePostOpen && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -1307,6 +1407,76 @@ function AdminModal({ modal, stores, saving, onClose, onSave }: {
                   { value: "false", label: "아니오" }, { value: "true", label: "예" },
                 ]} />
               </div>
+            </div>
+          </div>
+        )}
+
+        {modal.tab === "trade" && (
+          <div className="space-y-5">
+            <div>
+              <label className="text-sub text-sm font-medium block mb-2">상품명 *</label>
+              <input className={inputClass} value={(form.title as string) || ""} onChange={e => set("title", e.target.value)} placeholder="예: 포커 플라스틱 카드 2덱" />
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="text-sub text-sm font-medium block mb-2">카테고리</label>
+                <Select value={(form.category as string) || "기타"} onChange={v => set("category", v)} options={[
+                  { value: "카드", label: "카드" }, { value: "칩", label: "칩" }, { value: "테이블", label: "테이블" },
+                  { value: "악세서리", label: "악세서리" }, { value: "기타", label: "기타" },
+                ]} />
+              </div>
+              <div>
+                <label className="text-sub text-sm font-medium block mb-2">상품 상태</label>
+                <Select value={(form.condition as string) || "중고"} onChange={v => set("condition", v)} options={[
+                  { value: "새상품", label: "새상품" }, { value: "거의새것", label: "거의새것" },
+                  { value: "중고", label: "중고" }, { value: "하자있음", label: "하자있음" },
+                ]} />
+              </div>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="text-sub text-sm font-medium block mb-2">가격</label>
+                <input className={inputClass} value={(form.price as string) || ""} onChange={e => set("price", e.target.value)} placeholder="예: 30,000원 또는 협의" />
+              </div>
+              <div>
+                <label className="text-sub text-sm font-medium block mb-2">거래 지역</label>
+                <input className={inputClass} value={(form.region as string) || ""} onChange={e => set("region", e.target.value)} placeholder="예: 서울 강남" />
+              </div>
+            </div>
+            <div>
+              <label className="text-sub text-sm font-medium block mb-2">상세 설명</label>
+              <textarea className={inputClass + " resize-none"} rows={5} value={(form.description as string) || ""} onChange={e => set("description", e.target.value)} placeholder="상품 상태, 구매 시기 등" />
+            </div>
+            <div>
+              <label className="text-sub text-sm font-medium block mb-2">연락처</label>
+              <input className={inputClass} value={(form.contact as string) || ""} onChange={e => set("contact", e.target.value)} placeholder="카카오톡 ID 또는 전화번호" />
+            </div>
+            <div>
+              <label className="text-sub text-sm font-medium block mb-2">상품 사진 <span className="text-muted font-normal">(최대 8장)</span></label>
+              <div className="space-y-2">
+                {((form.images as string[]) || []).map((img, i) => (
+                  <div key={i} className="flex items-center gap-3 bg-[#f9f9f9] rounded-lg p-2.5">
+                    <img src={img} alt="" className="w-16 h-16 object-cover rounded-lg" />
+                    <button type="button" onClick={() => set("images", ((form.images as string[]) || []).filter((_, j) => j !== i))}
+                      className="ml-auto text-red-500 text-[12px] font-semibold hover:text-red-600 px-2">삭제</button>
+                  </div>
+                ))}
+                {((form.images as string[]) || []).length < 8 && (
+                  <ImageUpload
+                    value=""
+                    onChange={v => { if (v) set("images", [...((form.images as string[]) || []), v]); }}
+                    folder="trade"
+                    label={((form.images as string[]) || []).length === 0 ? "사진 업로드" : "사진 추가"}
+                    aspect="aspect-square"
+                  />
+                )}
+              </div>
+            </div>
+            <div>
+              <label className="text-sub text-sm font-medium block mb-2">판매 상태</label>
+              <Select value={(form.status as string) || "판매중"} onChange={v => set("status", v)} options={[
+                { value: "판매중", label: "판매중" }, { value: "예약중", label: "예약중" }, { value: "판매완료", label: "판매완료" },
+              ]} />
             </div>
           </div>
         )}

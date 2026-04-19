@@ -8,6 +8,7 @@ import Footer from "@/components/Footer";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
 import ImageUpload from "@/components/ImageUpload";
+import { classifyContent, formatFilterMessage } from "@/lib/contentFilter";
 
 const CATEGORIES = ["카드", "칩", "테이블", "악세서리", "기타"];
 const CONDITIONS = ["새상품", "거의새것", "중고", "하자있음"];
@@ -40,11 +41,14 @@ export default function TradeWritePage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.title.trim() || !form.price.trim()) { alert("제목과 가격을 입력하세요."); return; }
+    const filter = classifyContent(`${form.title}\n${form.description}`);
+    if (filter.action === "block") { alert(formatFilterMessage(filter)); return; }
     setSaving(true);
     const { error } = await supabase.from("trade_items").insert({
       user_id: user.id, nickname: profile?.nickname || "익명",
       title: form.title, category: form.category, price: form.price, condition: form.condition,
       description: form.description, images: form.images, region: form.region, contact: form.contact,
+      status: "판매중",
     });
     if (error) { alert("등록 실패"); setSaving(false); return; }
     router.push("/trade");
@@ -89,7 +93,29 @@ export default function TradeWritePage() {
             <div><label className="text-sub text-sm font-semibold mb-1.5 block">상세 설명</label>
               <textarea className={inputClass + " resize-none"} rows={5} value={form.description} onChange={e => set("description", e.target.value)} placeholder="상품 상태, 구매 시기 등" /></div>
 
-            <ImageUpload value={form.images[0] || ""} onChange={v => set("images", v ? [v] : [])} folder="trade" label="상품 이미지" hint="상품 사진을 업로드하세요" />
+            <div>
+              <label className="text-sub text-sm font-semibold mb-1.5 block">상품 사진 <span className="text-muted font-normal">(최대 8장)</span></label>
+              <div className="space-y-2">
+                {form.images.length > 0 && (
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                    {form.images.map((img, i) => (
+                      <div key={i} className="relative aspect-square rounded-lg overflow-hidden border border-border-custom bg-bg">
+                        <img src={img} alt="" className="w-full h-full object-cover" />
+                        <button type="button" onClick={() => set("images", form.images.filter((_, j) => j !== i))}
+                          className="absolute top-1.5 right-1.5 w-6 h-6 rounded-full bg-red-500 text-white flex items-center justify-center shadow-md opacity-90 hover:opacity-100 hover:bg-red-600 transition-all">
+                          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" /></svg>
+                        </button>
+                        {i === 0 && <span className="absolute bottom-1.5 left-1.5 bg-accent text-white text-[10px] font-bold px-1.5 py-0.5 rounded">대표</span>}
+                      </div>
+                    ))}
+                  </div>
+                )}
+                {form.images.length < 8 && (
+                  <ImageUpload value="" onChange={v => v && set("images", [...form.images, v])} folder="trade"
+                    label={form.images.length === 0 ? "사진 업로드" : "사진 추가"} aspect="aspect-square" hint={`${form.images.length}/8`} />
+                )}
+              </div>
+            </div>
 
             <div><label className="text-sub text-sm font-semibold mb-1.5 block">연락처</label>
               <input className={inputClass} value={form.contact} onChange={e => set("contact", e.target.value)} placeholder="카톡 ID 또는 전화번호" /></div>
