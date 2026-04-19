@@ -29,6 +29,15 @@ interface Post {
   created_at: string;
 }
 
+interface PostComment {
+  id: string;
+  post_id: string;
+  user_id: string | null;
+  nickname: string;
+  content: string;
+  created_at: string;
+}
+
 const EVENT_DEFAULT_NOTICE = `※ 본 페이지는 이벤트 정보 안내용이며, 실제 진행 및 참여는 각 업장에서 개별적으로 이루어집니다.
 ※ 본 사이트는 운영·모집·정산 등에 관여하지 않으며, 이용은 업장 기준에 따릅니다.
 ※ 관련 법령에 위반될 수 있는 행위는 지원하지 않습니다.`;
@@ -79,6 +88,8 @@ export default function AdminPage() {
   const [noticePostOpen, setNoticePostOpen] = useState(false);
   const [noticePostForm, setNoticePostForm] = useState({ title: "", content: "", image: "" });
   const [noticePostSaving, setNoticePostSaving] = useState(false);
+  const [expandedPostId, setExpandedPostId] = useState<string | null>(null);
+  const [postComments, setPostComments] = useState<Record<string, PostComment[]>>({});
 
   useEffect(() => { api.getBanners().then(setBanners); api.getAllShorts().then(setShorts); refreshUsers(); refreshLiveGames(); refreshPromotions(); refreshInquiries(); refreshEvents(); refreshPosts(); }, []);
 
@@ -102,6 +113,27 @@ export default function AdminPage() {
     const newStatus = status === "approved" ? "hidden" : "approved";
     await supabase.from("posts").update({ status: newStatus, hidden_reason: newStatus === "hidden" ? "관리자 숨김" : null }).eq("id", id);
     refreshPosts();
+  };
+
+  const togglePostComments = async (postId: string) => {
+    if (expandedPostId === postId) {
+      setExpandedPostId(null);
+      return;
+    }
+    setExpandedPostId(postId);
+    if (!postComments[postId]) {
+      const { data } = await supabase.from("comments").select("*").eq("post_id", postId).order("created_at", { ascending: true });
+      setPostComments(prev => ({ ...prev, [postId]: (data as PostComment[]) || [] }));
+    }
+  };
+
+  const handleCommentDelete = async (postId: string, commentId: string) => {
+    if (!confirm("이 댓글을 삭제하시겠습니까? 복구할 수 없습니다.")) return;
+    await supabase.from("comments").delete().eq("id", commentId);
+    setPostComments(prev => ({
+      ...prev,
+      [postId]: (prev[postId] || []).filter(c => c.id !== commentId),
+    }));
   };
 
   const handleNoticePostSubmit = async () => {
@@ -798,34 +830,66 @@ export default function AdminPage() {
             {posts.length === 0 ? (
               <div className="text-center py-12 text-muted text-sm">등록된 게시글이 없습니다</div>
             ) : posts.map(p => (
-              <div key={p.id} className={`px-5 py-4 border-b border-border-custom last:border-b-0 flex items-start justify-between gap-4 ${p.status === "hidden" ? "bg-red-50/30" : ""}`}>
-                <Link href={`/board/${p.id}`} target="_blank" className="flex-1 min-w-0 hover:bg-[#f9f9f9] -m-2 p-2 rounded-lg transition-colors">
-                  <div className="flex items-center gap-2 mb-1.5 flex-wrap">
-                    {p.status === "hidden" && <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-red-100 text-red-600">⚠️ 숨김</span>}
-                    {p.pinned && <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-accent text-white">📌 공지</span>}
-                    {p.category && <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-bg text-sub">{p.category}</span>}
-                    {(p.report_count ?? 0) > 0 && <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-yellow-50 text-yellow-700">🚨 신고 {p.report_count}</span>}
-                    <span className="text-muted text-[11px]">{p.nickname} · 조회 {p.views}</span>
-                    <span className="text-muted text-[11px]">{p.created_at?.slice(0, 10)}</span>
+              <div key={p.id} className={`border-b border-border-custom last:border-b-0 ${p.status === "hidden" ? "bg-red-50/30" : ""}`}>
+                <div className="px-5 py-4 flex items-start justify-between gap-4">
+                  <Link href={`/board/${p.id}`} target="_blank" className="flex-1 min-w-0 hover:bg-[#f9f9f9] -m-2 p-2 rounded-lg transition-colors">
+                    <div className="flex items-center gap-2 mb-1.5 flex-wrap">
+                      {p.status === "hidden" && <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-red-100 text-red-600">⚠️ 숨김</span>}
+                      {p.pinned && <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-accent text-white">📌 공지</span>}
+                      {p.category && <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-bg text-sub">{p.category}</span>}
+                      {(p.report_count ?? 0) > 0 && <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-yellow-50 text-yellow-700">🚨 신고 {p.report_count}</span>}
+                      <span className="text-muted text-[11px]">{p.nickname} · 조회 {p.views}</span>
+                      <span className="text-muted text-[11px]">{p.created_at?.slice(0, 10)}</span>
+                    </div>
+                    <p className="text-surface text-[14px] font-bold truncate">{p.title}</p>
+                    <p className="text-muted text-[12px] truncate mt-0.5">{p.content}</p>
+                    {p.hidden_reason && <p className="text-red-500 text-[11px] mt-1">숨김 사유: {p.hidden_reason}</p>}
+                  </Link>
+                  <div className="shrink-0 flex flex-col gap-1.5">
+                    <button onClick={() => togglePostComments(p.id)}
+                      className={`text-[12px] font-semibold px-3 py-1.5 rounded-lg transition-all ${expandedPostId === p.id ? "bg-accent text-white" : "bg-bg text-sub hover:bg-accent-light hover:text-accent"}`}>
+                      💬 댓글 {expandedPostId === p.id ? "닫기" : "보기"}
+                    </button>
+                    <button onClick={() => handlePostToggleStatus(p.id, p.status || "approved")}
+                      className={`text-[12px] font-semibold px-3 py-1.5 rounded-lg transition-all ${p.status === "hidden" ? "bg-accent text-white hover:bg-accent-hover" : "bg-red-50 text-red-500 hover:bg-red-100"}`}>
+                      {p.status === "hidden" ? "복구" : "숨기기"}
+                    </button>
+                    <button onClick={() => handlePostTogglePin(p.id, p.pinned)}
+                      className={`text-[12px] font-semibold px-3 py-1.5 rounded-lg transition-all ${p.pinned ? "bg-yellow-50 text-yellow-700 hover:bg-yellow-100" : "bg-bg text-sub hover:bg-accent-light hover:text-accent"}`}>
+                      {p.pinned ? "공지 해제" : "공지 고정"}
+                    </button>
+                    <button onClick={() => handlePostDelete(p.id)}
+                      className="text-[12px] font-semibold px-3 py-1.5 rounded-lg bg-red-50 text-red-500 hover:bg-red-100 transition-all">
+                      삭제
+                    </button>
                   </div>
-                  <p className="text-surface text-[14px] font-bold truncate">{p.title}</p>
-                  <p className="text-muted text-[12px] truncate mt-0.5">{p.content}</p>
-                  {p.hidden_reason && <p className="text-red-500 text-[11px] mt-1">숨김 사유: {p.hidden_reason}</p>}
-                </Link>
-                <div className="shrink-0 flex flex-col gap-1.5">
-                  <button onClick={() => handlePostToggleStatus(p.id, p.status || "approved")}
-                    className={`text-[12px] font-semibold px-3 py-1.5 rounded-lg transition-all ${p.status === "hidden" ? "bg-accent text-white hover:bg-accent-hover" : "bg-red-50 text-red-500 hover:bg-red-100"}`}>
-                    {p.status === "hidden" ? "복구" : "숨기기"}
-                  </button>
-                  <button onClick={() => handlePostTogglePin(p.id, p.pinned)}
-                    className={`text-[12px] font-semibold px-3 py-1.5 rounded-lg transition-all ${p.pinned ? "bg-yellow-50 text-yellow-700 hover:bg-yellow-100" : "bg-bg text-sub hover:bg-accent-light hover:text-accent"}`}>
-                    {p.pinned ? "공지 해제" : "공지 고정"}
-                  </button>
-                  <button onClick={() => handlePostDelete(p.id)}
-                    className="text-[12px] font-semibold px-3 py-1.5 rounded-lg bg-red-50 text-red-500 hover:bg-red-100 transition-all">
-                    삭제
-                  </button>
                 </div>
+                {expandedPostId === p.id && (
+                  <div className="bg-[#f9f9f9] border-t border-border-custom px-5 py-4">
+                    <p className="text-sub text-[13px] font-bold mb-3">댓글 ({(postComments[p.id] || []).length})</p>
+                    {(postComments[p.id] || []).length === 0 ? (
+                      <p className="text-muted text-[12px] py-2">댓글이 없습니다</p>
+                    ) : (
+                      <div className="space-y-2">
+                        {(postComments[p.id] || []).map(c => (
+                          <div key={c.id} className="flex items-start justify-between gap-3 bg-white rounded-lg border border-border-custom px-4 py-3">
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2 mb-1">
+                                <span className="text-surface text-[12px] font-semibold">{c.nickname}</span>
+                                <span className="text-muted text-[11px]">{c.created_at?.slice(0, 16).replace("T", " ")}</span>
+                              </div>
+                              <p className="text-sub text-[13px] whitespace-pre-wrap break-all">{c.content}</p>
+                            </div>
+                            <button onClick={() => handleCommentDelete(p.id, c.id)}
+                              className="shrink-0 text-[11px] font-semibold px-2.5 py-1 rounded-md bg-red-50 text-red-500 hover:bg-red-100 transition-all">
+                              삭제
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
             ))}
           </div>
