@@ -1214,8 +1214,8 @@ function AdminModal({ modal, stores, saving, onClose, onSave }: {
                 <label className="text-sub text-sm font-medium block mb-2">지역 *</label>
                 <Select value={(form.region as string) || "서울"} onChange={v => set("region", v)} options={[
                   { value: "서울", label: "서울" }, { value: "경기", label: "경기" }, { value: "인천", label: "인천" },
-                  { value: "충청도", label: "충청도" }, { value: "경상도", label: "경상도" }, { value: "전라도", label: "전라도" },
-                  { value: "강원도", label: "강원도" }, { value: "제주도", label: "제주도" },
+                  { value: "충청", label: "충청" }, { value: "경상", label: "경상" }, { value: "전라", label: "전라" },
+                  { value: "강원", label: "강원" }, { value: "제주", label: "제주" },
                 ]} />
               </div>
               <div>

@@ -12,7 +12,7 @@ import { Store } from "@/types";
 
 const MapView = dynamic(() => import("@/components/MapView"), { ssr: false });
 
-const regions = ["전체", "서울", "경기", "인천", "충청도", "경상도", "전라도", "강원도", "제주도"];
+const regions = ["전체", "서울", "경기", "인천", "충청", "경상", "전라", "강원", "제주"];
 
 export default function MapPage() {
   return (
