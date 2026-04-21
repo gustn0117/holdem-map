@@ -183,20 +183,23 @@ export default function JobsPage() {
         </div>
 
         {/* Tabs */}
-        <div className="flex items-center gap-3 mb-5 overflow-x-auto hide-scrollbar">
-          <div className="flex bg-white rounded-lg p-1 card-shadow shrink-0">
+        <div className="mb-3 overflow-x-auto hide-scrollbar -mx-5 md:-mx-10 px-5 md:px-10">
+          <div className="inline-flex bg-white rounded-lg p-1 card-shadow">
             <button onClick={() => { setTab("dealer"); setFilterRole("딜러"); }} className={`px-3 md:px-5 py-2 rounded-md text-[12px] md:text-[13px] font-semibold transition-all whitespace-nowrap ${tab === "dealer" && filterRole === "딜러" ? "bg-accent text-white" : "text-sub"}`}>딜러 찾기</button>
             <button onClick={() => { setTab("dealer"); setFilterRole("서빙"); }} className={`px-3 md:px-5 py-2 rounded-md text-[12px] md:text-[13px] font-semibold transition-all whitespace-nowrap ${tab === "dealer" && filterRole === "서빙" ? "bg-accent text-white" : "text-sub"}`}>서빙 찾기</button>
             <button onClick={() => { setTab("dealer"); setFilterRole("매니저"); }} className={`px-3 md:px-5 py-2 rounded-md text-[12px] md:text-[13px] font-semibold transition-all whitespace-nowrap ${tab === "dealer" && (filterRole === "매니저" || filterRole === "플로어") ? "bg-accent text-white" : "text-sub"}`}>매니저/플로어</button>
             <button onClick={() => setTab("jobs")} className={`px-3 md:px-5 py-2 rounded-md text-[12px] md:text-[13px] font-semibold transition-all whitespace-nowrap ${tab === "jobs" ? "bg-accent text-white" : "text-sub"}`}>구인/구직글</button>
           </div>
-          <button onClick={() => setShowFilter(!showFilter)} className={`card-shadow px-4 py-2 rounded-lg text-[13px] font-semibold flex items-center gap-1.5 transition-all ${
-            (filterRegion !== "전체" || filterStatus !== "전체") ? "bg-accent text-white" : "bg-white text-sub"
-          }`}>
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" /></svg>
-            필터{(filterRegion !== "전체" || filterStatus !== "전체") && " ON"}
-          </button>
         </div>
+
+        {/* Filter toggle (전체 폭) */}
+        <button onClick={() => setShowFilter(!showFilter)} className={`w-full card-shadow px-4 py-2.5 rounded-lg text-[13px] font-semibold flex items-center justify-center gap-2 whitespace-nowrap mb-5 transition-all ${
+          (filterRegion !== "전체" || filterStatus !== "전체" || filterGender !== "전체") ? "bg-accent text-white" : "bg-white text-sub"
+        }`}>
+          <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" /></svg>
+          <span>필터 (조건 선택){(filterRegion !== "전체" || filterStatus !== "전체" || filterGender !== "전체") && " · 적용중"}</span>
+          <svg className={`w-3.5 h-3.5 transition-transform ${showFilter ? "rotate-180" : ""}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+        </button>
 
         {/* Filter panel */}
         {showFilter && (
