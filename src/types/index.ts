@@ -11,6 +11,7 @@ export interface Store {
   region: string;
   tags: string[];
   is_recommended?: boolean;
+  is_hot?: boolean;
   created_at?: string;
   updated_at?: string;
 }

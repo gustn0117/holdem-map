@@ -62,7 +62,7 @@ export default function MarketPage() {
           <select value={filterRegion} onChange={e => setFilterRegion(e.target.value)}
             className="bg-white border border-border-custom rounded-lg px-3 py-2 text-[13px] text-sub focus:outline-none focus:border-accent">
             <option value="전체">전체 지역</option>
-            <option value="서울">서울</option><option value="경기">경기</option><option value="인천">인천</option>
+            {["서울", "경기", "인천", "충청", "전라", "경상", "강원", "제주"].map(r => <option key={r} value={r}>{r}</option>)}
           </select>
         </div>
 

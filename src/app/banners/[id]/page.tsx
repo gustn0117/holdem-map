@@ -5,6 +5,7 @@ import { useParams } from "next/navigation";
 import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import LinkifyText from "@/components/LinkifyText";
 import { supabase } from "@/lib/supabase";
 
 interface BannerLink { label: string; url: string; }
@@ -85,7 +86,9 @@ export default function BannerDetailPage() {
               {banner.description && (
                 <div className="mb-6">
                   <p className="text-[13px] text-muted mb-2">상세 안내</p>
-                  <p className="text-sub text-[15px] leading-relaxed whitespace-pre-wrap bg-[#f9f9f9] rounded-xl p-5">{banner.description}</p>
+                  <div className="bg-[#f9f9f9] rounded-xl p-5">
+                    <LinkifyText text={banner.description} className="text-sub text-[15px] leading-relaxed block" />
+                  </div>
                 </div>
               )}
 

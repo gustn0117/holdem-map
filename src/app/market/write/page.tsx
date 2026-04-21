@@ -11,7 +11,7 @@ import ImageUpload from "@/components/ImageUpload";
 import { classifyContent, formatFilterMessage } from "@/lib/contentFilter";
 
 const TYPES = ["매매", "대관", "단기운영"];
-const REGIONS = ["서울", "경기", "인천"];
+const REGIONS = ["서울", "경기", "인천", "충청", "전라", "경상", "강원", "제주"];
 
 export default function MarketWritePage() {
   const { user, profile } = useAuth();

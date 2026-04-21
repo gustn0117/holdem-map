@@ -40,6 +40,8 @@ export default function Home() {
   const sideBanners = banners.filter(b => b.position.startsWith("side")).sort((a, b) => a.position.localeCompare(b.position));
   const filteredStores = selectedRegion === "전체" ? stores : stores.filter((s) => s.region === selectedRegion);
   const recommendedStores = stores.filter((s) => s.is_recommended);
+  const hotStores = stores.filter((s) => s.is_hot).slice(0, 5);
+  const recentStores = [...stores].sort((a, b) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime()).slice(0, 5);
   const todayMs = new Date().setHours(0, 0, 0, 0);
   const upcomingEvents = [...events]
     .filter(e => new Date(e.end_date || e.date).getTime() >= todayMs)
@@ -280,13 +282,16 @@ export default function Home() {
         <section className="border-b border-border-custom bg-white">
           <div className="px-4 pt-3 pb-1">
             <div className="flex items-center justify-between mb-1">
-              <h3 className="text-surface text-[15px] font-extrabold">자유게시판</h3>
-              <Link href="/board" className="text-accent text-[12px] font-semibold">더보기 →</Link>
+              <Link href="/board" className="text-surface text-[15px] font-extrabold hover:text-accent transition-colors">자유게시판</Link>
+              <div className="flex items-center gap-2">
+                <Link href="/board/write" className="text-white text-[11px] font-bold bg-accent hover:bg-accent-hover px-2.5 py-1 rounded-full transition-all">글쓰기</Link>
+                <Link href="/board" className="text-accent text-[12px] font-semibold">전체보기 →</Link>
+              </div>
             </div>
           </div>
           {posts.length === 0 ? (
             <div className="px-4 pb-4 text-center">
-              <p className="text-muted text-[13px] py-4">아직 게시글이 없습니다</p>
+              <Link href="/board/write" className="block py-4 text-muted text-[13px]">아직 게시글이 없습니다 <span className="text-accent font-semibold">첫 글 작성 →</span></Link>
             </div>
           ) : (
             <div className="relative h-25 overflow-hidden">
@@ -331,14 +336,36 @@ export default function Home() {
           </div>
         </section>
 
-        {/* 6. 홀덤 매장 목록 */}
+        {/* 6. HOT 매장 */}
+        {hotStores.length > 0 && (
+          <section className="px-4 py-5">
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-2">
+                <span className="inline-flex items-center gap-1 bg-red-500 text-white text-[11px] font-black px-2.5 py-1 rounded-full">🔥 HOT</span>
+                <h2 className="text-[17px] font-bold text-surface">인기 매장</h2>
+              </div>
+              <Link href="/map" className="text-accent text-[12px] font-semibold hover:underline">전체보기 →</Link>
+            </div>
+            <div className="grid grid-cols-1 gap-3">
+              {hotStores.map(store => (
+                <div key={store.id} onClick={() => setSelectedStore(store)}
+                  className={`relative transition-all cursor-pointer rounded-2xl ${selectedStore?.id === store.id ? "ring-2 ring-accent" : ""}`}>
+                  <span className="absolute top-3 left-3 z-10 bg-red-500 text-white text-[10px] font-black px-2 py-0.5 rounded-full shadow-md">🔥 HOT</span>
+                  <StoreCard store={store} />
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* 7. 매장 정보 (5개) */}
         <section className="px-4 py-5">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-[17px] font-bold text-surface">홀덤 매장</h2>
+            <h2 className="text-[17px] font-bold text-surface">매장 정보</h2>
             <Link href="/map" className="text-accent text-[12px] font-semibold hover:underline">전체보기 →</Link>
           </div>
           <div className="grid grid-cols-1 gap-3">
-            {filteredStores.map((store) => (
+            {filteredStores.slice(0, 5).map((store) => (
               <div key={store.id} onClick={() => setSelectedStore(store)}
                 className={`transition-all cursor-pointer rounded-2xl ${selectedStore?.id === store.id ? "ring-2 ring-accent" : ""}`}>
                 <StoreCard store={store} />
@@ -347,7 +374,7 @@ export default function Home() {
           </div>
         </section>
 
-        {/* 7. 추천 매장 */}
+        {/* 8. 추천 매장 */}
         <section className="px-4 pb-5"><RecommendedSection /></section>
 
         {/* 8. 공지사항 */}

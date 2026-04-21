@@ -405,6 +405,7 @@ export default function AdminPage() {
           region: formData.region as string,
           tags: (formData.tags as string).split(",").map((t: string) => t.trim()).filter(Boolean),
           is_recommended: formData.is_recommended === "true",
+          is_hot: formData.is_hot === "true",
         };
         if (modal.type === "create") await api.createStore(payload);
         else await api.updateStore(formData.id as string, payload);
@@ -616,7 +617,7 @@ export default function AdminPage() {
                       <td className="px-5 py-3">{store.is_recommended ? <span className="text-gold">★</span> : <span className="text-muted/20">-</span>}</td>
                       <td className="px-5 py-3 text-right">
                         <div className="flex items-center justify-end gap-3">
-                          <button onClick={() => setModal({ type: "edit", tab: "stores", data: { ...store, tags: store.tags.join(", "), is_recommended: store.is_recommended ? "true" : "false" } })} className="text-muted hover:text-accent text-sm transition-colors">수정</button>
+                          <button onClick={() => setModal({ type: "edit", tab: "stores", data: { ...store, tags: store.tags.join(", "), is_recommended: store.is_recommended ? "true" : "false", is_hot: (store as any).is_hot ? "true" : "false" } })} className="text-muted hover:text-accent text-sm transition-colors">수정</button>
                           <button onClick={() => handleDelete("stores", store.id)} className="text-muted hover:text-red text-sm transition-colors">삭제</button>
                         </div>
                       </td>
@@ -1213,6 +1214,8 @@ function AdminModal({ modal, stores, saving, onClose, onSave }: {
                 <label className="text-sub text-sm font-medium block mb-2">지역 *</label>
                 <Select value={(form.region as string) || "서울"} onChange={v => set("region", v)} options={[
                   { value: "서울", label: "서울" }, { value: "경기", label: "경기" }, { value: "인천", label: "인천" },
+                  { value: "충청도", label: "충청도" }, { value: "경상도", label: "경상도" }, { value: "전라도", label: "전라도" },
+                  { value: "강원도", label: "강원도" }, { value: "제주도", label: "제주도" },
                 ]} />
               </div>
               <div>
@@ -1221,6 +1224,12 @@ function AdminModal({ modal, stores, saving, onClose, onSave }: {
                   { value: "false", label: "아니오" }, { value: "true", label: "예" },
                 ]} />
               </div>
+            </div>
+            <div>
+              <label className="text-sub text-sm font-medium block mb-2">🔥 HOT 매장 (인기 매장 상단 노출)</label>
+              <Select value={(form.is_hot as string) || "false"} onChange={v => set("is_hot", v)} options={[
+                { value: "false", label: "아니오" }, { value: "true", label: "HOT 지정" },
+              ]} />
             </div>
             <div>
               <label className="text-sub text-sm font-medium block mb-2">태그 (쉼표로 구분)</label>

@@ -122,7 +122,7 @@ export default function EventsPage() {
             <div className="w-8 h-8 border-2 border-accent/30 border-t-accent rounded-full animate-spin" />
           </div>
         ) : (
-          <div className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {sortedEvents.map((event, i) => {
               const eventDate = new Date(event.date);
               const today = new Date();

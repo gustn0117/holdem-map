@@ -372,7 +372,7 @@ export default function JobWritePage() {
               취소
             </Link>
             <button type="submit" disabled={saving}
-              className="flex-1 bg-accent hover:bg-accent-hover text-white py-3.5 rounded-xl text-base font-bold transition-all disabled:opacity-50">
+              className="flex-1 bg-[#dc2626] hover:bg-[#b91c1c] text-white py-3.5 rounded-xl text-base font-bold transition-all disabled:opacity-50">
               {saving ? "등록 중..." : "등록하기"}
             </button>
           </div>

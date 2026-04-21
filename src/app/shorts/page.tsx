@@ -36,7 +36,7 @@ export default function ShortsPage() {
             <p className="text-muted text-lg">아직 등록된 숏츠가 없습니다</p>
           </div>
         ) : (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+          <div className="grid grid-cols-2 gap-4 max-w-3xl mx-auto">
             {shorts.map((short) => (
               <ShortCard key={short.id} short={short} playing={playing === short.id} onPlay={() => setPlaying(playing === short.id ? null : short.id)} />
             ))}
