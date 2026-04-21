@@ -32,8 +32,19 @@ export default function ShortsPage() {
             <div className="w-8 h-8 border-2 border-accent/30 border-t-accent rounded-full animate-spin" />
           </div>
         ) : shorts.length === 0 ? (
-          <div className="text-center py-20 bg-white rounded-xl border border-border-custom">
-            <p className="text-muted text-lg">아직 등록된 숏츠가 없습니다</p>
+          <div className="max-w-3xl mx-auto">
+            <div className="grid grid-cols-2 gap-4">
+              {[0, 1].map(i => (
+                <div key={i} className="aspect-9/16 rounded-xl border-2 border-dashed border-border-custom bg-bg flex items-center justify-center">
+                  <div className="text-center px-3">
+                    <svg className="w-10 h-10 text-[#ddd] mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" /></svg>
+                    <p className="text-muted text-[13px] font-medium">숏츠 업로드 예정</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <p className="text-muted text-center text-[14px] mt-6">아직 등록된 숏츠가 없습니다</p>
+            <p className="text-[#bbb] text-center text-[12px] mt-1">업로드 시 좌·우 2개씩 노출됩니다</p>
           </div>
         ) : (
           <div className="grid grid-cols-2 gap-4 max-w-3xl mx-auto">
