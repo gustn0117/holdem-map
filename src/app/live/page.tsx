@@ -250,7 +250,7 @@ export default function LivePage() {
             );
           }
           return (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-3 md:gap-4">
               {sortedEvents.map((event, i) => {
                 const eventDate = new Date(event.date);
                 const nowDate = new Date();
@@ -258,53 +258,52 @@ export default function LivePage() {
                 const isUpcoming = daysUntil >= 0 && daysUntil <= 3;
                 return (
                   <Link key={event.id} href={`/events/${event.id}`} className="block group anim-in" style={{ animationDelay: `${i * 0.05}s` }}>
-                    <div className="bg-white rounded-xl border border-border-custom hover:border-accent/30 card-shadow hover:card-shadow-hover transition-all overflow-hidden">
-                      {event.image && (
-                        <div className="h-40 overflow-hidden">
+                    <div className="bg-white rounded-xl border border-border-custom hover:border-accent/30 card-shadow hover:card-shadow-hover transition-all overflow-hidden h-full flex flex-col">
+                      <div className="relative h-28 md:h-40 bg-accent/5 overflow-hidden">
+                        {event.image ? (
                           <img src={event.image} alt={event.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center">
+                            <svg className="w-10 h-10 text-accent/30" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                          </div>
+                        )}
+                        <div className="absolute top-2 left-2 bg-white/95 backdrop-blur rounded-lg px-2 py-1 shadow-sm">
+                          <p className="text-accent text-[13px] md:text-[15px] font-black leading-none text-center">{eventDate.getDate()}</p>
+                          <p className="text-muted text-[9px] md:text-[10px] text-center">{eventDate.getMonth() + 1}월</p>
                         </div>
-                      )}
-                      <div className="flex flex-col md:flex-row md:items-start gap-4 p-5">
-                        <div className="flex md:flex-col items-center gap-3 md:gap-2 md:w-16 shrink-0">
-                          <div className="bg-accent/10 border border-accent/15 rounded-xl p-2.5 md:w-full text-center">
-                            <p className="text-accent text-2xl font-bold leading-none">{eventDate.getDate()}</p>
-                            <p className="text-muted text-[10px] mt-0.5">{eventDate.getMonth() + 1}월</p>
-                          </div>
-                          {isUpcoming && (
-                            <span className="bg-accent text-dark text-[11px] font-bold px-2.5 py-0.5 rounded-lg shadow-sm">
-                              {daysUntil === 0 ? "TODAY" : `D-${daysUntil}`}
-                            </span>
-                          )}
+                        {isUpcoming && (
+                          <span className="absolute top-2 right-2 bg-accent text-dark text-[10px] md:text-[11px] font-bold px-2 py-0.5 rounded-md shadow-md">
+                            {daysUntil === 0 ? "TODAY" : `D-${daysUntil}`}
+                          </span>
+                        )}
+                        {event.prize && (
+                          <span className="absolute bottom-2 right-2 bg-accent text-dark px-2 py-0.5 md:px-2.5 md:py-1 rounded-md text-[11px] md:text-[12px] font-bold shadow-md shadow-accent/15 max-w-[65%] truncate">
+                            {event.prize}
+                          </span>
+                        )}
+                      </div>
+                      <div className="p-3 md:p-4 flex-1 flex flex-col">
+                        <div className="flex items-center gap-1.5 flex-wrap mb-1.5">
+                          <span className={`text-[9px] md:text-[10px] font-black px-1.5 py-0.5 rounded-full ${event.is_international ? "bg-blue-50 text-blue-600" : "bg-green-50 text-green-700"}`}>
+                            {event.is_international ? "🌏 해외" : "🇰🇷 국내"}
+                          </span>
                         </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-start justify-between gap-3">
-                            <div className="min-w-0">
-                              <div className="flex items-center gap-2 flex-wrap mb-1">
-                                <span className={`text-[10px] font-black px-2 py-0.5 rounded-full ${event.is_international ? "bg-blue-50 text-blue-600" : "bg-green-50 text-green-700"}`}>
-                                  {event.is_international ? "🌏 해외" : "🇰🇷 국내"}
-                                </span>
-                              </div>
-                              <h2 className="text-surface font-bold text-[17px] group-hover:text-accent transition-colors">{event.title}</h2>
-                              {(event.location || event.store_name) && (
-                                <p className="text-accent text-[13px] mt-1">📍 {event.location || event.store_name}</p>
-                              )}
-                            </div>
-                            {event.prize && (
-                              <span className="bg-accent text-dark px-3 py-1.5 rounded-lg text-[13px] font-bold shrink-0 shadow-md shadow-accent/15">{event.prize}</span>
-                            )}
-                          </div>
-                          {event.description && <p className="text-sub text-[13px] mt-2 leading-relaxed line-clamp-2">{event.description}</p>}
-                          <div className="flex items-center gap-4 mt-3 flex-wrap">
-                            <span className="text-muted text-[12px] flex items-center gap-1.5">
-                              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
-                              {event.date}{event.end_date && event.end_date !== event.date && ` ~ ${event.end_date}`}
-                            </span>
-                            <span className="text-muted text-[12px] flex items-center gap-1.5">
-                              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                              {event.time}
-                            </span>
-                            {event.buy_in && <span className="text-muted text-[12px]">바이인: {event.buy_in}</span>}
-                          </div>
+                        <h2 className="text-surface font-bold text-[14px] md:text-[17px] leading-tight group-hover:text-accent transition-colors line-clamp-2 mb-1.5">{event.title}</h2>
+                        {(event.location || event.store_name) && (
+                          <p className="text-accent text-[11px] md:text-[13px] mb-1.5 line-clamp-1">📍 {event.location || event.store_name}</p>
+                        )}
+                        {event.description && (
+                          <p className="text-sub text-[12px] md:text-[13px] leading-snug line-clamp-2 mb-2 hidden md:block">{event.description}</p>
+                        )}
+                        <div className="mt-auto pt-2 border-t border-border-custom/60 flex items-center gap-2 flex-wrap text-[10px] md:text-[12px] text-muted">
+                          <span className="flex items-center gap-1">
+                            <svg className="w-3 h-3 md:w-3.5 md:h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                            {event.date?.slice(5)}{event.end_date && event.end_date !== event.date && `~${event.end_date.slice(5)}`}
+                          </span>
+                          <span className="flex items-center gap-1">
+                            <svg className="w-3 h-3 md:w-3.5 md:h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                            {event.time}
+                          </span>
                         </div>
                       </div>
                     </div>
