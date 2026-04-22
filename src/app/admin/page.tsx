@@ -11,7 +11,7 @@ import ImageUpload from "@/components/ImageUpload";
 
 import { supabase } from "@/lib/supabase";
 
-type Tab = "stores" | "events" | "notices" | "banners" | "shorts" | "users" | "live" | "promotions" | "inquiries" | "board" | "market" | "trade";
+type Tab = "stores" | "events" | "notices" | "banners" | "shorts" | "users" | "live" | "promotions" | "inquiries" | "board" | "market" | "trade" | "jobs";
 
 interface TradeItemRow {
   id: string;
@@ -27,6 +27,7 @@ interface TradeItemRow {
   contact: string;
   status: string;
   views: number;
+  pinned_rank?: number;
   created_at: string;
 }
 
@@ -46,6 +47,7 @@ interface MarketListing {
   is_hidden?: boolean;
   hidden_reason?: string;
   report_count?: number;
+  pinned_rank?: number;
   created_at: string;
 }
 
@@ -62,6 +64,7 @@ interface Post {
   status?: string;
   hidden_reason?: string;
   report_count?: number;
+  pinned_rank?: number;
   created_at: string;
 }
 
@@ -113,6 +116,8 @@ export default function AdminPage() {
   const { notices, refresh: refreshNotices } = useNotices();
   const [events, setEvents] = useState<import("@/types").Event[]>([]);
   const refreshEvents = async () => { const data = await api.getAllEvents(); setEvents(data); };
+  const [jobs, setJobs] = useState<import("@/types").Job[]>([]);
+  const refreshJobs = async () => { const data = await api.getJobs(); setJobs(data); };
   const [banners, setBanners] = useState<import("@/types").Banner[]>([]);
   const [bannerSaving, setBannerSaving] = useState<string | null>(null);
   const [shorts, setShorts] = useState<import("@/types").Short[]>([]);
@@ -129,10 +134,10 @@ export default function AdminPage() {
   const [marketListings, setMarketListings] = useState<MarketListing[]>([]);
   const [tradeItems, setTradeItems] = useState<TradeItemRow[]>([]);
 
-  useEffect(() => { api.getBanners().then(setBanners); api.getAllShorts().then(setShorts); refreshUsers(); refreshLiveGames(); refreshPromotions(); refreshInquiries(); refreshEvents(); refreshPosts(); refreshMarket(); refreshTrade(); }, []);
+  useEffect(() => { api.getBanners().then(setBanners); api.getAllShorts().then(setShorts); refreshUsers(); refreshLiveGames(); refreshPromotions(); refreshInquiries(); refreshEvents(); refreshPosts(); refreshMarket(); refreshTrade(); refreshJobs(); }, []);
 
   const refreshTrade = async () => {
-    const { data } = await supabase.from("trade_items").select("*").order("created_at", { ascending: false });
+    const { data } = await supabase.from("trade_items").select("*").order("pinned_rank", { ascending: false }).order("created_at", { ascending: false });
     setTradeItems((data as TradeItemRow[]) || []);
   };
 
@@ -151,7 +156,7 @@ export default function AdminPage() {
   };
 
   const refreshMarket = async () => {
-    const { data } = await supabase.from("market_listings").select("*").order("is_featured", { ascending: false }).order("created_at", { ascending: false });
+    const { data } = await supabase.from("market_listings").select("*").order("pinned_rank", { ascending: false }).order("is_featured", { ascending: false }).order("created_at", { ascending: false });
     setMarketListings((data as MarketListing[]) || []);
   };
 
@@ -178,7 +183,7 @@ export default function AdminPage() {
   };
 
   const refreshPosts = async () => {
-    const { data } = await supabase.from("posts").select("*").order("pinned", { ascending: false }).order("created_at", { ascending: false });
+    const { data } = await supabase.from("posts").select("*").order("pinned_rank", { ascending: false }).order("pinned", { ascending: false }).order("created_at", { ascending: false });
     setPosts((data as Post[]) || []);
   };
 
@@ -191,6 +196,11 @@ export default function AdminPage() {
   const handlePostTogglePin = async (id: string, pinned: boolean) => {
     await supabase.from("posts").update({ pinned: !pinned }).eq("id", id);
     refreshPosts();
+  };
+
+  const handlePinnedRankSet = async (table: string, id: string, value: number, refreshFn: () => void) => {
+    await supabase.from(table).update({ pinned_rank: value }).eq("id", id);
+    refreshFn();
   };
 
   const handlePostToggleStatus = async (id: string, status: string) => {
@@ -273,7 +283,7 @@ export default function AdminPage() {
   };
 
   const refreshLiveGames = async () => {
-    const { data } = await supabase.from("live_games").select("*").order("created_at", { ascending: false });
+    const { data } = await supabase.from("live_games").select("*").order("pinned_rank", { ascending: false }).order("created_at", { ascending: false });
     setLiveGames(data || []);
   };
 
@@ -289,7 +299,7 @@ export default function AdminPage() {
   };
 
   const refreshPromotions = async () => {
-    const { data } = await supabase.from("promotions").select("*").order("sort_order", { ascending: true });
+    const { data } = await supabase.from("promotions").select("*").order("pinned_rank", { ascending: false }).order("sort_order", { ascending: true });
     setPromotions(data || []);
   };
   const [promoForm, setPromoForm] = useState({ title: "", content: "", badge: "EVENT", start_date: "", end_date: "", image: "", link: "" });
@@ -354,6 +364,7 @@ export default function AdminPage() {
     { key: "board", label: "자유게시판", count: posts.filter(p => p.status === "hidden").length },
     { key: "market", label: "대관/매매", count: marketListings.length },
     { key: "trade", label: "중고거래", count: tradeItems.length },
+    { key: "jobs", label: "구인구직", count: jobs.length },
   ];
 
   const refreshShorts = () => api.getAllShorts().then(setShorts);
@@ -378,6 +389,7 @@ export default function AdminPage() {
     try {
       if (tab === "stores") { await api.deleteStore(id); refreshStores(); }
       else if (tab === "events") { await api.deleteEvent(id); refreshEvents(); }
+      else if (tab === "jobs") { await api.deleteJob(id); refreshJobs(); }
       else { await api.deleteNotice(id); refreshNotices(); }
     } catch { alert("삭제 실패"); }
   };
@@ -406,6 +418,7 @@ export default function AdminPage() {
           tags: (formData.tags as string).split(",").map((t: string) => t.trim()).filter(Boolean),
           is_recommended: formData.is_recommended === "true",
           is_hot: formData.is_hot === "true",
+          pinned_rank: Number(formData.pinned_rank) || 0,
         };
         if (modal.type === "create") await api.createStore(payload);
         else await api.updateStore(formData.id as string, payload);
@@ -426,11 +439,13 @@ export default function AdminPage() {
           description: (formData.description as string) || "",
           prize: (formData.prize as string) || undefined,
           image: (formData.image as string) || "",
+          content_images: (formData.content_images as string[]) || [],
           details: (formData.details as string) || "",
           buy_in: (formData.buy_in as string) || "",
           location: (formData.location as string) || "",
           is_international: Boolean(formData.is_international),
           status: (formData.status as string) || "approved",
+          pinned_rank: Number(formData.pinned_rank) || 0,
         };
         if (modal.type === "create") await api.createEvent(payload);
         else await api.updateEvent(formData.id as string, payload);
@@ -441,6 +456,7 @@ export default function AdminPage() {
           content: formData.content as string,
           date: formData.date as string || new Date().toISOString().slice(0, 10),
           image: (formData.image as string) || "",
+          pinned_rank: Number(formData.pinned_rank) || 0,
         };
         if (modal.type === "create") await api.createNotice(payload);
         else await api.updateNotice(formData.id as string, payload);
@@ -457,6 +473,7 @@ export default function AdminPage() {
           contact: (formData.contact as string) || "",
           is_featured: Boolean(formData.is_featured),
           status: (formData.status as string) || "모집중",
+          pinned_rank: Number(formData.pinned_rank) || 0,
         };
         if (modal.type === "create") {
           await supabase.from("market_listings").insert({ ...payload, user_id: null });
@@ -475,6 +492,7 @@ export default function AdminPage() {
           region: (formData.region as string) || "",
           contact: (formData.contact as string) || "",
           status: (formData.status as string) || "판매중",
+          pinned_rank: Number(formData.pinned_rank) || 0,
         };
         if (modal.type === "create") {
           await supabase.from("trade_items").insert({ ...payload, user_id: null, nickname: "관리자", views: 0 });
@@ -482,6 +500,34 @@ export default function AdminPage() {
           await supabase.from("trade_items").update(payload).eq("id", formData.id as string);
         }
         refreshTrade();
+      } else if (modal?.tab === "jobs") {
+        const areasRaw = formData.areas;
+        const areas = Array.isArray(areasRaw)
+          ? (areasRaw as string[])
+          : ((areasRaw as string) || "").split(",").map(a => a.trim()).filter(Boolean);
+        const payload = {
+          type: (formData.type as string) || "구직",
+          nickname: (formData.nickname as string) || "익명",
+          role: (formData.role as string) || "딜러",
+          experience: (formData.experience as string) || "",
+          areas,
+          contact_type: (formData.contact_type as string) || "전화",
+          contact: (formData.contact as string) || "",
+          photo: (formData.photo as string) || "",
+          message: (formData.message as string) || "",
+          store_name: (formData.store_name as string) || "",
+          salary: (formData.salary as string) || "",
+          work_hours: (formData.work_hours as string) || "",
+          headcount: (formData.headcount as string) || "",
+          gender: (formData.gender as string) || "",
+          pinned_rank: Number(formData.pinned_rank) || 0,
+        };
+        if (modal.type === "create") {
+          await api.createJob({ ...payload, user_id: null });
+        } else {
+          await api.updateJob(formData.id as string, payload);
+        }
+        refreshJobs();
       }
       setModal(null);
     } catch {
@@ -610,7 +656,12 @@ export default function AdminPage() {
                 <tbody>
                   {stores.map((store) => (
                     <tr key={store.id} className="border-b border-border-custom/50 hover:bg-gray-50 transition-colors">
-                      <td className="px-5 py-3"><p className="text-surface text-base font-semibold">{store.name}</p></td>
+                      <td className="px-5 py-3">
+                        <p className="text-surface text-base font-semibold">
+                          {(store.pinned_rank || 0) > 0 && <span className="bg-accent text-white text-[10px] font-bold px-1.5 py-0.5 rounded mr-1.5">📌 {store.pinned_rank}</span>}
+                          {store.name}
+                        </p>
+                      </td>
                       <td className="px-5 py-3 hidden md:table-cell"><p className="text-muted text-sm truncate max-w-48">{store.address}</p></td>
                       <td className="px-5 py-3"><span className="bg-accent/10 text-accent text-xs px-2 py-0.5 rounded">{store.region}</span></td>
                       <td className="px-5 py-3 hidden md:table-cell"><p className="text-muted/50 text-sm">{store.hours}</p></td>
@@ -654,7 +705,12 @@ export default function AdminPage() {
                           "bg-yellow-50 text-yellow-700"
                         }`}>{event.status === "approved" ? "승인" : event.status === "rejected" ? "반려" : "대기"}</span>
                       </td>
-                      <td className="px-5 py-3"><p className="text-surface text-base font-semibold">{event.title}</p></td>
+                      <td className="px-5 py-3">
+                        <p className="text-surface text-base font-semibold">
+                          {(event.pinned_rank || 0) > 0 && <span className="bg-accent text-white text-[10px] font-bold px-1.5 py-0.5 rounded mr-1.5">📌 {event.pinned_rank}</span>}
+                          {event.title}
+                        </p>
+                      </td>
                       <td className="px-5 py-3 hidden md:table-cell"><p className="text-muted/80 text-sm truncate max-w-48">{event.location || event.store_name}</p></td>
                       <td className="px-5 py-3 hidden md:table-cell"><p className="text-muted/80 text-sm">{event.date}{event.end_date ? ` ~ ${event.end_date}` : ""} {event.time}</p></td>
                       <td className="px-5 py-3 hidden md:table-cell"><p className="text-muted/80 text-sm">{event.submitter_nickname || (event.submitted_by ? "회원" : "관리자")}</p></td>
@@ -686,7 +742,10 @@ export default function AdminPage() {
             {notices.map((notice) => (
               <div key={notice.id} className="bg-white rounded-2xl p-5 border border-border-custom flex items-start justify-between">
                 <div>
-                  <h3 className="text-surface font-semibold text-base">{notice.title}</h3>
+                  <h3 className="text-surface font-semibold text-base">
+                    {(notice.pinned_rank || 0) > 0 && <span className="bg-accent text-white text-[10px] font-bold px-1.5 py-0.5 rounded mr-1.5">📌 {notice.pinned_rank}</span>}
+                    {notice.title}
+                  </h3>
                   <p className="text-muted text-sm mt-1.5">{notice.content}</p>
                   <p className="text-muted text-xs mt-2">{notice.date}</p>
                 </div>
@@ -734,7 +793,13 @@ export default function AdminPage() {
                       <span className={`text-xs font-medium px-2 py-0.5 rounded ${s.active ? "bg-accent-light text-accent" : "bg-bg text-muted"}`}>
                         {s.active ? "활성" : "비활성"}
                       </span>
-                      <div className="flex gap-2">
+                      <div className="flex items-center gap-2">
+                        <label className="text-[11px] text-muted flex items-center gap-1" title="우선노출 순위">
+                          📌
+                          <input type="number" min={0} defaultValue={s.pinned_rank || 0}
+                            onBlur={e => { const v = Number(e.target.value) || 0; if (v !== (s.pinned_rank || 0)) handlePinnedRankSet("shorts", s.id, v, refreshShorts); }}
+                            className="w-12 border border-border-custom rounded px-1.5 py-0.5 text-[11px] text-center" />
+                        </label>
                         <button onClick={async () => { await api.updateShort(s.id, { active: !s.active }); refreshShorts(); }} className="text-muted hover:text-accent text-xs">{s.active ? "비활성화" : "활성화"}</button>
                         <button onClick={() => handleShortDelete(s.id)} className="text-muted hover:text-red text-xs">삭제</button>
                       </div>
@@ -821,7 +886,13 @@ export default function AdminPage() {
                   }`}>{g.status}</span>
                 </div>
                 <div className="md:col-span-2 text-muted text-[13px]">{g.created_at?.slice(0, 10)}</div>
-                <div className="md:col-span-2 flex gap-2 justify-end">
+                <div className="md:col-span-2 flex gap-2 justify-end items-center">
+                  <label className="text-[11px] text-muted flex items-center gap-1" title="우선노출 순위">
+                    📌
+                    <input type="number" min={0} defaultValue={g.pinned_rank || 0}
+                      onBlur={e => { const v = Number(e.target.value) || 0; if (v !== (g.pinned_rank || 0)) handlePinnedRankSet("live_games", g.id, v, refreshLiveGames); }}
+                      className="w-12 border border-border-custom rounded px-1.5 py-0.5 text-[11px] text-center" />
+                  </label>
                   {g.status === "진행중" && (
                     <button onClick={() => handleEndLive(g.id)} className="text-[12px] font-semibold px-3 py-1.5 rounded-lg bg-yellow-50 text-yellow-600 hover:bg-yellow-100 transition-all">종료</button>
                   )}
@@ -878,7 +949,13 @@ export default function AdminPage() {
                     <p className="text-surface text-[14px] font-bold truncate">{p.title}</p>
                     <p className="text-muted text-[12px] truncate">{p.content}</p>
                   </div>
-                  <div className="flex gap-1.5 shrink-0">
+                  <div className="flex items-center gap-1.5 shrink-0">
+                    <label className="text-[11px] text-muted flex items-center gap-1" title="우선노출 순위">
+                      📌
+                      <input type="number" min={0} defaultValue={p.pinned_rank || 0}
+                        onBlur={e => { const v = Number(e.target.value) || 0; if (v !== (p.pinned_rank || 0)) handlePinnedRankSet("promotions", p.id, v, refreshPromotions); }}
+                        className="w-12 border border-border-custom rounded px-1.5 py-0.5 text-[11px] text-center" />
+                    </label>
                     <button onClick={() => { setPromoEditing(p.id); setPromoForm({ title: p.title, content: p.content, badge: p.badge || "EVENT", start_date: p.start_date || "", end_date: p.end_date || "", image: p.image || "", link: p.link || "" }); }}
                       className="text-[12px] font-semibold px-3 py-1.5 rounded-lg bg-[#f5f6f8] text-sub hover:bg-accent/10 hover:text-accent transition-all">수정</button>
                     <button onClick={() => handlePromoToggle(p.id, !p.active)}
@@ -982,6 +1059,12 @@ export default function AdminPage() {
                       className={`text-[12px] font-semibold px-3 py-1.5 rounded-lg transition-all ${p.pinned ? "bg-yellow-50 text-yellow-700 hover:bg-yellow-100" : "bg-bg text-sub hover:bg-accent-light hover:text-accent"}`}>
                       {p.pinned ? "공지 해제" : "공지 고정"}
                     </button>
+                    <label className="text-[11px] text-muted flex items-center gap-1 px-2">
+                      📌
+                      <input type="number" min={0} defaultValue={(p as Post & { pinned_rank?: number }).pinned_rank || 0}
+                        onBlur={e => { const v = Number(e.target.value) || 0; if (v !== ((p as Post & { pinned_rank?: number }).pinned_rank || 0)) handlePinnedRankSet("posts", p.id, v, refreshPosts); }}
+                        className="w-12 border border-border-custom rounded px-1.5 py-0.5 text-[11px] text-center" title="우선노출 순위" />
+                    </label>
                     <button onClick={() => handlePostDelete(p.id)}
                       className="text-[12px] font-semibold px-3 py-1.5 rounded-lg bg-red-50 text-red-500 hover:bg-red-100 transition-all">
                       삭제
@@ -1029,6 +1112,7 @@ export default function AdminPage() {
                 <div className="px-5 py-4 flex items-start justify-between gap-4">
                   <Link href={`/market/${l.id}`} target="_blank" className="flex-1 min-w-0 hover:bg-[#f9f9f9] -m-2 p-2 rounded-lg transition-colors">
                     <div className="flex items-center gap-2 mb-1.5 flex-wrap">
+                      {((l as MarketListing & { pinned_rank?: number }).pinned_rank || 0) > 0 && <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-accent text-white">📌 {(l as MarketListing & { pinned_rank?: number }).pinned_rank}</span>}
                       {l.is_hidden && <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-red-100 text-red-600">⚠️ 숨김</span>}
                       {l.is_featured && <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-red-50 text-red-500">⭐ 추천</span>}
                       <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${
@@ -1074,6 +1158,52 @@ export default function AdminPage() {
         )}
 
         {/* Trade management */}
+        {activeTab === "jobs" && (
+          <div className="bg-white rounded-2xl border border-border-custom overflow-hidden">
+            <div className="px-5 py-4 border-b border-border-custom flex items-center justify-between">
+              <p className="text-muted text-sm">총 {jobs.length}건</p>
+              <button onClick={() => setModal({ type: "create", tab: "jobs", data: { type: "구직", role: "딜러", contact_type: "전화", areas: [] } })}
+                className="text-[12px] font-semibold px-3 py-1.5 rounded-lg bg-accent text-white hover:bg-accent-hover transition-all">+ 새 글 등록</button>
+            </div>
+            {jobs.length === 0 ? (
+              <div className="text-center py-12 text-muted text-sm">등록된 구인구직 글이 없습니다</div>
+            ) : jobs.map(j => (
+              <div key={j.id} className="border-b border-border-custom last:border-b-0">
+                <div className="px-5 py-4 flex items-start justify-between gap-4">
+                  <Link href={`/jobs/${j.id}`} target="_blank" className="flex-1 min-w-0 hover:bg-[#f9f9f9] -m-2 p-2 rounded-lg transition-colors">
+                    <div className="flex items-center gap-2 mb-1.5 flex-wrap">
+                      {(j.pinned_rank || 0) > 0 && (
+                        <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-accent text-white">📌 {j.pinned_rank}</span>
+                      )}
+                      <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${j.type === "구인" ? "bg-blue-100 text-blue-600" : "bg-emerald-100 text-emerald-700"}`}>{j.type}</span>
+                      <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-bg text-sub">{j.role}</span>
+                      {j.experience && <span className="text-muted text-[11px]">{j.experience}</span>}
+                      <span className="text-muted text-[11px]">{j.created_at?.slice(0, 10)}</span>
+                    </div>
+                    <p className="text-surface text-[14px] font-bold truncate">{j.nickname}{j.store_name ? ` · ${j.store_name}` : ""}</p>
+                    <p className="text-muted text-[12px] truncate mt-0.5">
+                      {j.areas?.join(", ") || ""}
+                      {j.salary ? ` · ${j.salary}` : ""}
+                      {j.work_hours ? ` · ${j.work_hours}` : ""}
+                    </p>
+                    {j.message && <p className="text-muted text-[12px] truncate mt-0.5">{j.message}</p>}
+                  </Link>
+                  <div className="shrink-0 flex flex-col gap-1.5">
+                    <button onClick={() => setModal({ type: "edit", tab: "jobs", data: { ...j, areas: j.areas || [] } as unknown as Record<string, unknown> })}
+                      className="text-[12px] font-semibold px-3 py-1.5 rounded-lg bg-bg text-sub hover:bg-accent-light hover:text-accent transition-all">
+                      수정
+                    </button>
+                    <button onClick={() => handleDelete("jobs", j.id)}
+                      className="text-[12px] font-semibold px-3 py-1.5 rounded-lg bg-red-50 text-red-500 hover:bg-red-100 transition-all">
+                      삭제
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
         {activeTab === "trade" && (
           <div className="bg-white rounded-2xl border border-border-custom overflow-hidden">
             {tradeItems.length === 0 ? (
@@ -1083,6 +1213,7 @@ export default function AdminPage() {
                 <div className="px-5 py-4 flex items-start justify-between gap-4">
                   <Link href={`/trade/${t.id}`} target="_blank" className="flex-1 min-w-0 hover:bg-[#f9f9f9] -m-2 p-2 rounded-lg transition-colors">
                     <div className="flex items-center gap-2 mb-1.5 flex-wrap">
+                      {((t as TradeItemRow & { pinned_rank?: number }).pinned_rank || 0) > 0 && <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-accent text-white">📌 {(t as TradeItemRow & { pinned_rank?: number }).pinned_rank}</span>}
                       <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${
                         t.status === "판매중" ? "bg-emerald-100 text-emerald-700" :
                         t.status === "예약중" ? "bg-yellow-100 text-yellow-700" :
@@ -1317,6 +1448,27 @@ function AdminModal({ modal, stores, saving, onClose, onSave }: {
               <textarea className={inputClass + " resize-none"} rows={3} value={(form.description as string) || ""} onChange={e => set("description", e.target.value)} placeholder="대회 간략 소개" />
             </div>
             <div>
+              <label className="text-sub text-sm font-medium block mb-2">내용 이미지 <span className="text-muted font-normal">(선택, 최대 8장)</span></label>
+              <div className="space-y-2">
+                {((form.content_images as string[]) || []).length > 0 && (
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                    {((form.content_images as string[]) || []).map((img, i) => (
+                      <div key={i} className="relative aspect-video rounded-lg overflow-hidden border border-border-custom bg-bg">
+                        <img src={img} alt="" className="w-full h-full object-cover" />
+                        <button type="button" onClick={() => set("content_images", ((form.content_images as string[]) || []).filter((_, j) => j !== i))}
+                          className="absolute top-1.5 right-1.5 w-6 h-6 rounded-full bg-red-500 text-white flex items-center justify-center shadow-md opacity-90 hover:opacity-100 hover:bg-red-600 transition-all">
+                          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" /></svg>
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                {((form.content_images as string[]) || []).length < 8 && (
+                  <ImageUpload value="" onChange={v => v && set("content_images", [...((form.content_images as string[]) || []), v])} folder="events" label={((form.content_images as string[]) || []).length === 0 ? "이미지 업로드" : "이미지 추가"} aspect="aspect-video" hint={`${((form.content_images as string[]) || []).length}/8`} />
+                )}
+              </div>
+            </div>
+            <div>
               <label className="text-sub text-sm font-medium block mb-2">상세 정보</label>
               <textarea className={inputClass + " resize-none"} rows={5} value={(form.details as string) || ""} onChange={e => set("details", e.target.value)} placeholder="룰, 시간표, 참가 방법 등 상세 내용" />
             </div>
@@ -1487,6 +1639,93 @@ function AdminModal({ modal, stores, saving, onClose, onSave }: {
                 { value: "판매중", label: "판매중" }, { value: "예약중", label: "예약중" }, { value: "판매완료", label: "판매완료" },
               ]} />
             </div>
+          </div>
+        )}
+
+        {modal.tab === "jobs" && (
+          <div className="space-y-5">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="text-sub text-sm font-medium block mb-2">유형 *</label>
+                <Select value={(form.type as string) || "구직"} onChange={v => set("type", v)} options={[
+                  { value: "구직", label: "구직 (일자리 찾아요)" }, { value: "구인", label: "구인 (사람 구해요)" },
+                ]} />
+              </div>
+              <div>
+                <label className="text-sub text-sm font-medium block mb-2">역할 *</label>
+                <Select value={(form.role as string) || "딜러"} onChange={v => set("role", v)} options={[
+                  { value: "딜러", label: "딜러" }, { value: "플로어", label: "플로어" }, { value: "서빙", label: "서빙" },
+                  { value: "매니저", label: "매니저" }, { value: "기타", label: "기타" },
+                ]} />
+              </div>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="text-sub text-sm font-medium block mb-2">닉네임/상호 *</label>
+                <input className={inputClass} value={(form.nickname as string) || ""} onChange={e => set("nickname", e.target.value)} placeholder="예: 홀덤러버 / OO홀덤펍" />
+              </div>
+              <div>
+                <label className="text-sub text-sm font-medium block mb-2">매장명 <span className="text-muted font-normal">(구인 시)</span></label>
+                <input className={inputClass} value={(form.store_name as string) || ""} onChange={e => set("store_name", e.target.value)} placeholder="예: OO홀덤펍 강남점" />
+              </div>
+            </div>
+            <div>
+              <label className="text-sub text-sm font-medium block mb-2">지역 <span className="text-muted font-normal">(쉼표로 구분)</span></label>
+              <input className={inputClass}
+                value={Array.isArray(form.areas) ? (form.areas as string[]).join(", ") : ((form.areas as string) || "")}
+                onChange={e => set("areas", e.target.value.split(",").map(s => s.trim()).filter(Boolean))}
+                placeholder="예: 서울 강남, 서울 홍대" />
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="text-sub text-sm font-medium block mb-2">경력</label>
+                <input className={inputClass} value={(form.experience as string) || ""} onChange={e => set("experience", e.target.value)} placeholder="예: 2년" />
+              </div>
+              <div>
+                <label className="text-sub text-sm font-medium block mb-2">성별 <span className="text-muted font-normal">(선택)</span></label>
+                <Select value={(form.gender as string) || ""} onChange={v => set("gender", v)} options={[
+                  { value: "", label: "무관" }, { value: "남", label: "남" }, { value: "여", label: "여" },
+                ]} />
+              </div>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div>
+                <label className="text-sub text-sm font-medium block mb-2">급여</label>
+                <input className={inputClass} value={(form.salary as string) || ""} onChange={e => set("salary", e.target.value)} placeholder="예: 시급 15,000원" />
+              </div>
+              <div>
+                <label className="text-sub text-sm font-medium block mb-2">근무시간</label>
+                <input className={inputClass} value={(form.work_hours as string) || ""} onChange={e => set("work_hours", e.target.value)} placeholder="예: 18:00~02:00" />
+              </div>
+              <div>
+                <label className="text-sub text-sm font-medium block mb-2">인원</label>
+                <input className={inputClass} value={(form.headcount as string) || ""} onChange={e => set("headcount", e.target.value)} placeholder="예: 2명" />
+              </div>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div>
+                <label className="text-sub text-sm font-medium block mb-2">연락 수단</label>
+                <Select value={(form.contact_type as string) || "전화"} onChange={v => set("contact_type", v)} options={[
+                  { value: "전화", label: "전화" }, { value: "문자", label: "문자" }, { value: "카카오톡", label: "카카오톡" }, { value: "텔레그램", label: "텔레그램" },
+                ]} />
+              </div>
+              <div className="md:col-span-2">
+                <label className="text-sub text-sm font-medium block mb-2">연락처</label>
+                <input className={inputClass} value={(form.contact as string) || ""} onChange={e => set("contact", e.target.value)} placeholder="예: 010-0000-0000 / 카카오톡 ID" />
+              </div>
+            </div>
+            <div>
+              <label className="text-sub text-sm font-medium block mb-2">메시지/상세</label>
+              <textarea className={inputClass + " resize-none"} rows={4} value={(form.message as string) || ""} onChange={e => set("message", e.target.value)} placeholder="자기소개 또는 구인 상세 내용" />
+            </div>
+            <ImageUpload value={(form.photo as string) || ""} onChange={v => set("photo", v)} folder="jobs" label="사진/프로필" hint="선택" aspect="aspect-square" />
+          </div>
+        )}
+
+        {["stores", "events", "notices", "market", "trade", "jobs"].includes(modal.tab) && (
+          <div className="mt-5 pt-5 border-t border-border-custom">
+            <label className="text-sub text-sm font-medium block mb-2">📌 우선노출 순위 <span className="text-muted font-normal">(0=일반, 숫자 클수록 상단 고정)</span></label>
+            <input className={inputClass} type="number" min={0} value={(form.pinned_rank as number) ?? 0} onChange={e => set("pinned_rank", Number(e.target.value) || 0)} />
           </div>
         )}
 

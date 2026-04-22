@@ -12,6 +12,7 @@ export interface Store {
   tags: string[];
   is_recommended?: boolean;
   is_hot?: boolean;
+  pinned_rank?: number;
   created_at?: string;
   updated_at?: string;
 }
@@ -27,6 +28,7 @@ export interface Event {
   description: string;
   prize?: string;
   image?: string;
+  content_images?: string[];
   details?: string;
   buy_in?: string;
   location?: string;
@@ -34,6 +36,7 @@ export interface Event {
   submitted_by?: string | null;
   submitter_nickname?: string;
   is_international?: boolean;
+  pinned_rank?: number;
   created_at?: string;
 }
 
@@ -49,6 +52,12 @@ export interface Job {
   photo?: string;
   message?: string;
   store_name?: string;
+  salary?: string;
+  work_hours?: string;
+  headcount?: string;
+  gender?: string;
+  user_id?: string;
+  pinned_rank?: number;
   created_at?: string;
 }
 
@@ -60,6 +69,7 @@ export interface Short {
   description: string;
   sort_order: number;
   active: boolean;
+  pinned_rank?: number;
   created_at?: string;
 }
 
@@ -74,6 +84,7 @@ export interface Banner {
   image: string;
   link: string;
   active: boolean;
+  pinned_rank?: number;
   updated_at?: string;
   links?: BannerLink[];
 }
@@ -84,5 +95,6 @@ export interface Notice {
   content: string;
   date: string;
   image?: string;
+  pinned_rank?: number;
   created_at?: string;
 }

@@ -31,9 +31,9 @@ export default function Home() {
     getBanners().then(setBanners);
     getShorts().then(setShorts);
     getJobs().then(setJobs);
-    supabase.from("posts").select("id,title,nickname,views,created_at").order("created_at", { ascending: false }).limit(4)
+    supabase.from("posts").select("id,title,nickname,views,created_at").order("pinned_rank", { ascending: false }).order("created_at", { ascending: false }).limit(4)
       .then(({ data }) => setPosts(data || []));
-    supabase.from("live_games").select("*").in("status", ["진행중", "대기중"]).order("updated_at", { ascending: false })
+    supabase.from("live_games").select("*").in("status", ["진행중", "대기중"]).order("pinned_rank", { ascending: false }).order("updated_at", { ascending: false })
       .then(({ data }) => setLiveGames(data || []));
   }, []);
 
@@ -72,7 +72,7 @@ export default function Home() {
             <Link href="/board/write" className="text-accent text-[12px] font-semibold mt-1 inline-block hover:underline">첫 글 작성하기 →</Link>
           </div>
         ) : posts.map((post) => (
-          <Link key={post.id} href={`/board/${post.id}`} className="flex items-center gap-2 px-3 py-2.5 rounded-xl hover:bg-bg group transition">
+          <Link key={post.id} href="/board" className="flex items-center gap-2 px-3 py-2.5 rounded-xl hover:bg-bg group transition">
             <span className="w-1 h-1 rounded-full bg-accent shrink-0" />
             <p className="text-sub text-[13px] truncate flex-1 group-hover:text-accent transition-colors">{post.title}</p>
             <span className="text-muted text-[11px] shrink-0">{post.nickname}</span>
@@ -278,7 +278,7 @@ export default function Home() {
           </Link>
         </section>
 
-        {/* 3. 자유게시판 (티커) */}
+        {/* 3. 자유게시판 */}
         <section className="border-b border-border-custom bg-white">
           <div className="px-4 pt-3 pb-1">
             <div className="flex items-center justify-between mb-1">
@@ -294,38 +294,27 @@ export default function Home() {
               <Link href="/board/write" className="block py-4 text-muted text-[13px]">아직 게시글이 없습니다 <span className="text-accent font-semibold">첫 글 작성 →</span></Link>
             </div>
           ) : (
-            <div className="relative h-25 overflow-hidden">
-              <div className="absolute top-0 left-0 right-0 h-3 bg-linear-to-b from-white to-transparent z-10 pointer-events-none" />
-              <div className="absolute bottom-0 left-0 right-0 h-3 bg-linear-to-t from-white to-transparent z-10 pointer-events-none" />
-              <div className="ticker-scroll px-4" style={{ animationDuration: "15s" }}>
-                {[...posts, ...posts].map((post, i) => (
-                  <Link key={`${post.id}-${i}`} href={`/board/${post.id}`} className="flex items-center gap-3 py-2.5 group">
-                    <span className="w-10 h-10 rounded-lg bg-gray-100 border border-gray-200 flex items-center justify-center shrink-0">
-                      <svg className="w-4.5 h-4.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" /></svg>
-                    </span>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-surface text-[14px] font-bold truncate">{post.title}</p>
-                      <p className="text-sub text-[12px]">{post.nickname} · 조회 {post.views}</p>
-                    </div>
-                    <svg className="w-4 h-4 text-[#ccc] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                    </svg>
-                  </Link>
-                ))}
-              </div>
+            <div className="px-4 pb-3">
+              {posts.slice(0, 4).map(post => (
+                <Link key={post.id} href="/board" className="flex items-center gap-3 py-2.5 border-b border-border-custom/50 last:border-b-0 group">
+                  <span className="w-10 h-10 rounded-lg bg-gray-100 border border-gray-200 flex items-center justify-center shrink-0">
+                    <svg className="w-4.5 h-4.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" /></svg>
+                  </span>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-surface text-[14px] font-bold truncate group-hover:text-accent transition-colors">{post.title}</p>
+                    <p className="text-sub text-[12px]">{post.nickname} · 조회 {post.views}</p>
+                  </div>
+                  <svg className="w-4 h-4 text-[#ccc] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </Link>
+              ))}
             </div>
           )}
         </section>
 
 
-        {/* 4. 무료 토너먼트 배너 */}
-        <section className="px-4 pb-5">
-          <Link href="/tournament" className="block rounded-2xl overflow-hidden relative group">
-            <img src="/tournament-banner.jpeg" alt="무료 토너먼트 신청" className="w-full h-20 object-cover block group-hover:brightness-110 transition-all" />
-          </Link>
-        </section>
-
-        {/* 5. 지도 */}
+        {/* 4. 지도 */}
         <section className="section-alt border-y border-border-custom px-4 py-5">
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-[17px] font-bold text-surface">매장 지도</h2>
@@ -334,6 +323,13 @@ export default function Home() {
           <div className="h-72 rounded-2xl overflow-hidden card-shadow">
             <MapView stores={filteredStores} onStoreClick={setSelectedStore} selectedStore={selectedStore} />
           </div>
+        </section>
+
+        {/* 5. 무료 토너먼트 배너 */}
+        <section className="px-4 py-5">
+          <Link href="/tournament" className="block rounded-2xl overflow-hidden relative group">
+            <img src="/tournament-banner.jpeg" alt="무료 토너먼트 신청" className="w-full h-20 object-cover block group-hover:brightness-110 transition-all" />
+          </Link>
         </section>
 
         {/* 6. HOT 매장 */}

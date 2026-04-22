@@ -49,6 +49,7 @@ export default function LivePage() {
   const fetchGames = () => {
     supabase.from("live_games").select("*")
       .in("status", ["진행중", "대기중"])
+      .order("pinned_rank", { ascending: false })
       .order("updated_at", { ascending: false })
       .then(({ data }) => { setGames(data || []); setLoading(false); });
   };

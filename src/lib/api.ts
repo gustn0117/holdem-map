@@ -5,6 +5,7 @@ export async function getStores(): Promise<Store[]> {
   const { data, error } = await supabase
     .from("stores")
     .select("*")
+    .order("pinned_rank", { ascending: false })
     .order("created_at", { ascending: true });
   if (error) throw error;
   return data || [];
@@ -35,6 +36,7 @@ export async function getEvents(): Promise<Event[]> {
     .from("events")
     .select("*")
     .eq("status", "approved")
+    .order("pinned_rank", { ascending: false })
     .order("date", { ascending: true });
   if (error) throw error;
   return data || [];
@@ -44,6 +46,7 @@ export async function getAllEvents(): Promise<Event[]> {
   const { data, error } = await supabase
     .from("events")
     .select("*")
+    .order("pinned_rank", { ascending: false })
     .order("created_at", { ascending: false });
   if (error) throw error;
   return data || [];
@@ -55,6 +58,7 @@ export async function getEventsByStore(storeId: string): Promise<Event[]> {
     .select("*")
     .eq("store_id", storeId)
     .eq("status", "approved")
+    .order("pinned_rank", { ascending: false })
     .order("date", { ascending: true });
   if (error) throw error;
   return data || [];
@@ -64,6 +68,7 @@ export async function getNotices(): Promise<Notice[]> {
   const { data, error } = await supabase
     .from("notices")
     .select("*")
+    .order("pinned_rank", { ascending: false })
     .order("date", { ascending: false });
   if (error) throw error;
   return data || [];
@@ -128,13 +133,23 @@ export async function deleteNotice(id: string) {
 
 // Jobs
 export async function getJobs(): Promise<Job[]> {
-  const { data, error } = await supabase.from("jobs").select("*").order("created_at", { ascending: false });
+  const { data, error } = await supabase
+    .from("jobs")
+    .select("*")
+    .order("pinned_rank", { ascending: false })
+    .order("created_at", { ascending: false });
   if (error) throw error;
   return data || [];
 }
 
 export async function createJob(job: Record<string, unknown>) {
   const { data, error } = await supabase.from("jobs").insert(job).select().single();
+  if (error) throw error;
+  return data;
+}
+
+export async function updateJob(id: string, updates: Partial<Job>) {
+  const { data, error } = await supabase.from("jobs").update(updates).eq("id", id).select().single();
   if (error) throw error;
   return data;
 }
@@ -146,7 +161,11 @@ export async function deleteJob(id: string) {
 
 // Banners
 export async function getBanners(): Promise<Banner[]> {
-  const { data, error } = await supabase.from("banners").select("*").order("position");
+  const { data, error } = await supabase
+    .from("banners")
+    .select("*")
+    .order("pinned_rank", { ascending: false })
+    .order("position");
   if (error) throw error;
   return data || [];
 }
@@ -159,13 +178,13 @@ export async function updateBanner(id: string, updates: Partial<Banner>) {
 
 // Shorts
 export async function getShorts(): Promise<Short[]> {
-  const { data, error } = await supabase.from("shorts").select("*").eq("active", true).order("sort_order");
+  const { data, error } = await supabase.from("shorts").select("*").eq("active", true).order("pinned_rank", { ascending: false }).order("sort_order");
   if (error) throw error;
   return data || [];
 }
 
 export async function getAllShorts(): Promise<Short[]> {
-  const { data, error } = await supabase.from("shorts").select("*").order("sort_order");
+  const { data, error } = await supabase.from("shorts").select("*").order("pinned_rank", { ascending: false }).order("sort_order");
   if (error) throw error;
   return data || [];
 }

@@ -28,7 +28,7 @@ export default function TradePage() {
   const [query, setQuery] = useState("");
 
   useEffect(() => {
-    supabase.from("trade_items").select("*").order("created_at", { ascending: false })
+    supabase.from("trade_items").select("*").order("pinned_rank", { ascending: false }).order("created_at", { ascending: false })
       .then(({ data }) => { setItems(data || []); setLoading(false); });
   }, []);
 

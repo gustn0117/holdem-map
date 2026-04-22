@@ -119,10 +119,23 @@ export default function EventDetailPage() {
         </div>
 
         {/* Description */}
-        <div className="bg-card rounded-xl border border-border-custom p-8 mb-8">
-          <h2 className="text-surface font-bold text-xl mb-4">대회 안내</h2>
-          <p className="text-sub text-base leading-relaxed whitespace-pre-wrap">{event.description}</p>
-        </div>
+        {(event.description || (event.content_images && event.content_images.length > 0)) && (
+          <div className="bg-card rounded-xl border border-border-custom p-8 mb-8">
+            <h2 className="text-surface font-bold text-xl mb-4">대회 안내</h2>
+            {event.description && (
+              <p className="text-sub text-base leading-relaxed whitespace-pre-wrap">{event.description}</p>
+            )}
+            {event.content_images && event.content_images.length > 0 && (
+              <div className={`${event.description ? "mt-6" : ""} grid grid-cols-1 md:grid-cols-2 gap-3`}>
+                {event.content_images.map((img, i) => (
+                  <div key={i} className="rounded-lg overflow-hidden border border-border-custom bg-bg">
+                    <img src={img} alt={`${event.title} 이미지 ${i + 1}`} loading="lazy" className="w-full h-auto block" />
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Details */}
         {event.details && (

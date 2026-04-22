@@ -28,12 +28,13 @@ export default function EventWritePage() {
     prize: "",
     buy_in: "",
     image: "",
+    content_images: [] as string[],
     description: "",
     details: DEFAULT_NOTICE,
     is_international: false,
   });
 
-  const set = (key: string, value: string | boolean) => setForm(prev => ({ ...prev, [key]: value }));
+  const set = (key: string, value: string | boolean | string[]) => setForm(prev => ({ ...prev, [key]: value }));
 
   if (!user) {
     return (
@@ -82,6 +83,7 @@ export default function EventWritePage() {
       prize: form.prize || null,
       buy_in: form.buy_in || null,
       image: form.image || null,
+      content_images: form.content_images,
       description: form.description || null,
       details: form.details || null,
       is_international: form.is_international,
@@ -193,6 +195,29 @@ export default function EventWritePage() {
           <div>
             <label className="text-sub text-sm font-semibold block mb-2">간단 설명 <span className="text-muted font-normal">(선택)</span></label>
             <textarea className={inputClass + " resize-none"} rows={3} value={form.description} onChange={e => set("description", e.target.value)} placeholder="대회 간략 소개" />
+          </div>
+
+          <div>
+            <label className="text-sub text-sm font-semibold block mb-2">내용 이미지 <span className="text-muted font-normal">(선택, 최대 8장)</span></label>
+            <p className="text-muted text-xs mb-2">대회 소개에 함께 노출됩니다. 룰·시간표·포스터 상세컷 등 보조 이미지를 올려주세요.</p>
+            <div className="space-y-2">
+              {form.content_images.length > 0 && (
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                  {form.content_images.map((img, i) => (
+                    <div key={i} className="relative aspect-video rounded-lg overflow-hidden border border-border-custom bg-bg">
+                      <img src={img} alt="" className="w-full h-full object-cover" />
+                      <button type="button" onClick={() => set("content_images", form.content_images.filter((_, j) => j !== i))}
+                        className="absolute top-1.5 right-1.5 w-6 h-6 rounded-full bg-red-500 text-white flex items-center justify-center shadow-md opacity-90 hover:opacity-100 hover:bg-red-600 transition-all">
+                        <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" /></svg>
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+              {form.content_images.length < 8 && (
+                <ImageUpload value="" onChange={v => v && set("content_images", [...form.content_images, v])} folder="events" label={form.content_images.length === 0 ? "이미지 업로드" : "이미지 추가"} aspect="aspect-video" hint={`${form.content_images.length}/8`} />
+              )}
+            </div>
           </div>
 
           <div>

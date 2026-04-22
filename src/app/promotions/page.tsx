@@ -17,7 +17,7 @@ export default function PromotionsPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    supabase.from("promotions").select("*").eq("active", true).order("sort_order", { ascending: true })
+    supabase.from("promotions").select("*").eq("active", true).order("pinned_rank", { ascending: false }).order("sort_order", { ascending: true })
       .then(({ data }) => { setPromotions((data || []).filter(p => p.image)); setLoading(false); });
   }, []);
 

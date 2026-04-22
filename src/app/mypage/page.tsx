@@ -9,6 +9,7 @@ import { useAuth, Profile } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
 import { AvatarPicker, renderAvatar } from "@/components/Avatar";
 import { getRank, getRankProgress } from "@/lib/rank";
+import RankInsignia from "@/components/RankInsignia";
 
 const STATUS_OPTIONS = [
   { value: "지금 가능", label: "지금 가능", color: "bg-green-500", desc: "즉시 근무 가능" },
@@ -145,7 +146,8 @@ export default function MyPage() {
                         STATUS_OPTIONS.find(s => s.value === profile.status)?.color || "bg-gray-400"
                       }`}>{profile.status || "비노출"}</span>
                     )}
-                    <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full border ${getRank((profile as any).points || 0).color} ${getRank((profile as any).points || 0).border}`}>
+                    <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full border inline-flex items-center gap-1.5 ${getRank((profile as any).points || 0).color} ${getRank((profile as any).points || 0).border}`}>
+                      <RankInsignia rank={getRank((profile as any).points || 0)} size="xs" />
                       {getRank((profile as any).points || 0).name}
                     </span>
                   </div>
@@ -157,8 +159,16 @@ export default function MyPage() {
                 return (
                   <div className="mb-3 bg-white/80 rounded-lg px-3 py-2">
                     <div className="flex items-center justify-between text-[11px] mb-1">
-                      <span className="text-sub font-semibold">{rp.rank.name} · {((profile as any).points || 0).toLocaleString()}P</span>
-                      {rp.nextRank && <span className="text-muted">{rp.nextRank.name}까지 {rp.pointsToNext?.toLocaleString()}P</span>}
+                      <span className="text-sub font-semibold inline-flex items-center gap-1.5">
+                        <RankInsignia rank={rp.rank} size="xs" />
+                        {rp.rank.name} · {((profile as any).points || 0).toLocaleString()}P
+                      </span>
+                      {rp.nextRank && (
+                        <span className="text-muted inline-flex items-center gap-1">
+                          <RankInsignia rank={rp.nextRank} size="xs" />
+                          {rp.nextRank.name}까지 {rp.pointsToNext?.toLocaleString()}P
+                        </span>
+                      )}
                     </div>
                     <div className="h-1.5 bg-gray-200 rounded-full overflow-hidden">
                       <div className="h-full bg-accent transition-all" style={{ width: `${rp.progress}%` }} />

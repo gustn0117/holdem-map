@@ -42,7 +42,7 @@ export default function JobsPage() {
   useEffect(() => {
     Promise.all([
       supabase.from("profiles").select("*").eq("user_type", "딜러"),
-      supabase.from("jobs").select("*").order("created_at", { ascending: false }),
+      supabase.from("jobs").select("*").order("pinned_rank", { ascending: false }).order("created_at", { ascending: false }),
     ]).then(([{ data: d }, { data: j }]) => {
       const allJobs = j || [];
       const profileDealers = (d || []).filter(p => p.status !== "비노출");

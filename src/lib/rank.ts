@@ -1,18 +1,30 @@
-export const RANKS = [
-  { name: "이등병", min: 0, max: 999, color: "bg-gray-100 text-gray-600", border: "border-gray-200" },
-  { name: "일병", min: 1000, max: 1999, color: "bg-gray-100 text-gray-700", border: "border-gray-200" },
-  { name: "상병", min: 2000, max: 2999, color: "bg-gray-200 text-gray-800", border: "border-gray-300" },
-  { name: "병장", min: 3000, max: 3999, color: "bg-slate-200 text-slate-800", border: "border-slate-300" },
-  { name: "하사", min: 4000, max: 5999, color: "bg-emerald-100 text-emerald-700", border: "border-emerald-200" },
-  { name: "중사", min: 6000, max: 7999, color: "bg-emerald-100 text-emerald-700", border: "border-emerald-300" },
-  { name: "상사", min: 8000, max: 9999, color: "bg-emerald-200 text-emerald-800", border: "border-emerald-400" },
-  { name: "소령", min: 10000, max: 12999, color: "bg-blue-100 text-blue-700", border: "border-blue-200" },
-  { name: "중령", min: 13000, max: 15999, color: "bg-blue-200 text-blue-800", border: "border-blue-300" },
-  { name: "대령", min: 16000, max: 19999, color: "bg-blue-300 text-blue-900", border: "border-blue-400" },
-  { name: "준장", min: 20000, max: 39999, color: "bg-amber-100 text-amber-700", border: "border-amber-200" },
-  { name: "소장", min: 40000, max: 59999, color: "bg-amber-200 text-amber-800", border: "border-amber-300" },
-  { name: "중장", min: 60000, max: 79999, color: "bg-amber-300 text-amber-900", border: "border-amber-400" },
-  { name: "대장", min: 80000, max: Infinity, color: "bg-red-200 text-red-800", border: "border-red-400" },
+export type RankTier = "enlisted" | "nco" | "field" | "general";
+
+export interface Rank {
+  name: string;
+  min: number;
+  max: number;
+  color: string;
+  border: string;
+  tier: RankTier;
+  count: number;
+}
+
+export const RANKS: Rank[] = [
+  { name: "이등병", min: 0, max: 999, color: "bg-gray-100 text-gray-600", border: "border-gray-200", tier: "enlisted", count: 1 },
+  { name: "일병", min: 1000, max: 1999, color: "bg-gray-100 text-gray-700", border: "border-gray-200", tier: "enlisted", count: 2 },
+  { name: "상병", min: 2000, max: 2999, color: "bg-gray-200 text-gray-800", border: "border-gray-300", tier: "enlisted", count: 3 },
+  { name: "병장", min: 3000, max: 3999, color: "bg-slate-200 text-slate-800", border: "border-slate-300", tier: "enlisted", count: 4 },
+  { name: "하사", min: 4000, max: 5999, color: "bg-emerald-100 text-emerald-700", border: "border-emerald-200", tier: "nco", count: 1 },
+  { name: "중사", min: 6000, max: 7999, color: "bg-emerald-100 text-emerald-700", border: "border-emerald-300", tier: "nco", count: 2 },
+  { name: "상사", min: 8000, max: 9999, color: "bg-emerald-200 text-emerald-800", border: "border-emerald-400", tier: "nco", count: 3 },
+  { name: "소령", min: 10000, max: 12999, color: "bg-blue-100 text-blue-700", border: "border-blue-200", tier: "field", count: 1 },
+  { name: "중령", min: 13000, max: 15999, color: "bg-blue-200 text-blue-800", border: "border-blue-300", tier: "field", count: 2 },
+  { name: "대령", min: 16000, max: 19999, color: "bg-blue-300 text-blue-900", border: "border-blue-400", tier: "field", count: 3 },
+  { name: "준장", min: 20000, max: 39999, color: "bg-amber-100 text-amber-700", border: "border-amber-200", tier: "general", count: 1 },
+  { name: "소장", min: 40000, max: 59999, color: "bg-amber-200 text-amber-800", border: "border-amber-300", tier: "general", count: 2 },
+  { name: "중장", min: 60000, max: 79999, color: "bg-amber-300 text-amber-900", border: "border-amber-400", tier: "general", count: 3 },
+  { name: "대장", min: 80000, max: Infinity, color: "bg-red-200 text-red-800", border: "border-red-400", tier: "general", count: 4 },
 ];
 
 export function getRank(points: number) {
