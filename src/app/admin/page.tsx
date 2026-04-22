@@ -345,9 +345,9 @@ export default function AdminPage() {
 
   const refreshBanners = () => api.getBanners().then(setBanners);
 
-  const handleBannerSave = async (id: string, image: string, link: string, title?: string, description?: string, contact?: string, detail_images?: string[], links?: import("@/types").BannerLink[]) => {
+  const handleBannerSave = async (id: string, image: string, link: string, title?: string, description?: string, contact?: string, detail_images?: string[], links?: import("@/types").BannerLink[], pinned_rank?: number) => {
     setBannerSaving(id);
-    try { await api.updateBanner(id, { image, link, title, description, contact, detail_images, links } as any); await refreshBanners(); } catch { alert("저장 실패"); }
+    try { await api.updateBanner(id, { image, link, title, description, contact, detail_images, links, pinned_rank } as any); await refreshBanners(); } catch { alert("저장 실패"); }
     setBannerSaving(null);
   };
 
@@ -1746,7 +1746,7 @@ function BannerEditor({ banner, label, size, saving, onSave }: {
   label: string;
   size: string;
   saving: boolean;
-  onSave: (id: string, image: string, link: string, title?: string, description?: string, contact?: string, detail_images?: string[], links?: import("@/types").BannerLink[]) => void;
+  onSave: (id: string, image: string, link: string, title?: string, description?: string, contact?: string, detail_images?: string[], links?: import("@/types").BannerLink[], pinned_rank?: number) => void;
 }) {
   const [image, setImage] = useState(banner.image || "");
   const [link, setLink] = useState(banner.link || "");
@@ -1755,16 +1755,20 @@ function BannerEditor({ banner, label, size, saving, onSave }: {
   const [description, setDescription] = useState(banner.description || "");
   const [contact, setContact] = useState(banner.contact || "");
   const [links, setLinks] = useState<import("@/types").BannerLink[]>(banner.links || []);
+  const [pinnedRank, setPinnedRank] = useState<number>(banner.pinned_rank ?? 0);
   const inputClass = "w-full bg-white border border-border-custom rounded-xl px-4 py-3 text-base text-surface focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/10 transition-all placeholder:text-muted";
 
   return (
     <div className="bg-white rounded-2xl border border-border-custom p-6">
       <div className="flex items-center justify-between mb-4">
         <div>
-          <h4 className="text-surface font-bold text-base">{label}</h4>
+          <h4 className="text-surface font-bold text-base flex items-center gap-2">
+            {pinnedRank > 0 && <span className="bg-accent text-white text-[10px] font-bold px-1.5 py-0.5 rounded">📌 {pinnedRank}</span>}
+            {label}
+          </h4>
           <p className="text-muted text-sm mt-0.5">권장 사이즈: <span className="text-accent font-semibold">{size}</span></p>
         </div>
-        <button onClick={() => onSave(banner.id, image, link, title, description, contact, detailImages, links)} disabled={saving}
+        <button onClick={() => onSave(banner.id, image, link, title, description, contact, detailImages, links, pinnedRank)} disabled={saving}
           className="bg-accent hover:bg-accent-hover text-white text-sm font-bold px-5 py-2 rounded-lg transition-all disabled:opacity-50">
           {saving ? "저장 중..." : "저장"}
         </button>
@@ -1825,6 +1829,11 @@ function BannerEditor({ banner, label, size, saving, onSave }: {
               />
             )}
           </div>
+        </div>
+
+        <div>
+          <label className="text-sub text-sm font-medium block mb-2">📌 우선노출 순위 <span className="text-muted font-normal">(0=일반, 숫자 클수록 같은 위치 배너들 중 상단 고정)</span></label>
+          <input className={inputClass} type="number" min={0} value={pinnedRank} onChange={e => setPinnedRank(Number(e.target.value) || 0)} />
         </div>
       </div>
     </div>
