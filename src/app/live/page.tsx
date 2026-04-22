@@ -222,12 +222,18 @@ export default function LivePage() {
 
         {/* Category filter */}
         <div className="flex gap-1.5 mb-5 overflow-x-auto hide-scrollbar">
-          {CATEGORIES.map(c => (
-            <button key={c} onClick={() => setCategory(c)}
-              className={`shrink-0 px-4 py-2 rounded-full text-[13px] font-semibold transition-all ${
-                category === c ? "bg-accent text-white" : "bg-white card-shadow text-sub hover:bg-accent/10"
-              }`}>{c} {c !== "전체" && <span className="ml-0.5 text-[11px]">({games.filter(g => g.category === c).length})</span>}</button>
-          ))}
+          {CATEGORIES.map(c => {
+            const todayMs = new Date().setHours(0, 0, 0, 0);
+            const count = c === "대회"
+              ? events.filter(e => new Date(e.end_date || e.date).getTime() >= todayMs).length
+              : games.filter(g => g.category === c).length;
+            return (
+              <button key={c} onClick={() => setCategory(c)}
+                className={`shrink-0 px-4 py-2 rounded-full text-[13px] font-semibold transition-all ${
+                  category === c ? "bg-accent text-white" : "bg-white card-shadow text-sub hover:bg-accent/10"
+                }`}>{c} {c !== "전체" && <span className="ml-0.5 text-[11px]">({count})</span>}</button>
+            );
+          })}
         </div>
 
         {/* 대회 탭: /events 페이지와 동일한 디자인으로 표시 */}
