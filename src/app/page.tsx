@@ -6,14 +6,16 @@ import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import StoreCard from "@/components/StoreCard";
+import RankInsignia from "@/components/RankInsignia";
 import { useStores, useEvents, useNotices } from "@/hooks/useData";
+import { useUserRanks } from "@/hooks/useUserRanks";
 import { getBanners, getShorts, getJobs } from "@/lib/api";
 import { Store, Banner, Short, Job } from "@/types";
 import { supabase } from "@/lib/supabase";
 
 const MapView = dynamic(() => import("@/components/MapView"), { ssr: false });
 
-interface Post { id: string; title: string; nickname: string; views: number; created_at: string; }
+interface Post { id: string; title: string; nickname: string; views: number; created_at: string; user_id?: string | null; }
 
 export default function Home() {
   const [selectedRegion, setSelectedRegion] = useState("전체");
@@ -31,12 +33,13 @@ export default function Home() {
     getBanners().then(setBanners);
     getShorts().then(setShorts);
     getJobs().then(setJobs);
-    supabase.from("posts").select("id,title,nickname,views,created_at").order("pinned_rank", { ascending: false }).order("created_at", { ascending: false }).limit(4)
+    supabase.from("posts").select("id,title,nickname,views,created_at,user_id").order("pinned_rank", { ascending: false }).order("created_at", { ascending: false }).limit(4)
       .then(({ data }) => setPosts(data || []));
     supabase.from("live_games").select("*").in("status", ["진행중", "대기중"]).order("pinned_rank", { ascending: false }).order("updated_at", { ascending: false })
       .then(({ data }) => setLiveGames(data || []));
   }, []);
 
+  const postRanks = useUserRanks(posts.map(p => p.user_id));
   const sideBanners = banners.filter(b => b.position.startsWith("side")).sort((a, b) => a.position.localeCompare(b.position));
   const filteredStores = selectedRegion === "전체" ? stores : stores.filter((s) => s.region === selectedRegion);
   const recommendedStores = stores.filter((s) => s.is_recommended);
@@ -71,13 +74,19 @@ export default function Home() {
             <p className="text-muted text-[13px]">아직 게시글이 없습니다</p>
             <Link href="/board/write" className="text-accent text-[12px] font-semibold mt-1 inline-block hover:underline">첫 글 작성하기 →</Link>
           </div>
-        ) : posts.map((post) => (
+        ) : posts.map((post) => {
+          const r = post.user_id ? postRanks[post.user_id] : undefined;
+          return (
           <Link key={post.id} href="/board" className="flex items-center gap-2 px-3 py-2.5 rounded-xl hover:bg-bg group transition">
             <span className="w-1 h-1 rounded-full bg-accent shrink-0" />
             <p className="text-sub text-[13px] truncate flex-1 group-hover:text-accent transition-colors">{post.title}</p>
-            <span className="text-muted text-[11px] shrink-0">{post.nickname}</span>
+            <span className="text-muted text-[11px] shrink-0 inline-flex items-center gap-1">
+              {r && <span className={`inline-flex items-center rounded px-1 ${r.color}`}><RankInsignia rank={r} size="xs" /></span>}
+              {post.nickname}
+            </span>
           </Link>
-        ))}
+          );
+        })}
       </div>
     </div>
   );
@@ -295,20 +304,26 @@ export default function Home() {
             </div>
           ) : (
             <div className="px-4 pb-3">
-              {posts.slice(0, 4).map(post => (
+              {posts.slice(0, 4).map(post => {
+                const r = post.user_id ? postRanks[post.user_id] : undefined;
+                return (
                 <Link key={post.id} href="/board" className="flex items-center gap-3 py-2.5 border-b border-border-custom/50 last:border-b-0 group">
                   <span className="w-10 h-10 rounded-lg bg-gray-100 border border-gray-200 flex items-center justify-center shrink-0">
                     <svg className="w-4.5 h-4.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" /></svg>
                   </span>
                   <div className="flex-1 min-w-0">
                     <p className="text-surface text-[14px] font-bold truncate group-hover:text-accent transition-colors">{post.title}</p>
-                    <p className="text-sub text-[12px]">{post.nickname} · 조회 {post.views}</p>
+                    <p className="text-sub text-[12px] inline-flex items-center gap-1">
+                      {r && <span className={`inline-flex items-center rounded px-1 ${r.color}`}><RankInsignia rank={r} size="xs" /></span>}
+                      {post.nickname} · 조회 {post.views}
+                    </p>
                   </div>
                   <svg className="w-4 h-4 text-[#ccc] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                   </svg>
                 </Link>
-              ))}
+                );
+              })}
             </div>
           )}
         </section>

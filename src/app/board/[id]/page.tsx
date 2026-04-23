@@ -9,6 +9,8 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
 import { addPoints } from "@/lib/rank";
 import { classifyContent, formatFilterMessage } from "@/lib/contentFilter";
+import RankInsignia from "@/components/RankInsignia";
+import { useUserRanks } from "@/hooks/useUserRanks";
 
 interface Post {
   id: string; user_id: string; nickname: string; title: string; content: string;
@@ -102,6 +104,8 @@ export default function BoardDetailPage() {
     router.push("/board");
   };
 
+  const rankMap = useUserRanks([post?.user_id, ...comments.map(c => c.user_id)]);
+
   if (loading) return (
     <div className="flex flex-col min-h-screen pb-16 md:pb-0">
       <Header />
@@ -123,6 +127,7 @@ export default function BoardDetailPage() {
   );
 
   const isAuthor = user?.id === post.user_id;
+  const postRank = post.user_id ? rankMap[post.user_id] : undefined;
 
   return (
     <div className="flex flex-col min-h-screen pb-16 md:pb-0">
@@ -149,7 +154,10 @@ export default function BoardDetailPage() {
               {post.pinned && <span className="inline-block text-[10px] font-bold px-2 py-0.5 rounded bg-accent text-white mb-2">공지</span>}
               <h1 className="text-2xl font-black text-surface mb-3">{post.title}</h1>
               <div className="flex items-center gap-3 text-muted text-[13px] pb-5 border-b border-border-custom">
-                <span className="font-semibold text-sub">{post.nickname}</span>
+                <span className="font-semibold text-sub inline-flex items-center gap-1.5">
+                  {postRank && <span className={`inline-flex items-center rounded px-1 py-0.5 ${postRank.color}`}><RankInsignia rank={postRank} size="xs" /></span>}
+                  {post.nickname}
+                </span>
                 <span>{post.created_at?.slice(0, 10)}</span>
                 <span>조회 {post.views}</span>
                 {isAuthor && <button onClick={handleDelete} className="ml-auto text-red-400 hover:text-red-500 text-[12px] font-semibold">삭제</button>}
@@ -186,11 +194,16 @@ export default function BoardDetailPage() {
             <div className="border-t border-border-custom p-6 md:p-8">
               <h3 className="text-surface font-bold text-[15px] mb-4">댓글 {comments.length}</h3>
               <div className="space-y-3 mb-4">
-                {comments.map((c, i) => (
+                {comments.map((c, i) => {
+                  const cRank = c.user_id ? rankMap[c.user_id] : undefined;
+                  return (
                   <div key={c.id}>
                     <div className="bg-[#f9f9f9] rounded-xl px-4 py-3">
                       <div className="flex items-center gap-2 mb-1">
-                        <span className="text-surface text-[13px] font-bold">{c.nickname}</span>
+                        <span className="text-surface text-[13px] font-bold inline-flex items-center gap-1.5">
+                          {cRank && <span className={`inline-flex items-center rounded px-1 py-0.5 ${cRank.color}`}><RankInsignia rank={cRank} size="xs" /></span>}
+                          {c.nickname}
+                        </span>
                         <span className="text-[#ccc] text-[11px]">{c.created_at?.slice(0, 10)}</span>
                       </div>
                       <p className="text-sub text-[14px]">{c.content}</p>
@@ -207,7 +220,8 @@ export default function BoardDetailPage() {
                       </Link>
                     )}
                   </div>
-                ))}
+                  );
+                })}
                 {comments.length === 0 && <p className="text-muted text-[13px]">아직 댓글이 없습니다</p>}
               </div>
 

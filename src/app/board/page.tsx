@@ -6,9 +6,12 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
+import RankInsignia from "@/components/RankInsignia";
+import { useUserRanks } from "@/hooks/useUserRanks";
+import { Rank } from "@/lib/rank";
 
 interface Post {
-  id: string; nickname: string; title: string; content: string;
+  id: string; user_id: string | null; nickname: string; title: string; content: string;
   category: string; views: number; likes: number; dislikes: number;
   pinned: boolean; image: string; created_at: string;
   comment_count?: number;
@@ -51,6 +54,8 @@ export default function BoardPage() {
 
     return { pinned, hot, regular };
   }, [posts, query]);
+
+  const rankMap = useUserRanks(posts.map(p => p.user_id));
 
   return (
     <div className="flex flex-col min-h-screen pb-16 md:pb-0">
@@ -106,13 +111,13 @@ export default function BoardPage() {
               </div>
 
               {/* Pinned */}
-              {pinned.map(p => <PostRow key={p.id} post={p} type="pinned" />)}
+              {pinned.map(p => <PostRow key={p.id} post={p} type="pinned" rank={p.user_id ? rankMap[p.user_id] : undefined} />)}
 
               {/* HOT */}
-              {hot.map(p => <PostRow key={p.id} post={p} type="hot" />)}
+              {hot.map(p => <PostRow key={p.id} post={p} type="hot" rank={p.user_id ? rankMap[p.user_id] : undefined} />)}
 
               {/* Regular */}
-              {regular.map(p => <PostRow key={p.id} post={p} type="regular" />)}
+              {regular.map(p => <PostRow key={p.id} post={p} type="regular" rank={p.user_id ? rankMap[p.user_id] : undefined} />)}
 
               {pinned.length === 0 && hot.length === 0 && regular.length === 0 && (
                 <div className="text-center py-16 text-muted">{query ? "검색 결과가 없습니다" : "아직 게시글이 없습니다"}</div>
@@ -126,7 +131,7 @@ export default function BoardPage() {
   );
 }
 
-function PostRow({ post, type }: { post: any; type: "pinned" | "hot" | "regular" }) {
+function PostRow({ post, type, rank }: { post: any; type: "pinned" | "hot" | "regular"; rank?: Rank }) {
   return (
     <Link href={`/board/${post.id}`}
       className={`grid grid-cols-1 md:grid-cols-12 gap-1 md:gap-4 px-5 py-3 border-b border-border-custom last:border-b-0 hover:bg-[#fafafa] transition-colors group ${
@@ -145,9 +150,18 @@ function PostRow({ post, type }: { post: any; type: "pinned" | "hot" | "regular"
           <p className="text-surface text-[14px] font-semibold truncate group-hover:text-accent transition-colors">{post.title}</p>
           {post.comment_count > 0 && <span className="text-accent text-[12px] font-bold shrink-0">[{post.comment_count}]</span>}
         </div>
-        <p className="md:hidden text-muted text-[11px] mt-0.5">{post.nickname} · {post.created_at?.slice(5, 10)} · 조회 {post.views} · 👍 {post.likes || 0}</p>
+        <p className="md:hidden text-muted text-[11px] mt-0.5 inline-flex items-center gap-1">
+          {rank && <span className={`inline-flex items-center gap-0.5 rounded px-1 ${rank.color}`}><RankInsignia rank={rank} size="xs" /></span>}
+          <span>{post.nickname}</span>
+          <span>· {post.created_at?.slice(5, 10)} · 조회 {post.views} · 👍 {post.likes || 0}</span>
+        </p>
       </div>
-      <div className="hidden md:block md:col-span-2 text-sub text-[13px]">{post.nickname}</div>
+      <div className="hidden md:block md:col-span-2 text-sub text-[13px]">
+        <span className="inline-flex items-center gap-1.5">
+          {rank && <span className={`inline-flex items-center rounded px-1 py-0.5 ${rank.color}`}><RankInsignia rank={rank} size="xs" /></span>}
+          {post.nickname}
+        </span>
+      </div>
       <div className="hidden md:block md:col-span-1 text-center text-muted text-[13px]">{post.views}</div>
       <div className="hidden md:block md:col-span-1 text-center text-[13px] text-accent font-semibold">{post.likes || 0}</div>
       <div className="hidden md:block md:col-span-1 text-right text-muted text-[12px]">{post.created_at?.slice(5, 10)}</div>
