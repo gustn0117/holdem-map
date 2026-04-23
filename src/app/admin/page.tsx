@@ -8,6 +8,7 @@ import * as api from "@/lib/api";
 import { geocodeAddress } from "@/lib/geocode";
 import Select from "@/components/Select";
 import ImageUpload from "@/components/ImageUpload";
+import JobAvatarPicker from "@/components/JobAvatarPicker";
 
 import { supabase } from "@/lib/supabase";
 
@@ -1718,7 +1719,12 @@ function AdminModal({ modal, stores, saving, onClose, onSave }: {
               <label className="text-sub text-sm font-medium block mb-2">메시지/상세</label>
               <textarea className={inputClass + " resize-none"} rows={4} value={(form.message as string) || ""} onChange={e => set("message", e.target.value)} placeholder="자기소개 또는 구인 상세 내용" />
             </div>
-            <ImageUpload value={(form.photo as string) || ""} onChange={v => set("photo", v)} folder="jobs" label="사진/프로필" hint="선택" aspect="aspect-square" />
+            <JobAvatarPicker
+              value={(form.photo as string) || ""}
+              onChange={v => set("photo", v)}
+              role={(form.role as string) || ""}
+              gender={(form.gender as string) || ""}
+            />
           </div>
         )}
 
