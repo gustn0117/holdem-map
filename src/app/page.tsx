@@ -385,10 +385,31 @@ export default function Home() {
           </div>
         </section>
 
-        {/* 8. 추천 매장 */}
-        <section className="px-4 pb-5"><RecommendedSection /></section>
+        {/* 8. 숏츠 */}
+        {shorts.length > 0 && (
+          <section className="section-alt border-y border-border-custom px-4 py-5">
+            <div className="flex items-center justify-between mb-3">
+              <h2 className="text-[17px] font-bold text-surface">숏츠</h2>
+              <Link href="/shorts" className="text-accent text-[12px] font-semibold hover:underline">전체보기 →</Link>
+            </div>
+            <div className="flex gap-3 overflow-x-auto hide-scrollbar -mx-4 px-4">
+              {shorts.slice(0, 8).map((short, i) => (
+                <Link key={short.id} href="/shorts" className="shrink-0 w-32 group">
+                  <div className="aspect-9/16 rounded-2xl overflow-hidden card-shadow relative">
+                    <video src={short.video_url} poster={short.thumbnail || undefined} className="w-full h-full object-cover" muted loop playsInline autoPlay={i === 0} />
+                    {i === 0 && <div className="absolute top-2 left-2 bg-accent text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full flex items-center gap-1"><span className="w-1 h-1 bg-white rounded-full pulse-dot" />LIVE</div>}
+                  </div>
+                  <p className="text-surface text-[12px] font-semibold mt-2 truncate">{short.title}</p>
+                </Link>
+              ))}
+            </div>
+          </section>
+        )}
 
-        {/* 8. 공지사항 */}
+        {/* 9. 추천 매장 */}
+        <section className="px-4 pb-5 pt-5"><RecommendedSection /></section>
+
+        {/* 10. 공지사항 */}
         <section className="px-4 pb-5"><NoticesSection /></section>
       </div>
 
@@ -428,6 +449,76 @@ export default function Home() {
             </div>
           </div>
         </section>
+
+        {/* PC LIVE: 실시간 토너/대회/레이크 */}
+        <section className="border-b border-border-custom">
+          <div className="max-w-350 mx-auto px-5 md:px-10 py-8">
+            <div className="flex items-center justify-between mb-5">
+              <div className="flex items-center gap-2">
+                <span className="relative flex h-2 w-2">
+                  <span className="live-pulse absolute inline-flex h-full w-full rounded-full bg-red-500 opacity-75" />
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500" />
+                </span>
+                <span className="text-red-500 text-[13px] font-extrabold">LIVE</span>
+                <h2 className="text-[17px] font-bold text-surface">진행중인 토너 · 대회 · 레이크</h2>
+              </div>
+              <Link href="/live" className="text-accent text-[13px] font-semibold hover:underline">전체보기 →</Link>
+            </div>
+            {liveGames.length === 0 ? (
+              <div className="rounded-2xl card-shadow bg-white px-5 py-8 text-center">
+                <p className="text-muted text-[13px]">현재 진행중인 현황이 없습니다</p>
+                <Link href="/live" className="text-accent text-[12px] font-semibold mt-1 inline-block hover:underline">실시간 등록하기 →</Link>
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+                {liveGames.slice(0, 8).map(game => (
+                  <Link key={game.id} href="/live" className="rounded-2xl card-shadow bg-white p-4 hover:bg-bg transition group">
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                        game.category === "게임" ? "bg-blue-100 text-blue-600" :
+                        game.category === "토너" ? "bg-emerald-100 text-emerald-700" :
+                        game.category === "대회" ? "bg-red-100 text-red-600" :
+                        "bg-amber-100 text-amber-700"
+                      }`}>{game.category}</span>
+                      {game.players_current > 0 && (
+                        <span className="text-[10px] font-bold text-accent bg-accent/8 px-1.5 py-0.5 rounded">{game.players_current}{game.players_max > 0 ? `/${game.players_max}` : ""}명</span>
+                      )}
+                    </div>
+                    <p className="text-surface text-[14px] font-bold truncate group-hover:text-accent transition-colors">{game.title}</p>
+                    <p className="text-muted text-[12px] mt-0.5 truncate">{game.store_name}</p>
+                    {(game.blind || game.prize) && (
+                      <p className="text-muted text-[11px] mt-0.5 truncate">{[game.blind, game.prize].filter(Boolean).join(" · ")}</p>
+                    )}
+                  </Link>
+                ))}
+              </div>
+            )}
+          </div>
+        </section>
+
+        {/* PC HOT 매장 */}
+        {hotStores.length > 0 && (
+          <section className="border-b border-border-custom">
+            <div className="max-w-350 mx-auto px-5 md:px-10 py-8">
+              <div className="flex items-center justify-between mb-5">
+                <div className="flex items-center gap-2">
+                  <span className="inline-flex items-center gap-1 bg-red-500 text-white text-[11px] font-black px-2.5 py-1 rounded-full">🔥 HOT</span>
+                  <h2 className="text-[17px] font-bold text-surface">인기 매장</h2>
+                </div>
+                <Link href="/map" className="text-accent text-[13px] font-semibold hover:underline">전체보기 →</Link>
+              </div>
+              <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
+                {hotStores.map(store => (
+                  <div key={store.id} onClick={() => setSelectedStore(store)}
+                    className={`relative transition-all cursor-pointer rounded-2xl ${selectedStore?.id === store.id ? "ring-2 ring-accent" : ""}`}>
+                    <span className="absolute top-3 left-3 z-10 bg-red-500 text-white text-[10px] font-black px-2 py-0.5 rounded-full shadow-md">🔥 HOT</span>
+                    <StoreCard store={store} />
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
 
         {/* PC Jobs */}
         <section className="border-b border-border-custom">
