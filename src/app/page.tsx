@@ -28,6 +28,8 @@ export default function Home() {
   const [jobs, setJobs] = useState<Job[]>([]);
   const [posts, setPosts] = useState<Post[]>([]);
   const [liveGames, setLiveGames] = useState<any[]>([]);
+  const [showAllStores, setShowAllStores] = useState(false);
+  const PC_STORE_PREVIEW = 6;
 
   useEffect(() => {
     getBanners().then(setBanners);
@@ -563,17 +565,40 @@ export default function Home() {
         <section>
           <div className="max-w-350 mx-auto px-5 md:px-10 py-8">
             <div className="flex items-center justify-between mb-5">
-              <h2 className="text-[17px] font-bold text-surface">매장 목록</h2>
-              <Link href="/map" className="text-accent text-[13px] font-semibold hover:underline">전체보기 →</Link>
+              <h2 className="text-[17px] font-bold text-surface">
+                매장 목록
+                <span className="text-muted text-[13px] font-normal ml-2">
+                  ({showAllStores ? filteredStores.length : Math.min(PC_STORE_PREVIEW, filteredStores.length)} / {filteredStores.length})
+                </span>
+              </h2>
+              <Link href="/map" className="text-muted text-[12px] hover:text-accent transition-colors">지도에서 보기 →</Link>
             </div>
             <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
-              {filteredStores.map((store) => (
+              {(showAllStores ? filteredStores : filteredStores.slice(0, PC_STORE_PREVIEW)).map((store) => (
                 <div key={store.id} onClick={() => setSelectedStore(store)}
                   className={`transition-all cursor-pointer rounded-2xl ${selectedStore?.id === store.id ? "ring-2 ring-accent" : ""}`}>
                   <StoreCard store={store} />
                 </div>
               ))}
             </div>
+            {filteredStores.length > PC_STORE_PREVIEW && (
+              <div className="flex justify-center mt-6">
+                <button onClick={() => setShowAllStores(v => !v)}
+                  className="inline-flex items-center gap-2 bg-white border border-border-custom hover:border-accent hover:bg-accent-light text-sub hover:text-accent text-[14px] font-bold px-6 py-3 rounded-xl card-shadow transition-all">
+                  {showAllStores ? (
+                    <>
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" /></svg>
+                      접기
+                    </>
+                  ) : (
+                    <>
+                      전체보기 ({filteredStores.length - PC_STORE_PREVIEW}개 더)
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                    </>
+                  )}
+                </button>
+              </div>
+            )}
           </div>
         </section>
 
