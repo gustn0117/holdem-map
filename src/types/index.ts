@@ -82,6 +82,7 @@ export interface Banner {
   id: string;
   position: string;
   image: string;
+  image_mobile?: string;
   link: string;
   active: boolean;
   pinned_rank?: number;

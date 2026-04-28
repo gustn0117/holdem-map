@@ -346,9 +346,9 @@ export default function AdminPage() {
 
   const refreshBanners = () => api.getBanners().then(setBanners);
 
-  const handleBannerSave = async (id: string, image: string, link: string, title?: string, description?: string, contact?: string, detail_images?: string[], links?: import("@/types").BannerLink[], pinned_rank?: number) => {
+  const handleBannerSave = async (id: string, image: string, link: string, title?: string, description?: string, contact?: string, detail_images?: string[], links?: import("@/types").BannerLink[], pinned_rank?: number, image_mobile?: string) => {
     setBannerSaving(id);
-    try { await api.updateBanner(id, { image, link, title, description, contact, detail_images, links, pinned_rank } as any); await refreshBanners(); } catch { alert("저장 실패"); }
+    try { await api.updateBanner(id, { image, image_mobile, link, title, description, contact, detail_images, links, pinned_rank } as any); await refreshBanners(); } catch { alert("저장 실패"); }
     setBannerSaving(null);
   };
 
@@ -529,6 +529,36 @@ export default function AdminPage() {
           await api.updateJob(formData.id as string, payload);
         }
         refreshJobs();
+      } else if (modal?.tab === "live") {
+        const payload = {
+          store_name: (formData.store_name as string) || "",
+          category: (formData.category as string) || "토너",
+          title: (formData.title as string) || "",
+          blind: (formData.blind as string) || "",
+          buy_in: (formData.buy_in as string) || "",
+          prize: (formData.prize as string) || "",
+          rake: (formData.rake as string) || "",
+          players_current: Number(formData.players_current) || 0,
+          players_max: Number(formData.players_max) || 0,
+          description: (formData.description as string) || "",
+          image: (formData.image as string) || "",
+          contact_kakao: (formData.contact_kakao as string) || "",
+          contact_telegram: (formData.contact_telegram as string) || "",
+          contact_phone: (formData.contact_phone as string) || "",
+          status: (formData.status as string) || "진행중",
+          pinned_rank: Number(formData.pinned_rank) || 0,
+        };
+        if (!payload.title.trim() || !payload.store_name.trim()) {
+          alert("매장명과 제목을 입력해주세요.");
+          setSaving(false);
+          return;
+        }
+        if (modal.type === "create") {
+          await supabase.from("live_games").insert({ ...payload, created_by: null });
+        } else {
+          await supabase.from("live_games").update(payload).eq("id", formData.id as string);
+        }
+        refreshLiveGames();
       }
       setModal(null);
     } catch {
@@ -764,7 +794,7 @@ export default function AdminPage() {
           <div className="space-y-6">
             {/* Main Banner */}
             {banners.filter(b => b.position === "main").map(banner => (
-              <BannerEditor key={banner.id} banner={banner} label="메인 배너" size="1400 x 120px (권장)" saving={bannerSaving === banner.id} onSave={handleBannerSave} />
+              <BannerEditor key={banner.id} banner={banner} label="메인 배너 (상단)" size="PC 2800x260 / 모바일 750x84" saving={bannerSaving === banner.id} onSave={handleBannerSave} hasMobile />
             ))}
 
             <h3 className="text-surface font-bold text-lg pt-4">사이드 배너</h3>
@@ -894,6 +924,8 @@ export default function AdminPage() {
                       onBlur={e => { const v = Number(e.target.value) || 0; if (v !== (g.pinned_rank || 0)) handlePinnedRankSet("live_games", g.id, v, refreshLiveGames); }}
                       className="w-12 border border-border-custom rounded px-1.5 py-0.5 text-[11px] text-center" />
                   </label>
+                  <button onClick={() => setModal({ type: "edit", tab: "live", data: g as Record<string, unknown> })}
+                    className="text-[12px] font-semibold px-3 py-1.5 rounded-lg bg-bg text-sub hover:bg-accent-light hover:text-accent transition-all">수정</button>
                   {g.status === "진행중" && (
                     <button onClick={() => handleEndLive(g.id)} className="text-[12px] font-semibold px-3 py-1.5 rounded-lg bg-yellow-50 text-yellow-600 hover:bg-yellow-100 transition-all">종료</button>
                   )}
@@ -1728,7 +1760,81 @@ function AdminModal({ modal, stores, saving, onClose, onSave }: {
           </div>
         )}
 
-        {["stores", "events", "notices", "market", "trade", "jobs"].includes(modal.tab) && (
+        {modal.tab === "live" && (
+          <div className="space-y-5">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="text-sub text-sm font-medium block mb-2">매장명 *</label>
+                <input className={inputClass} value={(form.store_name as string) || ""} onChange={e => set("store_name", e.target.value)} placeholder="예: 강남홀덤펍" />
+              </div>
+              <div>
+                <label className="text-sub text-sm font-medium block mb-2">카테고리 *</label>
+                <Select value={(form.category as string) || "토너"} onChange={v => set("category", v)} options={[
+                  { value: "게임", label: "게임" }, { value: "토너", label: "토너" }, { value: "대회", label: "대회" }, { value: "레이크", label: "레이크" },
+                ]} />
+              </div>
+            </div>
+            <div>
+              <label className="text-sub text-sm font-medium block mb-2">제목 *</label>
+              <input className={inputClass} value={(form.title as string) || ""} onChange={e => set("title", e.target.value)} placeholder="예: NLH 1/2 캐시게임, 주말 토너먼트" />
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div>
+                <label className="text-sub text-sm font-medium block mb-2">블라인드</label>
+                <input className={inputClass} value={(form.blind as string) || ""} onChange={e => set("blind", e.target.value)} placeholder="1/2" />
+              </div>
+              <div>
+                <label className="text-sub text-sm font-medium block mb-2">바이인</label>
+                <input className={inputClass} value={(form.buy_in as string) || ""} onChange={e => set("buy_in", e.target.value)} placeholder="100,000" />
+              </div>
+              <div>
+                <label className="text-sub text-sm font-medium block mb-2">{(form.category as string) === "레이크" ? "레이크" : "프라이즈"}</label>
+                <input className={inputClass}
+                  value={((form.category as string) === "레이크" ? (form.rake as string) : (form.prize as string)) || ""}
+                  onChange={e => set((form.category as string) === "레이크" ? "rake" : "prize", e.target.value)}
+                  placeholder={(form.category as string) === "레이크" ? "5%" : "GTD 100만"} />
+              </div>
+              <div>
+                <label className="text-sub text-sm font-medium block mb-2">상태</label>
+                <Select value={(form.status as string) || "진행중"} onChange={v => set("status", v)} options={[
+                  { value: "진행중", label: "진행중" }, { value: "대기중", label: "대기중" }, { value: "마감", label: "마감" }, { value: "종료", label: "종료" },
+                ]} />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="text-sub text-sm font-medium block mb-2">현재 인원</label>
+                <input className={inputClass} type="number" min={0} value={(form.players_current as number) ?? 0} onChange={e => set("players_current", Number(e.target.value) || 0)} />
+              </div>
+              <div>
+                <label className="text-sub text-sm font-medium block mb-2">최대 인원</label>
+                <input className={inputClass} type="number" min={0} value={(form.players_max as number) ?? 0} onChange={e => set("players_max", Number(e.target.value) || 0)} />
+              </div>
+            </div>
+            <div>
+              <label className="text-sub text-sm font-medium block mb-2">설명</label>
+              <textarea className={inputClass + " resize-none"} rows={3} value={(form.description as string) || ""} onChange={e => set("description", e.target.value)} placeholder="추가 정보 (선택)" />
+            </div>
+            <ImageUpload value={(form.image as string) || ""} onChange={v => set("image", v)} folder="live" label="포스터 이미지" hint="선택" />
+            <div className="space-y-2">
+              <label className="text-sub text-sm font-medium block mb-1">연락처 <span className="text-muted font-normal">(선택)</span></label>
+              <div className="flex items-center gap-2">
+                <span className="w-16 text-[12px] font-semibold shrink-0">카카오톡</span>
+                <input className={inputClass} value={(form.contact_kakao as string) || ""} onChange={e => set("contact_kakao", e.target.value)} placeholder="카톡 ID" />
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="w-16 text-[12px] font-semibold shrink-0">텔레그램</span>
+                <input className={inputClass} value={(form.contact_telegram as string) || ""} onChange={e => set("contact_telegram", e.target.value)} placeholder="텔레 ID" />
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="w-16 text-[12px] font-semibold shrink-0">전화번호</span>
+                <input className={inputClass} value={(form.contact_phone as string) || ""} onChange={e => set("contact_phone", e.target.value)} placeholder="01012345678" />
+              </div>
+            </div>
+          </div>
+        )}
+
+        {["stores", "events", "notices", "market", "trade", "jobs", "live"].includes(modal.tab) && (
           <div className="mt-5 pt-5 border-t border-border-custom">
             <label className="text-sub text-sm font-medium block mb-2">📌 우선노출 순위 <span className="text-muted font-normal">(0=일반, 숫자 클수록 상단 고정)</span></label>
             <input className={inputClass} type="number" min={0} value={(form.pinned_rank as number) ?? 0} onChange={e => set("pinned_rank", Number(e.target.value) || 0)} />
@@ -1747,14 +1853,16 @@ function AdminModal({ modal, stores, saving, onClose, onSave }: {
 }
 
 // ─── Banner Editor ───
-function BannerEditor({ banner, label, size, saving, onSave }: {
+function BannerEditor({ banner, label, size, saving, onSave, hasMobile }: {
   banner: import("@/types").Banner & { title?: string; description?: string; contact?: string; detail_images?: string[]; links?: import("@/types").BannerLink[] };
   label: string;
   size: string;
   saving: boolean;
-  onSave: (id: string, image: string, link: string, title?: string, description?: string, contact?: string, detail_images?: string[], links?: import("@/types").BannerLink[], pinned_rank?: number) => void;
+  onSave: (id: string, image: string, link: string, title?: string, description?: string, contact?: string, detail_images?: string[], links?: import("@/types").BannerLink[], pinned_rank?: number, image_mobile?: string) => void;
+  hasMobile?: boolean;
 }) {
   const [image, setImage] = useState(banner.image || "");
+  const [imageMobile, setImageMobile] = useState(banner.image_mobile || "");
   const [link, setLink] = useState(banner.link || "");
   const [detailImages, setDetailImages] = useState<string[]>(banner.detail_images || []);
   const [title, setTitle] = useState(banner.title || "");
@@ -1774,14 +1882,17 @@ function BannerEditor({ banner, label, size, saving, onSave }: {
           </h4>
           <p className="text-muted text-sm mt-0.5">권장 사이즈: <span className="text-accent font-semibold">{size}</span></p>
         </div>
-        <button onClick={() => onSave(banner.id, image, link, title, description, contact, detailImages, links, pinnedRank)} disabled={saving}
+        <button onClick={() => onSave(banner.id, image, link, title, description, contact, detailImages, links, pinnedRank, imageMobile)} disabled={saving}
           className="bg-accent hover:bg-accent-hover text-white text-sm font-bold px-5 py-2 rounded-lg transition-all disabled:opacity-50">
           {saving ? "저장 중..." : "저장"}
         </button>
       </div>
 
       <div className="space-y-4">
-        <ImageUpload value={image} onChange={setImage} folder="banners" label="배너 이미지" aspect="aspect-[4/1]" hint={size} />
+        <ImageUpload value={image} onChange={setImage} folder="banners" label={hasMobile ? "PC 배너 이미지" : "배너 이미지"} aspect="aspect-[4/1]" hint={hasMobile ? "권장 2800x260 (또는 1400x130)" : size} />
+        {hasMobile && (
+          <ImageUpload value={imageMobile} onChange={setImageMobile} folder="banners" label="모바일 배너 이미지 (선택)" aspect="aspect-[8/1]" hint="권장 750x84 — 비워두면 PC 이미지를 사용" />
+        )}
 
         <div>
           <label className="text-sub text-sm font-medium block mb-2">제목 <span className="text-muted font-normal">(배너 상세 페이지에 표시)</span></label>

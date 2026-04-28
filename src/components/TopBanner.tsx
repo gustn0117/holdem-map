@@ -40,22 +40,26 @@ export default function TopBanner() {
 
   const current = banners[currentIdx];
 
+  const mobileSrc = current?.image_mobile || current?.image;
+  const pcSrc = current?.image;
+
   return (
     <div className="sticky top-0 z-60 bg-white border-b border-border-custom px-3 md:px-6 py-1.5">
       <div className="mx-auto" style={{ maxWidth: "1400px" }}>
         {current?.image ? (
           <div className="relative overflow-hidden rounded-xl">
-            {/* Mobile: always /banners, PC: link or detail */}
+            {/* Mobile: 권장 750x84, ratio 8.93:1 */}
             <Link href="/banners" className="block md:hidden">
-              <img src={current.image} alt="" className="w-full h-24 object-cover rounded-xl" />
+              <img src={mobileSrc} alt="" className="w-full aspect-750/84 object-cover rounded-xl" />
             </Link>
+            {/* PC: 권장 2800x260 (또는 1400x130), ratio 10.77:1 */}
             {current.link ? (
               <a href={current.link} target="_blank" rel="noopener noreferrer" className="hidden md:block">
-                <img src={current.image} alt="" className="w-full h-32 object-cover rounded-xl" />
+                <img src={pcSrc} alt="" className="w-full aspect-2800/260 object-cover rounded-xl" />
               </a>
             ) : (
               <Link href={`/banners/${current.id}`} className="hidden md:block">
-                <img src={current.image} alt="" className="w-full h-32 object-cover rounded-xl" />
+                <img src={pcSrc} alt="" className="w-full aspect-2800/260 object-cover rounded-xl" />
               </Link>
             )}
             {banners.length > 1 && (
@@ -65,7 +69,7 @@ export default function TopBanner() {
             )}
           </div>
         ) : (
-          <Link href="/banners" className="ad-pattern h-24 md:h-32 flex items-center justify-center rounded-xl">
+          <Link href="/banners" className="ad-pattern aspect-750/84 md:aspect-2800/260 flex items-center justify-center rounded-xl">
             <p className="text-muted text-[12px]">광고 영역</p>
           </Link>
         )}

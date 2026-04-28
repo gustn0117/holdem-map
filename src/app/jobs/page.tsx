@@ -313,9 +313,18 @@ export default function JobsPage() {
                 <div className="p-3 md:p-5 flex flex-col flex-1 min-w-0">
                   <div className="flex items-center gap-1.5 mb-1 md:mb-3 flex-wrap">
                     <p className="text-surface text-[14px] md:text-[16px] font-bold truncate">{d.nickname}</p>
+                    {d.role && (
+                      <span className={`text-[9px] md:text-[10px] font-bold px-1.5 md:px-2 py-0.5 rounded-full ${
+                        d.role === "딜러" ? "bg-emerald-100 text-emerald-700" :
+                        d.role === "서빙" ? "bg-amber-100 text-amber-700" :
+                        d.role === "매니저" ? "bg-indigo-100 text-indigo-700" :
+                        d.role === "플로어" ? "bg-rose-100 text-rose-700" :
+                        "bg-gray-100 text-gray-600"
+                      }`}>{d.role}</span>
+                    )}
                     <span className={`text-[9px] md:text-[10px] font-bold px-1.5 md:px-2 py-0.5 rounded-full ${statusBg(d.status || "")}`}>{d.status || "등록됨"}</span>
                   </div>
-                  <p className="text-muted text-[11px] md:text-[12px] truncate">{d.areas?.slice(0, 2).join(", ")}{d.experience && ` · ${d.experience}`}</p>
+                  <p className="text-muted text-[11px] md:text-[12px] line-clamp-2">{d.areas?.join(", ")}{d.experience && ` · ${d.experience}`}</p>
                   <div className="flex items-center gap-1.5 text-[10px] md:text-[12px] text-muted my-1.5 md:mb-3">
                     <span className={`w-1.5 h-1.5 md:w-2 md:h-2 rounded-full ${statusColor(d.status || "")}`} />
                     <span>{timeAgo(d.status_updated_at || d.created_at)}</span>
