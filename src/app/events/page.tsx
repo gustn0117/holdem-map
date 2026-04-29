@@ -82,12 +82,14 @@ export default function EventsPage() {
         {/* Region tabs */}
         <div className="flex bg-bg rounded-xl p-1 mb-4">
           {([
-            { k: "all" as RegionTab, l: `전체 ${counts.all}` },
-            { k: "domestic" as RegionTab, l: `🇰🇷 국내 ${counts.domestic}` },
-            { k: "international" as RegionTab, l: `🌏 해외 ${counts.international}` },
+            { k: "all" as RegionTab, l: `전체 ${counts.all}`, type: "all" },
+            { k: "domestic" as RegionTab, l: `국내 ${counts.domestic}`, type: "domestic" },
+            { k: "international" as RegionTab, l: `해외 ${counts.international}`, type: "international" },
           ]).map(t => (
             <button key={t.k} onClick={() => setRegionTab(t.k)}
-              className={`flex-1 py-2.5 rounded-lg text-[13px] md:text-[14px] font-bold transition-all ${regionTab === t.k ? "bg-white text-accent shadow-sm" : "text-muted"}`}>
+              className={`flex-1 py-2.5 rounded-lg text-[13px] md:text-[14px] font-bold transition-all inline-flex items-center justify-center gap-1 ${regionTab === t.k ? "bg-white text-accent shadow-sm" : "text-muted"}`}>
+              {t.type === "domestic" && <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M3 5h18v14H3z" fill="#fff" stroke="currentColor" strokeWidth="1"/><circle cx="12" cy="12" r="3" fill="#cd2e3a"/><path d="M9.5 12a2.5 2.5 0 015 0" fill="#0047a0"/></svg>}
+              {t.type === "international" && <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" /><path d="M3 12h18M12 3a14 14 0 010 18M12 3a14 14 0 000 18" /></svg>}
               {t.l}
             </button>
           ))}
@@ -165,8 +167,9 @@ export default function EventsPage() {
                     {/* Content */}
                     <div className="p-3 md:p-4 flex-1 flex flex-col">
                       <div className="flex items-center gap-1.5 flex-wrap mb-1.5">
-                        <span className={`text-[9px] md:text-[10px] font-black px-1.5 py-0.5 rounded-full ${event.is_international ? "bg-blue-50 text-blue-600" : "bg-green-50 text-green-700"}`}>
-                          {event.is_international ? "🌏 해외" : "🇰🇷 국내"}
+                        <span className={`text-[9px] md:text-[10px] font-black px-1.5 py-0.5 rounded-full inline-flex items-center gap-0.5 ${event.is_international ? "bg-blue-50 text-blue-600" : "bg-green-50 text-green-700"}`}>
+                          <svg className="w-2.5 h-2.5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" /><path d="M3 12h18M12 3a14 14 0 010 18" /></svg>
+                          {event.is_international ? "해외" : "국내"}
                         </span>
                       </div>
                       <h2 className="text-surface font-bold text-[14px] md:text-[17px] leading-tight group-hover:text-accent transition-colors line-clamp-2 mb-1.5">{event.title}</h2>

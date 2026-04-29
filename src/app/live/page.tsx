@@ -297,8 +297,9 @@ export default function LivePage() {
                       </div>
                       <div className="p-3 md:p-4 flex-1 flex flex-col">
                         <div className="flex items-center gap-1.5 flex-wrap mb-1.5">
-                          <span className={`text-[9px] md:text-[10px] font-black px-1.5 py-0.5 rounded-full ${event.is_international ? "bg-blue-50 text-blue-600" : "bg-green-50 text-green-700"}`}>
-                            {event.is_international ? "🌏 해외" : "🇰🇷 국내"}
+                          <span className={`text-[9px] md:text-[10px] font-black px-1.5 py-0.5 rounded-full inline-flex items-center gap-0.5 ${event.is_international ? "bg-blue-50 text-blue-600" : "bg-green-50 text-green-700"}`}>
+                            <svg className="w-2.5 h-2.5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" /><path d="M3 12h18M12 3a14 14 0 010 18" /></svg>
+                            {event.is_international ? "해외" : "국내"}
                           </span>
                         </div>
                         <h2 className="text-surface font-bold text-[14px] md:text-[17px] leading-tight group-hover:text-accent transition-colors line-clamp-2 mb-1.5">{event.title}</h2>
@@ -341,7 +342,7 @@ export default function LivePage() {
               <div key={game.id} onClick={() => setSelectedGame(game)} className="bg-white rounded-2xl card-shadow overflow-hidden hover:card-shadow-hover transition-all cursor-pointer">
                 {/* Poster image */}
                 {game.image && (
-                  <div className="h-40 bg-[#f5f6f8] overflow-hidden">
+                  <div className="h-40 bg-bg overflow-hidden">
                     <img src={game.image} alt={game.title} className="w-full h-full object-cover" />
                   </div>
                 )}

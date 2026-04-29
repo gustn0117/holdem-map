@@ -124,7 +124,9 @@ export default function Home() {
     <div className="rounded-2xl overflow-hidden card-shadow bg-white">
       <Link href="/recommended" className="px-5 py-4 border-b border-border-custom flex items-center justify-between gap-2 hover:bg-bg transition group">
         <div className="flex items-center gap-2">
-          <span className="w-6 h-6 rounded bg-accent flex items-center justify-center text-white text-[11px] font-bold">★</span>
+          <span className="w-6 h-6 rounded bg-accent flex items-center justify-center text-white">
+            <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l2.6 7.6h7.9l-6.4 4.7 2.4 7.7L12 17.3 5.5 22l2.4-7.7-6.4-4.7h7.9z" /></svg>
+          </span>
           <h3 className="text-surface font-bold text-[15px] group-hover:text-accent transition-colors">추천 매장</h3>
         </div>
         <span className="text-accent text-[12px] font-semibold">더보기 →</span>
@@ -354,7 +356,10 @@ export default function Home() {
           <section className="px-4 py-5">
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
-                <span className="inline-flex items-center gap-1 bg-red-500 text-white text-[11px] font-black px-2.5 py-1 rounded-full">🔥 HOT</span>
+                <span className="inline-flex items-center gap-1 bg-red-500 text-white text-[11px] font-black px-2.5 py-1 rounded-full">
+                  <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2s1 4 4 6c2 1.3 3 3.5 3 6 0 3.9-3.1 7-7 7s-7-3.1-7-7c0-2 1-4 3-5-1 4 1 6 2 6-1-3 1-7 2-9 0 3 2 4 3 5 0-3-3-6-3-9z"/></svg>
+                  HOT
+                </span>
                 <h2 className="text-[17px] font-bold text-surface">인기 매장</h2>
               </div>
               <Link href="/map" className="text-accent text-[12px] font-semibold hover:underline">전체보기 →</Link>
@@ -363,7 +368,10 @@ export default function Home() {
               {hotStores.map(store => (
                 <div key={store.id} onClick={() => setSelectedStore(store)}
                   className={`relative transition-all cursor-pointer rounded-2xl ${selectedStore?.id === store.id ? "ring-2 ring-accent" : ""}`}>
-                  <span className="absolute top-3 left-3 z-10 bg-red-500 text-white text-[10px] font-black px-2 py-0.5 rounded-full shadow-md">🔥 HOT</span>
+                  <span className="absolute top-3 left-3 z-10 bg-red-500 text-white text-[10px] font-black px-2 py-0.5 rounded-full shadow-md inline-flex items-center gap-0.5">
+                    <svg className="w-2.5 h-2.5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2s1 4 4 6c2 1.3 3 3.5 3 6 0 3.9-3.1 7-7 7s-7-3.1-7-7c0-2 1-4 3-5-1 4 1 6 2 6-1-3 1-7 2-9 0 3 2 4 3 5 0-3-3-6-3-9z"/></svg>
+                    HOT
+                  </span>
                   <StoreCard store={store} />
                 </div>
               ))}
@@ -504,7 +512,10 @@ export default function Home() {
             <div className="max-w-350 mx-auto px-5 md:px-10 py-8">
               <div className="flex items-center justify-between mb-5">
                 <div className="flex items-center gap-2">
-                  <span className="inline-flex items-center gap-1 bg-red-500 text-white text-[11px] font-black px-2.5 py-1 rounded-full">🔥 HOT</span>
+                  <span className="inline-flex items-center gap-1 bg-red-500 text-white text-[11px] font-black px-2.5 py-1 rounded-full">
+                  <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2s1 4 4 6c2 1.3 3 3.5 3 6 0 3.9-3.1 7-7 7s-7-3.1-7-7c0-2 1-4 3-5-1 4 1 6 2 6-1-3 1-7 2-9 0 3 2 4 3 5 0-3-3-6-3-9z"/></svg>
+                  HOT
+                </span>
                   <h2 className="text-[17px] font-bold text-surface">인기 매장</h2>
                 </div>
                 <Link href="/map" className="text-accent text-[13px] font-semibold hover:underline">전체보기 →</Link>
@@ -513,7 +524,10 @@ export default function Home() {
                 {hotStores.map(store => (
                   <div key={store.id} onClick={() => setSelectedStore(store)}
                     className={`relative transition-all cursor-pointer rounded-2xl ${selectedStore?.id === store.id ? "ring-2 ring-accent" : ""}`}>
-                    <span className="absolute top-3 left-3 z-10 bg-red-500 text-white text-[10px] font-black px-2 py-0.5 rounded-full shadow-md">🔥 HOT</span>
+                    <span className="absolute top-3 left-3 z-10 bg-red-500 text-white text-[10px] font-black px-2 py-0.5 rounded-full shadow-md inline-flex items-center gap-0.5">
+                    <svg className="w-2.5 h-2.5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2s1 4 4 6c2 1.3 3 3.5 3 6 0 3.9-3.1 7-7 7s-7-3.1-7-7c0-2 1-4 3-5-1 4 1 6 2 6-1-3 1-7 2-9 0 3 2 4 3 5 0-3-3-6-3-9z"/></svg>
+                    HOT
+                  </span>
                     <StoreCard store={store} />
                   </div>
                 ))}

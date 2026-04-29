@@ -21,7 +21,9 @@ export default function RecommendedStoresPage() {
 
         <div className="mb-8 flex items-end justify-between">
           <div className="flex items-center gap-3">
-            <span className="w-10 h-10 rounded-xl bg-accent flex items-center justify-center text-white text-lg font-black shadow-md shadow-accent/20">★</span>
+            <span className="w-10 h-10 rounded-xl bg-accent flex items-center justify-center text-white shadow-md shadow-accent/20">
+              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l2.6 7.6h7.9l-6.4 4.7 2.4 7.7L12 17.3 5.5 22l2.4-7.7-6.4-4.7h7.9z" /></svg>
+            </span>
             <div>
               <h1 className="text-2xl font-black text-surface">추천 매장</h1>
               <p className="text-muted text-sm mt-1">엄선된 홀덤 매장을 한눈에</p>

@@ -94,7 +94,10 @@ export default function MarketDetailPage() {
                   "bg-amber-100 text-amber-700"
                 }`}>{listing.type}</span>
                 <span className={`text-[11px] font-bold px-2.5 py-0.5 rounded-full ${listing.status === "모집중" ? "bg-emerald-100 text-emerald-700" : "bg-gray-100 text-gray-600"}`}>{listing.status || "모집중"}</span>
-                {listing.is_featured && <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-red-50 text-red-500">⭐ 추천</span>}
+                {listing.is_featured && <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-red-50 text-red-500 inline-flex items-center gap-0.5">
+                  <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l2.6 7.6h7.9l-6.4 4.7 2.4 7.7L12 17.3 5.5 22l2.4-7.7-6.4-4.7h7.9z" /></svg>
+                  추천
+                </span>}
                 <span className="text-muted text-[12px] ml-auto">{listing.created_at?.slice(0, 10)}</span>
               </div>
 

@@ -689,14 +689,14 @@ export default function AdminPage() {
                     <tr key={store.id} className="border-b border-border-custom/50 hover:bg-gray-50 transition-colors">
                       <td className="px-5 py-3">
                         <p className="text-surface text-base font-semibold">
-                          {(store.pinned_rank || 0) > 0 && <span className="bg-accent text-white text-[10px] font-bold px-1.5 py-0.5 rounded mr-1.5">📌 {store.pinned_rank}</span>}
+                          {(store.pinned_rank || 0) > 0 && <span className="bg-accent text-white text-[10px] font-bold px-1.5 py-0.5 rounded mr-1.5 inline-flex items-center gap-0.5"><svg className="w-2.5 h-2.5" fill="currentColor" viewBox="0 0 24 24"><path d="M16 12V4h1V2H7v2h1v8l-2 2v2h5.2v6h1.6v-6H18v-2z"/></svg>{store.pinned_rank}</span>}
                           {store.name}
                         </p>
                       </td>
                       <td className="px-5 py-3 hidden md:table-cell"><p className="text-muted text-sm truncate max-w-48">{store.address}</p></td>
                       <td className="px-5 py-3"><span className="bg-accent/10 text-accent text-xs px-2 py-0.5 rounded">{store.region}</span></td>
                       <td className="px-5 py-3 hidden md:table-cell"><p className="text-muted/50 text-sm">{store.hours}</p></td>
-                      <td className="px-5 py-3">{store.is_recommended ? <span className="text-gold">★</span> : <span className="text-muted/20">-</span>}</td>
+                      <td className="px-5 py-3">{store.is_recommended ? <svg className="w-4 h-4 text-gold" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l2.6 7.6h7.9l-6.4 4.7 2.4 7.7L12 17.3 5.5 22l2.4-7.7-6.4-4.7h7.9z"/></svg> : <span className="text-muted/20">-</span>}</td>
                       <td className="px-5 py-3 text-right">
                         <div className="flex items-center justify-end gap-3">
                           <button onClick={() => setModal({ type: "edit", tab: "stores", data: { ...store, tags: store.tags.join(", "), is_recommended: store.is_recommended ? "true" : "false", is_hot: (store as any).is_hot ? "true" : "false" } })} className="text-muted hover:text-accent text-sm transition-colors">수정</button>
@@ -738,7 +738,7 @@ export default function AdminPage() {
                       </td>
                       <td className="px-5 py-3">
                         <p className="text-surface text-base font-semibold">
-                          {(event.pinned_rank || 0) > 0 && <span className="bg-accent text-white text-[10px] font-bold px-1.5 py-0.5 rounded mr-1.5">📌 {event.pinned_rank}</span>}
+                          {(event.pinned_rank || 0) > 0 && <span className="bg-accent text-white text-[10px] font-bold px-1.5 py-0.5 rounded mr-1.5 inline-flex items-center gap-0.5"><svg className="w-2.5 h-2.5" fill="currentColor" viewBox="0 0 24 24"><path d="M16 12V4h1V2H7v2h1v8l-2 2v2h5.2v6h1.6v-6H18v-2z"/></svg>{event.pinned_rank}</span>}
                           {event.title}
                         </p>
                       </td>
@@ -774,7 +774,7 @@ export default function AdminPage() {
               <div key={notice.id} className="bg-white rounded-2xl p-5 border border-border-custom flex items-start justify-between">
                 <div>
                   <h3 className="text-surface font-semibold text-base">
-                    {(notice.pinned_rank || 0) > 0 && <span className="bg-accent text-white text-[10px] font-bold px-1.5 py-0.5 rounded mr-1.5">📌 {notice.pinned_rank}</span>}
+                    {(notice.pinned_rank || 0) > 0 && <span className="bg-accent text-white text-[10px] font-bold px-1.5 py-0.5 rounded mr-1.5 inline-flex items-center gap-0.5"><svg className="w-2.5 h-2.5" fill="currentColor" viewBox="0 0 24 24"><path d="M16 12V4h1V2H7v2h1v8l-2 2v2h5.2v6h1.6v-6H18v-2z"/></svg>{notice.pinned_rank}</span>}
                     {notice.title}
                   </h3>
                   <p className="text-muted text-sm mt-1.5">{notice.content}</p>
@@ -826,7 +826,7 @@ export default function AdminPage() {
                       </span>
                       <div className="flex items-center gap-2">
                         <label className="text-[11px] text-muted flex items-center gap-1" title="우선노출 순위">
-                          📌
+                          <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24"><path d="M16 12V4h1V2H7v2h1v8l-2 2v2h5.2v6h1.6v-6H18v-2z"/></svg>
                           <input type="number" min={0} defaultValue={s.pinned_rank || 0}
                             onBlur={e => { const v = Number(e.target.value) || 0; if (v !== (s.pinned_rank || 0)) handlePinnedRankSet("shorts", s.id, v, refreshShorts); }}
                             className="w-12 border border-border-custom rounded px-1.5 py-0.5 text-[11px] text-center" />
@@ -919,7 +919,7 @@ export default function AdminPage() {
                 <div className="md:col-span-2 text-muted text-[13px]">{g.created_at?.slice(0, 10)}</div>
                 <div className="md:col-span-2 flex gap-2 justify-end items-center">
                   <label className="text-[11px] text-muted flex items-center gap-1" title="우선노출 순위">
-                    📌
+                    <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24"><path d="M16 12V4h1V2H7v2h1v8l-2 2v2h5.2v6h1.6v-6H18v-2z"/></svg>
                     <input type="number" min={0} defaultValue={g.pinned_rank || 0}
                       onBlur={e => { const v = Number(e.target.value) || 0; if (v !== (g.pinned_rank || 0)) handlePinnedRankSet("live_games", g.id, v, refreshLiveGames); }}
                       className="w-12 border border-border-custom rounded px-1.5 py-0.5 text-[11px] text-center" />
@@ -984,7 +984,7 @@ export default function AdminPage() {
                   </div>
                   <div className="flex items-center gap-1.5 shrink-0">
                     <label className="text-[11px] text-muted flex items-center gap-1" title="우선노출 순위">
-                      📌
+                      <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24"><path d="M16 12V4h1V2H7v2h1v8l-2 2v2h5.2v6h1.6v-6H18v-2z"/></svg>
                       <input type="number" min={0} defaultValue={p.pinned_rank || 0}
                         onBlur={e => { const v = Number(e.target.value) || 0; if (v !== (p.pinned_rank || 0)) handlePinnedRankSet("promotions", p.id, v, refreshPromotions); }}
                         className="w-12 border border-border-custom rounded px-1.5 py-0.5 text-[11px] text-center" />
@@ -1069,9 +1069,9 @@ export default function AdminPage() {
                   <Link href={`/board/${p.id}`} target="_blank" className="flex-1 min-w-0 hover:bg-[#f9f9f9] -m-2 p-2 rounded-lg transition-colors">
                     <div className="flex items-center gap-2 mb-1.5 flex-wrap">
                       {p.status === "hidden" && <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-red-100 text-red-600">⚠️ 숨김</span>}
-                      {p.pinned && <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-accent text-white">📌 공지</span>}
+                      {p.pinned && <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-accent text-white"><svg className="w-3 h-3 inline-block align-middle mr-1" fill="currentColor" viewBox="0 0 24 24"><path d="M16 12V4h1V2H7v2h1v8l-2 2v2h5.2v6h1.6v-6H18v-2z"/></svg>공지</span>}
                       {p.category && <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-bg text-sub">{p.category}</span>}
-                      {(p.report_count ?? 0) > 0 && <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-yellow-50 text-yellow-700">🚨 신고 {p.report_count}</span>}
+                      {(p.report_count ?? 0) > 0 && <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-yellow-50 text-yellow-700"><svg className="w-3 h-3 inline-block align-middle mr-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L1 21h22L12 2zm1 14h-2v2h2v-2zm0-6h-2v4h2v-4z"/></svg>신고 {p.report_count}</span>}
                       <span className="text-muted text-[11px]">{p.nickname} · 조회 {p.views}</span>
                       <span className="text-muted text-[11px]">{p.created_at?.slice(0, 10)}</span>
                     </div>
@@ -1082,7 +1082,7 @@ export default function AdminPage() {
                   <div className="shrink-0 flex flex-col gap-1.5">
                     <button onClick={() => togglePostComments(p.id)}
                       className={`text-[12px] font-semibold px-3 py-1.5 rounded-lg transition-all ${expandedPostId === p.id ? "bg-accent text-white" : "bg-bg text-sub hover:bg-accent-light hover:text-accent"}`}>
-                      💬 댓글 {expandedPostId === p.id ? "닫기" : "보기"}
+                      <svg className="w-3 h-3 inline-block align-middle mr-1" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.86 9.86 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg>댓글 {expandedPostId === p.id ? "닫기" : "보기"}
                     </button>
                     <button onClick={() => handlePostToggleStatus(p.id, p.status || "approved")}
                       className={`text-[12px] font-semibold px-3 py-1.5 rounded-lg transition-all ${p.status === "hidden" ? "bg-accent text-white hover:bg-accent-hover" : "bg-red-50 text-red-500 hover:bg-red-100"}`}>
@@ -1093,7 +1093,7 @@ export default function AdminPage() {
                       {p.pinned ? "공지 해제" : "공지 고정"}
                     </button>
                     <label className="text-[11px] text-muted flex items-center gap-1 px-2">
-                      📌
+                      <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24"><path d="M16 12V4h1V2H7v2h1v8l-2 2v2h5.2v6h1.6v-6H18v-2z"/></svg>
                       <input type="number" min={0} defaultValue={(p as Post & { pinned_rank?: number }).pinned_rank || 0}
                         onBlur={e => { const v = Number(e.target.value) || 0; if (v !== ((p as Post & { pinned_rank?: number }).pinned_rank || 0)) handlePinnedRankSet("posts", p.id, v, refreshPosts); }}
                         className="w-12 border border-border-custom rounded px-1.5 py-0.5 text-[11px] text-center" title="우선노출 순위" />
@@ -1145,16 +1145,16 @@ export default function AdminPage() {
                 <div className="px-5 py-4 flex items-start justify-between gap-4">
                   <Link href={`/market/${l.id}`} target="_blank" className="flex-1 min-w-0 hover:bg-[#f9f9f9] -m-2 p-2 rounded-lg transition-colors">
                     <div className="flex items-center gap-2 mb-1.5 flex-wrap">
-                      {((l as MarketListing & { pinned_rank?: number }).pinned_rank || 0) > 0 && <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-accent text-white">📌 {(l as MarketListing & { pinned_rank?: number }).pinned_rank}</span>}
+                      {((l as MarketListing & { pinned_rank?: number }).pinned_rank || 0) > 0 && <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-accent text-white"><svg className="w-3 h-3 inline-block align-middle mr-1" fill="currentColor" viewBox="0 0 24 24"><path d="M16 12V4h1V2H7v2h1v8l-2 2v2h5.2v6h1.6v-6H18v-2z"/></svg>{(l as MarketListing & { pinned_rank?: number }).pinned_rank}</span>}
                       {l.is_hidden && <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-red-100 text-red-600">⚠️ 숨김</span>}
-                      {l.is_featured && <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-red-50 text-red-500">⭐ 추천</span>}
+                      {l.is_featured && <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-red-50 text-red-500"><svg className="w-3 h-3 inline-block align-middle mr-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l2.6 7.6h7.9l-6.4 4.7 2.4 7.7L12 17.3 5.5 22l2.4-7.7-6.4-4.7h7.9z"/></svg>추천</span>}
                       <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${
                         l.type === "매매" ? "bg-red-100 text-red-600" :
                         l.type === "대관" ? "bg-blue-100 text-blue-600" :
                         "bg-amber-100 text-amber-700"
                       }`}>{l.type}</span>
                       <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${l.status === "모집중" ? "bg-emerald-100 text-emerald-700" : "bg-gray-100 text-gray-600"}`}>{l.status || "모집중"}</span>
-                      {(l.report_count ?? 0) > 0 && <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-yellow-50 text-yellow-700">🚨 신고 {l.report_count}</span>}
+                      {(l.report_count ?? 0) > 0 && <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-yellow-50 text-yellow-700"><svg className="w-3 h-3 inline-block align-middle mr-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L1 21h22L12 2zm1 14h-2v2h2v-2zm0-6h-2v4h2v-4z"/></svg>신고 {l.report_count}</span>}
                       <span className="text-muted text-[11px]">{l.region}</span>
                       <span className="text-muted text-[11px]">{l.created_at?.slice(0, 10)}</span>
                     </div>
@@ -1206,7 +1206,7 @@ export default function AdminPage() {
                   <Link href={`/jobs/${j.id}`} target="_blank" className="flex-1 min-w-0 hover:bg-[#f9f9f9] -m-2 p-2 rounded-lg transition-colors">
                     <div className="flex items-center gap-2 mb-1.5 flex-wrap">
                       {(j.pinned_rank || 0) > 0 && (
-                        <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-accent text-white">📌 {j.pinned_rank}</span>
+                        <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-accent text-white"><svg className="w-3 h-3 inline-block align-middle mr-1" fill="currentColor" viewBox="0 0 24 24"><path d="M16 12V4h1V2H7v2h1v8l-2 2v2h5.2v6h1.6v-6H18v-2z"/></svg>{j.pinned_rank}</span>
                       )}
                       <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${j.type === "구인" ? "bg-blue-100 text-blue-600" : "bg-emerald-100 text-emerald-700"}`}>{j.type}</span>
                       <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-bg text-sub">{j.role}</span>
@@ -1246,7 +1246,7 @@ export default function AdminPage() {
                 <div className="px-5 py-4 flex items-start justify-between gap-4">
                   <Link href={`/trade/${t.id}`} target="_blank" className="flex-1 min-w-0 hover:bg-[#f9f9f9] -m-2 p-2 rounded-lg transition-colors">
                     <div className="flex items-center gap-2 mb-1.5 flex-wrap">
-                      {((t as TradeItemRow & { pinned_rank?: number }).pinned_rank || 0) > 0 && <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-accent text-white">📌 {(t as TradeItemRow & { pinned_rank?: number }).pinned_rank}</span>}
+                      {((t as TradeItemRow & { pinned_rank?: number }).pinned_rank || 0) > 0 && <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-accent text-white"><svg className="w-3 h-3 inline-block align-middle mr-1" fill="currentColor" viewBox="0 0 24 24"><path d="M16 12V4h1V2H7v2h1v8l-2 2v2h5.2v6h1.6v-6H18v-2z"/></svg>{(t as TradeItemRow & { pinned_rank?: number }).pinned_rank}</span>}
                       <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${
                         t.status === "판매중" ? "bg-emerald-100 text-emerald-700" :
                         t.status === "예약중" ? "bg-yellow-100 text-yellow-700" :
@@ -1287,7 +1287,7 @@ export default function AdminPage() {
             <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={() => setNoticePostOpen(false)} />
             <div className="relative bg-white rounded-3xl p-8 border border-border-custom w-full max-w-xl max-h-[85vh] overflow-y-auto">
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-surface font-bold text-2xl">📌 공지글 작성</h2>
+                <h2 className="text-surface font-bold text-2xl"><svg className="w-3 h-3 inline-block align-middle mr-1" fill="currentColor" viewBox="0 0 24 24"><path d="M16 12V4h1V2H7v2h1v8l-2 2v2h5.2v6h1.6v-6H18v-2z"/></svg>공지글 작성</h2>
                 <button onClick={() => setNoticePostOpen(false)} className="text-muted hover:text-accent">
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
                 </button>
@@ -1390,7 +1390,7 @@ function AdminModal({ modal, stores, saving, onClose, onSave }: {
               </div>
             </div>
             <div>
-              <label className="text-sub text-sm font-medium block mb-2">🔥 HOT 매장 (인기 매장 상단 노출)</label>
+              <label className="text-sub text-sm font-medium block mb-2"><svg className="w-3 h-3 inline-block align-middle mr-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2s1 4 4 6c2 1.3 3 3.5 3 6 0 3.9-3.1 7-7 7s-7-3.1-7-7c0-2 1-4 3-5-1 4 1 6 2 6-1-3 1-7 2-9 0 3 2 4 3 5 0-3-3-6-3-9z"/></svg>HOT 매장 (인기 매장 상단 노출)</label>
               <Select value={(form.is_hot as string) || "false"} onChange={v => set("is_hot", v)} options={[
                 { value: "false", label: "아니오" }, { value: "true", label: "HOT 지정" },
               ]} />
@@ -1437,12 +1437,14 @@ function AdminModal({ modal, stores, saving, onClose, onSave }: {
               <label className="text-sub text-sm font-medium block mb-2">국내/해외 *</label>
               <div className="flex gap-2">
                 <button type="button" onClick={() => set("is_international", false)}
-                  className={`flex-1 py-2.5 rounded-xl text-[14px] font-semibold border transition-all ${!form.is_international ? "bg-accent text-white border-accent" : "border-border-custom text-sub"}`}>
-                  🇰🇷 국내
+                  className={`flex-1 py-2.5 rounded-xl text-[14px] font-semibold border transition-all inline-flex items-center justify-center gap-1.5 ${!form.is_international ? "bg-accent text-white border-accent" : "border-border-custom text-sub"}`}>
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" /><path d="M12 3a14 14 0 010 18" /></svg>
+                  국내
                 </button>
                 <button type="button" onClick={() => set("is_international", true)}
-                  className={`flex-1 py-2.5 rounded-xl text-[14px] font-semibold border transition-all ${form.is_international ? "bg-accent text-white border-accent" : "border-border-custom text-sub"}`}>
-                  🌏 해외
+                  className={`flex-1 py-2.5 rounded-xl text-[14px] font-semibold border transition-all inline-flex items-center justify-center gap-1.5 ${form.is_international ? "bg-accent text-white border-accent" : "border-border-custom text-sub"}`}>
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" /><path d="M3 12h18M12 3a14 14 0 010 18M12 3a14 14 0 000 18" /></svg>
+                  해외
                 </button>
               </div>
             </div>
@@ -1836,7 +1838,7 @@ function AdminModal({ modal, stores, saving, onClose, onSave }: {
 
         {["stores", "events", "notices", "market", "trade", "jobs", "live"].includes(modal.tab) && (
           <div className="mt-5 pt-5 border-t border-border-custom">
-            <label className="text-sub text-sm font-medium block mb-2">📌 우선노출 순위 <span className="text-muted font-normal">(0=일반, 숫자 클수록 상단 고정)</span></label>
+            <label className="text-sub text-sm font-medium block mb-2"><svg className="w-3 h-3 inline-block align-middle mr-1" fill="currentColor" viewBox="0 0 24 24"><path d="M16 12V4h1V2H7v2h1v8l-2 2v2h5.2v6h1.6v-6H18v-2z"/></svg>우선노출 순위 <span className="text-muted font-normal">(0=일반, 숫자 클수록 상단 고정)</span></label>
             <input className={inputClass} type="number" min={0} value={(form.pinned_rank as number) ?? 0} onChange={e => set("pinned_rank", Number(e.target.value) || 0)} />
           </div>
         )}
@@ -1877,7 +1879,7 @@ function BannerEditor({ banner, label, size, saving, onSave, hasMobile }: {
       <div className="flex items-center justify-between mb-4">
         <div>
           <h4 className="text-surface font-bold text-base flex items-center gap-2">
-            {pinnedRank > 0 && <span className="bg-accent text-white text-[10px] font-bold px-1.5 py-0.5 rounded">📌 {pinnedRank}</span>}
+            {pinnedRank > 0 && <span className="bg-accent text-white text-[10px] font-bold px-1.5 py-0.5 rounded"><svg className="w-3 h-3 inline-block align-middle mr-1" fill="currentColor" viewBox="0 0 24 24"><path d="M16 12V4h1V2H7v2h1v8l-2 2v2h5.2v6h1.6v-6H18v-2z"/></svg>{pinnedRank}</span>}
             {label}
           </h4>
           <p className="text-muted text-sm mt-0.5">권장 사이즈: <span className="text-accent font-semibold">{size}</span></p>
@@ -1949,7 +1951,7 @@ function BannerEditor({ banner, label, size, saving, onSave, hasMobile }: {
         </div>
 
         <div>
-          <label className="text-sub text-sm font-medium block mb-2">📌 우선노출 순위 <span className="text-muted font-normal">(0=일반, 숫자 클수록 같은 위치 배너들 중 상단 고정)</span></label>
+          <label className="text-sub text-sm font-medium block mb-2"><svg className="w-3 h-3 inline-block align-middle mr-1" fill="currentColor" viewBox="0 0 24 24"><path d="M16 12V4h1V2H7v2h1v8l-2 2v2h5.2v6h1.6v-6H18v-2z"/></svg>우선노출 순위 <span className="text-muted font-normal">(0=일반, 숫자 클수록 같은 위치 배너들 중 상단 고정)</span></label>
           <input className={inputClass} type="number" min={0} value={pinnedRank} onChange={e => setPinnedRank(Number(e.target.value) || 0)} />
         </div>
       </div>

@@ -212,16 +212,16 @@ export default function JobsPage() {
                 <div>
                   <p className="text-sub text-[12px] font-semibold mb-2">지역</p>
                   <div className="flex flex-wrap gap-1.5">
-                    {REGIONS.map(r => <button key={r} onClick={() => { setFilterRegion(r); setFilterDistrict("전체"); }} className={`px-3 py-1.5 rounded-lg text-[12px] font-semibold transition-all ${filterRegion === r ? "bg-accent text-white" : "bg-[#f5f6f8] text-sub"}`}>{r}</button>)}
+                    {REGIONS.map(r => <button key={r} onClick={() => { setFilterRegion(r); setFilterDistrict("전체"); }} className={`px-3 py-1.5 rounded-lg text-[12px] font-semibold transition-all ${filterRegion === r ? "bg-accent text-white" : "bg-bg text-sub"}`}>{r}</button>)}
                   </div>
                 </div>
                 {filterRegion !== "전체" && regionData[filterRegion] && (
                   <div>
                     <p className="text-sub text-[12px] font-semibold mb-2">{filterRegion} 세부 지역</p>
                     <div className="flex flex-wrap gap-1.5">
-                      <button onClick={() => setFilterDistrict("전체")} className={`px-3 py-1.5 rounded-lg text-[12px] font-semibold transition-all ${filterDistrict === "전체" ? "bg-accent text-white" : "bg-[#f5f6f8] text-sub"}`}>전체</button>
+                      <button onClick={() => setFilterDistrict("전체")} className={`px-3 py-1.5 rounded-lg text-[12px] font-semibold transition-all ${filterDistrict === "전체" ? "bg-accent text-white" : "bg-bg text-sub"}`}>전체</button>
                       {regionData[filterRegion].map(d => (
-                        <button key={d} onClick={() => setFilterDistrict(d)} className={`px-3 py-1.5 rounded-lg text-[12px] font-semibold transition-all ${filterDistrict === d ? "bg-accent text-white" : "bg-[#f5f6f8] text-sub"}`}>{d}</button>
+                        <button key={d} onClick={() => setFilterDistrict(d)} className={`px-3 py-1.5 rounded-lg text-[12px] font-semibold transition-all ${filterDistrict === d ? "bg-accent text-white" : "bg-bg text-sub"}`}>{d}</button>
                       ))}
                     </div>
                   </div>
@@ -229,19 +229,19 @@ export default function JobsPage() {
                 <div>
                   <p className="text-sub text-[12px] font-semibold mb-2">상태</p>
                   <div className="flex flex-wrap gap-1.5">
-                    {STATUSES.map(s => <button key={s} onClick={() => setFilterStatus(s)} className={`px-3 py-1.5 rounded-lg text-[12px] font-semibold transition-all ${filterStatus === s ? "bg-accent text-white" : "bg-[#f5f6f8] text-sub"}`}>{s}</button>)}
+                    {STATUSES.map(s => <button key={s} onClick={() => setFilterStatus(s)} className={`px-3 py-1.5 rounded-lg text-[12px] font-semibold transition-all ${filterStatus === s ? "bg-accent text-white" : "bg-bg text-sub"}`}>{s}</button>)}
                   </div>
                 </div>
                 <div>
                   <p className="text-sub text-[12px] font-semibold mb-2">성별</p>
                   <div className="flex flex-wrap gap-1.5">
-                    {GENDERS.map(g => <button key={g} onClick={() => setFilterGender(g)} className={`px-3 py-1.5 rounded-lg text-[12px] font-semibold transition-all ${filterGender === g ? "bg-accent text-white" : "bg-[#f5f6f8] text-sub"}`}>{g}</button>)}
+                    {GENDERS.map(g => <button key={g} onClick={() => setFilterGender(g)} className={`px-3 py-1.5 rounded-lg text-[12px] font-semibold transition-all ${filterGender === g ? "bg-accent text-white" : "bg-bg text-sub"}`}>{g}</button>)}
                   </div>
                 </div>
                 <div>
                   <p className="text-sub text-[12px] font-semibold mb-2">정렬</p>
                   <div className="flex flex-wrap gap-1.5">
-                    {SORTS.map(s => <button key={s.value} onClick={() => setSortBy(s.value)} className={`px-3 py-1.5 rounded-lg text-[12px] font-semibold transition-all ${sortBy === s.value ? "bg-accent text-white" : "bg-[#f5f6f8] text-sub"}`}>{s.label}</button>)}
+                    {SORTS.map(s => <button key={s.value} onClick={() => setSortBy(s.value)} className={`px-3 py-1.5 rounded-lg text-[12px] font-semibold transition-all ${sortBy === s.value ? "bg-accent text-white" : "bg-bg text-sub"}`}>{s.label}</button>)}
                   </div>
                 </div>
               </>
@@ -250,22 +250,22 @@ export default function JobsPage() {
                 <div>
                   <p className="text-sub text-[12px] font-semibold mb-2">직종</p>
                   <div className="flex flex-wrap gap-1.5">
-                    {["전체", "딜러", "서빙", "매니저", "플로어"].map(r => <button key={r} onClick={() => setFilterRole(r)} className={`px-3 py-1.5 rounded-lg text-[12px] font-semibold transition-all ${filterRole === r ? "bg-accent text-white" : "bg-[#f5f6f8] text-sub"}`}>{r}</button>)}
+                    {["전체", "딜러", "서빙", "매니저", "플로어"].map(r => <button key={r} onClick={() => setFilterRole(r)} className={`px-3 py-1.5 rounded-lg text-[12px] font-semibold transition-all ${filterRole === r ? "bg-accent text-white" : "bg-bg text-sub"}`}>{r}</button>)}
                   </div>
                 </div>
                 <div>
                   <p className="text-sub text-[12px] font-semibold mb-2">지역</p>
                   <div className="flex flex-wrap gap-1.5">
-                    {REGIONS.map(r => <button key={r} onClick={() => { setFilterRegion(r); setFilterDistrict("전체"); }} className={`px-3 py-1.5 rounded-lg text-[12px] font-semibold transition-all ${filterRegion === r ? "bg-accent text-white" : "bg-[#f5f6f8] text-sub"}`}>{r}</button>)}
+                    {REGIONS.map(r => <button key={r} onClick={() => { setFilterRegion(r); setFilterDistrict("전체"); }} className={`px-3 py-1.5 rounded-lg text-[12px] font-semibold transition-all ${filterRegion === r ? "bg-accent text-white" : "bg-bg text-sub"}`}>{r}</button>)}
                   </div>
                 </div>
                 {filterRegion !== "전체" && regionData[filterRegion] && (
                   <div>
                     <p className="text-sub text-[12px] font-semibold mb-2">{filterRegion} 세부 지역</p>
                     <div className="flex flex-wrap gap-1.5">
-                      <button onClick={() => setFilterDistrict("전체")} className={`px-3 py-1.5 rounded-lg text-[12px] font-semibold transition-all ${filterDistrict === "전체" ? "bg-accent text-white" : "bg-[#f5f6f8] text-sub"}`}>전체</button>
+                      <button onClick={() => setFilterDistrict("전체")} className={`px-3 py-1.5 rounded-lg text-[12px] font-semibold transition-all ${filterDistrict === "전체" ? "bg-accent text-white" : "bg-bg text-sub"}`}>전체</button>
                       {regionData[filterRegion].map(d => (
-                        <button key={d} onClick={() => setFilterDistrict(d)} className={`px-3 py-1.5 rounded-lg text-[12px] font-semibold transition-all ${filterDistrict === d ? "bg-accent text-white" : "bg-[#f5f6f8] text-sub"}`}>{d}</button>
+                        <button key={d} onClick={() => setFilterDistrict(d)} className={`px-3 py-1.5 rounded-lg text-[12px] font-semibold transition-all ${filterDistrict === d ? "bg-accent text-white" : "bg-bg text-sub"}`}>{d}</button>
                       ))}
                     </div>
                   </div>
@@ -273,7 +273,7 @@ export default function JobsPage() {
                 <div>
                   <p className="text-sub text-[12px] font-semibold mb-2">성별</p>
                   <div className="flex flex-wrap gap-1.5">
-                    {GENDERS.map(g => <button key={g} onClick={() => setFilterGender(g)} className={`px-3 py-1.5 rounded-lg text-[12px] font-semibold transition-all ${filterGender === g ? "bg-accent text-white" : "bg-[#f5f6f8] text-sub"}`}>{g}</button>)}
+                    {GENDERS.map(g => <button key={g} onClick={() => setFilterGender(g)} className={`px-3 py-1.5 rounded-lg text-[12px] font-semibold transition-all ${filterGender === g ? "bg-accent text-white" : "bg-bg text-sub"}`}>{g}</button>)}
                   </div>
                 </div>
               </div>
@@ -304,7 +304,8 @@ export default function JobsPage() {
                 {/* Photo / Placeholder */}
                 <div className="w-32 md:w-full md:aspect-square shrink-0 bg-bg overflow-hidden relative">
                   {d.avatar ? (
-                    <img src={d.avatar} alt={d.nickname} className="w-full h-full object-cover object-top" />
+                    <img src={d.avatar} alt={d.nickname}
+                      className={`w-full h-full ${d.avatar.includes("/posters/") ? "object-contain" : "object-cover object-top"}`} />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center bg-accent/5 min-h-32">
                       <svg className="w-10 h-10 md:w-14 md:h-14 text-accent/20" fill="none" stroke="currentColor" viewBox="0 0 24 24">

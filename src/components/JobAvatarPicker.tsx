@@ -115,12 +115,14 @@ export default function JobAvatarPicker({ value, onChange, role, gender }: {
               <div className="px-5 pb-3">
                 <div className="flex bg-bg rounded-xl p-1">
                   <button type="button" onClick={() => setMode("avatar")}
-                    className={`flex-1 py-2 rounded-lg text-[13px] font-bold transition-all ${mode === "avatar" ? "bg-white text-accent shadow-sm" : "text-muted"}`}>
-                    👤 인물 아바타 (32종)
+                    className={`flex-1 py-2 rounded-lg text-[13px] font-bold transition-all inline-flex items-center justify-center gap-1.5 ${mode === "avatar" ? "bg-white text-accent shadow-sm" : "text-muted"}`}>
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+                    인물 아바타 (32종)
                   </button>
                   <button type="button" onClick={() => setMode("poster")}
-                    className={`flex-1 py-2 rounded-lg text-[13px] font-bold transition-all ${mode === "poster" ? "bg-white text-accent shadow-sm" : "text-muted"}`}>
-                    🏪 매장 포스터 (9종)
+                    className={`flex-1 py-2 rounded-lg text-[13px] font-bold transition-all inline-flex items-center justify-center gap-1.5 ${mode === "poster" ? "bg-white text-accent shadow-sm" : "text-muted"}`}>
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>
+                    매장 포스터 (9종)
                   </button>
                 </div>
               </div>
@@ -189,10 +191,10 @@ export default function JobAvatarPicker({ value, onChange, role, gender }: {
                         const isSelected = value === url;
                         return (
                           <button key={i} type="button" onClick={() => { onChange(url); setOpen(false); }}
-                            className={`group relative aspect-square rounded-2xl overflow-hidden border-2 transition-all ${isSelected ? "border-accent ring-4 ring-accent/20 scale-[1.02]" : "border-transparent hover:border-accent/40"}`}>
+                            className={`group relative aspect-4/3 rounded-2xl overflow-hidden border-2 transition-all ${isSelected ? "border-accent ring-4 ring-accent/20 scale-[1.02]" : "border-transparent hover:border-accent/40"}`}>
                             <div className={`absolute inset-0 bg-linear-to-br ${currentPoster.gradient}`} />
                             <img src={url} alt={`${currentPoster.label} 포스터 ${i}`}
-                              className="relative w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                              className="relative w-full h-full object-contain group-hover:scale-105 transition-transform duration-300" />
                             {isSelected && (
                               <div className="absolute top-2 right-2 w-7 h-7 rounded-full bg-accent text-white flex items-center justify-center shadow-lg">
                                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
