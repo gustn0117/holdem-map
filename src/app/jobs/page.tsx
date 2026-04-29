@@ -36,6 +36,7 @@ export default function JobsPage() {
   const [filterGender, setFilterGender] = useState("전체");
   const [filterStatus, setFilterStatus] = useState("전체");
   const [filterRole, setFilterRole] = useState("딜러");
+  const [filterJobType, setFilterJobType] = useState<"전체" | "구인" | "구직">("전체");
   const [sortBy, setSortBy] = useState("available");
   const [showFilter, setShowFilter] = useState(false);
 
@@ -112,12 +113,13 @@ export default function JobsPage() {
 
   const filteredJobs = useMemo(() => {
     let result = jobs;
+    if (filterJobType !== "전체") result = result.filter(j => j.type === filterJobType);
     if (filterRole !== "전체") result = result.filter(j => j.role === filterRole);
     if (filterRegion !== "전체") result = result.filter(j => j.areas && j.areas.some((a: string) => a.includes(filterRegion)));
     if (filterDistrict !== "전체") result = result.filter(j => j.areas && j.areas.some((a: string) => a.includes(filterDistrict)));
     if (filterGender !== "전체") result = result.filter((j: any) => j.gender === filterGender);
     return result;
-  }, [jobs, filterRole, filterRegion, filterDistrict, filterGender]);
+  }, [jobs, filterJobType, filterRole, filterRegion, filterDistrict, filterGender]);
 
   const timeAgo = (date: string | null) => {
     if (!date) return ""; const d = Date.now() - new Date(date).getTime(); const m = Math.floor(d / 60000);
@@ -185,10 +187,11 @@ export default function JobsPage() {
         {/* Tabs */}
         <div className="mb-3 overflow-x-auto hide-scrollbar -mx-5 md:-mx-10 px-5 md:px-10">
           <div className="inline-flex bg-white rounded-lg p-1 card-shadow">
+            <button onClick={() => { setTab("jobs"); setFilterJobType("구인"); setFilterRole("전체"); }} className={`px-3 md:px-5 py-2 rounded-md text-[12px] md:text-[13px] font-semibold transition-all whitespace-nowrap ${tab === "jobs" && filterJobType === "구인" ? "bg-accent text-white" : "text-sub"}`}>일자리 찾기</button>
             <button onClick={() => { setTab("dealer"); setFilterRole("딜러"); }} className={`px-3 md:px-5 py-2 rounded-md text-[12px] md:text-[13px] font-semibold transition-all whitespace-nowrap ${tab === "dealer" && filterRole === "딜러" ? "bg-accent text-white" : "text-sub"}`}>딜러 찾기</button>
             <button onClick={() => { setTab("dealer"); setFilterRole("서빙"); }} className={`px-3 md:px-5 py-2 rounded-md text-[12px] md:text-[13px] font-semibold transition-all whitespace-nowrap ${tab === "dealer" && filterRole === "서빙" ? "bg-accent text-white" : "text-sub"}`}>서빙 찾기</button>
             <button onClick={() => { setTab("dealer"); setFilterRole("매니저"); }} className={`px-3 md:px-5 py-2 rounded-md text-[12px] md:text-[13px] font-semibold transition-all whitespace-nowrap ${tab === "dealer" && (filterRole === "매니저" || filterRole === "플로어") ? "bg-accent text-white" : "text-sub"}`}>매니저/플로어</button>
-            <button onClick={() => setTab("jobs")} className={`px-3 md:px-5 py-2 rounded-md text-[12px] md:text-[13px] font-semibold transition-all whitespace-nowrap ${tab === "jobs" ? "bg-accent text-white" : "text-sub"}`}>구인/구직글</button>
+            <button onClick={() => { setTab("jobs"); setFilterJobType("전체"); }} className={`px-3 md:px-5 py-2 rounded-md text-[12px] md:text-[13px] font-semibold transition-all whitespace-nowrap ${tab === "jobs" && filterJobType === "전체" ? "bg-accent text-white" : "text-sub"}`}>구인/구직글</button>
           </div>
         </div>
 

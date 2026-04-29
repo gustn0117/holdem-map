@@ -127,10 +127,16 @@ export default function LivePage() {
               </div>
             </div>
             {user && (
-              <button onClick={() => setShowForm(!showForm)}
-                className="bg-accent hover:bg-accent-hover text-white text-sm font-bold px-5 py-2.5 rounded-lg transition-all shrink-0">
-                {showForm ? "닫기" : "실시간 등록"}
-              </button>
+              <div className="flex gap-2 shrink-0">
+                <button onClick={() => setShowForm(!showForm)}
+                  className="bg-accent hover:bg-accent-hover text-white text-[13px] font-bold px-3 py-2.5 rounded-lg transition-all">
+                  {showForm ? "닫기" : "실시간 등록"}
+                </button>
+                <Link href="/jobs/write?type=구인"
+                  className="bg-[#dc2626] hover:bg-[#b91c1c] text-white text-[13px] font-bold px-3 py-2.5 rounded-lg transition-all whitespace-nowrap">
+                  대회 구인글 등록
+                </Link>
+              </div>
             )}
           </div>
         </div>

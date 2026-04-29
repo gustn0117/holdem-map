@@ -1,43 +1,24 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { createJob } from "@/lib/api";
 import { regionData, allRegions } from "@/data/areas";
 import Select from "@/components/Select";
-import ImageUpload from "@/components/ImageUpload";
+import JobAvatarPicker from "@/components/JobAvatarPicker";
 import { useAuth } from "@/contexts/AuthContext";
 import { classifyContent, formatFilterMessage } from "@/lib/contentFilter";
 
-const AVATAR_ROLES = [
-  { key: "dealer", label: "딜러", gradient: "from-emerald-50 to-teal-100" },
-  { key: "server", label: "서빙", gradient: "from-amber-50 to-orange-100" },
-  { key: "manager", label: "매니저", gradient: "from-indigo-50 to-blue-100" },
-  { key: "floor", label: "플로어", gradient: "from-rose-50 to-pink-100" },
-] as const;
-
-const AVATAR_GENDERS = [
-  { key: "male", label: "남자" },
-  { key: "female", label: "여자" },
-] as const;
-
-const ROLE_TO_KEY: Record<string, "dealer" | "server" | "manager" | "floor"> = {
-  "딜러": "dealer", "서빙": "server", "매니저": "manager", "플로어": "floor",
-};
-const GENDER_TO_KEY: Record<string, "male" | "female"> = { "남": "male", "여": "female" };
-
 export default function JobWritePage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { user, profile } = useAuth();
   const [saving, setSaving] = useState(false);
   const [areaSearch, setAreaSearch] = useState("");
   const [expandedRegion, setExpandedRegion] = useState<string | null>(null);
-  const [avatarOpen, setAvatarOpen] = useState(false);
-  const [avatarGender, setAvatarGender] = useState<"male" | "female">("male");
-  const [avatarRole, setAvatarRole] = useState<"dealer" | "server" | "manager" | "floor">("dealer");
 
   if (!user) {
     return (
@@ -62,8 +43,9 @@ export default function JobWritePage() {
       </div>
     );
   }
+  const initialType = searchParams.get("type") === "구인" ? "구인" : "구직";
   const [form, setForm] = useState({
-    type: "구직",
+    type: initialType,
     nickname: "",
     role: "딜러",
     gender: "",
@@ -311,54 +293,12 @@ export default function JobWritePage() {
           </div>
 
           {/* Photo + Avatar */}
-          <div>
-            <label className="text-sub text-sm font-semibold block mb-2">프로필 사진 <span className="text-muted font-normal">(선택)</span></label>
-            {form.photo ? (
-              <div className="flex items-start gap-4">
-                <div className="relative shrink-0">
-                  <div className="w-40 h-40 rounded-2xl bg-linear-to-br from-[#f5f6f8] to-[#eceef2] border border-border-custom overflow-hidden flex items-center justify-center">
-                    <img src={form.photo} alt="" className="w-full h-full object-contain" />
-                  </div>
-                  <button type="button" onClick={() => set("photo", "")}
-                    className="absolute -top-2 -right-2 w-7 h-7 rounded-full bg-red-500 text-white flex items-center justify-center shadow-lg hover:bg-red-600 transition-all">
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" /></svg>
-                  </button>
-                </div>
-                <div className="flex flex-col gap-2">
-                  <button type="button" onClick={() => {
-                    if (form.gender) setAvatarGender(GENDER_TO_KEY[form.gender] || "male");
-                    if (form.role) setAvatarRole(ROLE_TO_KEY[form.role] || "dealer");
-                    setAvatarOpen(true);
-                  }}
-                    className="text-[13px] font-semibold text-accent hover:text-accent-hover px-3 py-2 border border-accent/30 rounded-lg hover:bg-accent/5 transition-all">
-                    다른 아바타 선택
-                  </button>
-                  <ImageUpload value="" onChange={v => v && set("photo", v)} folder="jobs" label="사진 업로드" aspect="aspect-square max-w-[100px]" hint="내 사진" />
-                </div>
-              </div>
-            ) : (
-              <div className="flex flex-wrap gap-4">
-                <div className="w-40">
-                  <p className="text-sub text-sm font-semibold block mb-2 invisible">사진 업로드</p>
-                  <button type="button" onClick={() => {
-                    if (form.gender) setAvatarGender(GENDER_TO_KEY[form.gender] || "male");
-                    if (form.role) setAvatarRole(ROLE_TO_KEY[form.role] || "dealer");
-                    setAvatarOpen(true);
-                  }}
-                    className="group w-40 h-40 rounded-2xl border-2 border-dashed border-accent/40 bg-linear-to-br from-accent/5 to-accent/10 hover:from-accent/10 hover:to-accent/15 hover:border-accent/60 text-accent font-bold flex flex-col items-center justify-center gap-2 transition-all">
-                    <div className="w-11 h-11 rounded-full bg-accent/10 flex items-center justify-center group-hover:scale-110 transition-transform">
-                      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
-                    </div>
-                    <span className="text-[14px]">아바타 선택</span>
-                    <span className="text-[11px] text-accent/60 font-normal">캐릭터 32종</span>
-                  </button>
-                </div>
-                <div className="w-40">
-                  <ImageUpload value={form.photo} onChange={v => set("photo", v)} folder="jobs" label="사진 업로드" aspect="w-40 h-40" hint="내 사진" />
-                </div>
-              </div>
-            )}
-          </div>
+          <JobAvatarPicker
+            value={form.photo}
+            onChange={v => set("photo", v)}
+            role={form.role}
+            gender={form.gender}
+          />
 
           {/* Message */}
           <div>
@@ -379,86 +319,6 @@ export default function JobWritePage() {
         </form>
       </main>
       <Footer />
-
-      {/* Avatar picker modal */}
-      {avatarOpen && (() => {
-        const currentRole = AVATAR_ROLES.find(r => r.key === avatarRole)!;
-        return (
-          <div className="fixed inset-0 z-[100] flex items-end md:items-center justify-center" onClick={() => setAvatarOpen(false)}>
-            <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
-            <div className="relative bg-white w-full md:max-w-3xl max-h-[92vh] md:max-h-[85vh] rounded-t-3xl md:rounded-3xl overflow-hidden flex flex-col shadow-2xl" onClick={e => e.stopPropagation()}>
-              {/* Drag handle (mobile) */}
-              <div className="md:hidden flex justify-center pt-2.5 pb-1">
-                <div className="w-10 h-1 rounded-full bg-border-custom" />
-              </div>
-
-              {/* Header */}
-              <div className="px-5 pt-3 md:pt-5 pb-3 flex items-center justify-between">
-                <div>
-                  <h3 className="text-surface text-xl font-black leading-tight">아바타 선택</h3>
-                  <p className="text-muted text-[12px] mt-0.5">성별·직종을 고른 뒤 마음에 드는 캐릭터를 터치하세요</p>
-                </div>
-                <button onClick={() => setAvatarOpen(false)}
-                  className="w-9 h-9 rounded-full bg-[#f5f6f8] hover:bg-[#eceef2] text-sub flex items-center justify-center transition-colors shrink-0">
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
-                </button>
-              </div>
-
-              {/* Gender tabs — segmented */}
-              <div className="px-5 pb-3">
-                <div className="flex bg-[#f5f6f8] rounded-xl p-1">
-                  {AVATAR_GENDERS.map(g => (
-                    <button key={g.key} type="button" onClick={() => setAvatarGender(g.key)}
-                      className={`flex-1 py-2 rounded-lg text-[13px] font-bold transition-all ${avatarGender === g.key ? "bg-white text-accent shadow-sm" : "text-muted"}`}>
-                      {g.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Role chips */}
-              <div className="px-5 pb-4 flex gap-2 overflow-x-auto hide-scrollbar">
-                {AVATAR_ROLES.map(r => (
-                  <button key={r.key} type="button" onClick={() => setAvatarRole(r.key)}
-                    className={`shrink-0 px-4 py-2 rounded-full text-[12px] font-bold transition-all border ${avatarRole === r.key ? "bg-accent text-white border-accent shadow-md shadow-accent/20" : "bg-white text-sub border-border-custom hover:border-accent/40"}`}>
-                    {r.label}
-                  </button>
-                ))}
-              </div>
-
-              {/* Avatar grid */}
-              <div className="flex-1 overflow-y-auto px-5 pb-6">
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                  {[1, 2, 3, 4].map(i => {
-                    const url = `/avatars/${avatarGender}-${avatarRole}/${i}.png?v=2`;
-                    const isSelected = form.photo === url;
-                    return (
-                      <button key={i} type="button" onClick={() => { set("photo", url); setAvatarOpen(false); }}
-                        className={`group relative aspect-square rounded-2xl overflow-hidden border-2 transition-all ${isSelected ? "border-accent ring-4 ring-accent/20 scale-[1.02]" : "border-transparent hover:border-accent/40"}`}>
-                        <div className={`absolute inset-0 bg-linear-to-br ${currentRole.gradient}`} />
-                        <img src={url} alt={`${currentRole.label} 아바타 ${i}`}
-                          className="relative w-full h-full object-contain p-1.5 group-hover:scale-105 transition-transform duration-300" />
-                        {isSelected && (
-                          <div className="absolute top-2 right-2 w-7 h-7 rounded-full bg-accent text-white flex items-center justify-center shadow-lg">
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
-                          </div>
-                        )}
-                        <div className="absolute bottom-1.5 left-1.5 bg-white/90 backdrop-blur text-surface text-[10px] font-bold px-2 py-0.5 rounded-full">
-                          {currentRole.label} {i}
-                        </div>
-                      </button>
-                    );
-                  })}
-                </div>
-
-                <p className="text-center text-muted text-[12px] mt-6 mb-2">
-                  마음에 드는 아바타가 없으면 <span className="text-accent font-semibold">내 사진 업로드</span>도 이용하세요
-                </p>
-              </div>
-            </div>
-          </div>
-        );
-      })()}
     </div>
   );
 }
