@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Header from "@/components/Header";
@@ -13,6 +13,19 @@ import { useAuth } from "@/contexts/AuthContext";
 import { classifyContent, formatFilterMessage } from "@/lib/contentFilter";
 
 export default function JobWritePage() {
+  return (
+    <Suspense fallback={
+      <div className="flex flex-col min-h-screen pb-16 md:pb-0">
+        <Header />
+        <div className="flex-1 flex items-center justify-center"><div className="w-8 h-8 border-2 border-accent/30 border-t-accent rounded-full animate-spin" /></div>
+      </div>
+    }>
+      <JobWritePageInner />
+    </Suspense>
+  );
+}
+
+function JobWritePageInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { user, profile } = useAuth();
