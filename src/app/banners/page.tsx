@@ -7,7 +7,7 @@ import Footer from "@/components/Footer";
 import { supabase } from "@/lib/supabase";
 
 interface Banner {
-  id: string; position: string; image: string; link: string;
+  id: string; position: string; image: string; image_mobile?: string; link: string;
   title: string; description: string; contact: string; active: boolean;
 }
 
@@ -39,8 +39,13 @@ export default function BannersPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             {banners.map(b => (
               <Link key={b.id} href={`/banners/${b.id}`} className="bg-white rounded-2xl card-shadow overflow-hidden hover:card-shadow-hover transition-all group">
-                <div className="aspect-[4/1] bg-[#f5f6f8] overflow-hidden">
-                  <img src={b.image} alt={b.title || ""} className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
+                {/* Mobile: 300x96 비율, Mobile 전용 이미지 우선 사용 */}
+                <div className="md:hidden bg-bg overflow-hidden">
+                  <img src={b.image_mobile || b.image} alt={b.title || ""} className="w-full aspect-300/96 object-contain group-hover:scale-105 transition-transform" />
+                </div>
+                {/* PC: 2800x260 비율, PC 이미지 사용 */}
+                <div className="hidden md:block bg-bg overflow-hidden">
+                  <img src={b.image} alt={b.title || ""} className="w-full aspect-2800/260 object-contain group-hover:scale-105 transition-transform" />
                 </div>
                 <div className="p-5">
                   <h2 className="text-surface text-[17px] font-bold mb-1">{b.title || "제목 없음"}</h2>
