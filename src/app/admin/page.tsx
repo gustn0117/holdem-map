@@ -794,7 +794,7 @@ export default function AdminPage() {
           <div className="space-y-6">
             {/* Main Banner */}
             {banners.filter(b => b.position === "main").map(banner => (
-              <BannerEditor key={banner.id} banner={banner} label="메인 배너 (상단)" size="PC 2800x260 / 모바일 750x84" saving={bannerSaving === banner.id} onSave={handleBannerSave} hasMobile />
+              <BannerEditor key={banner.id} banner={banner} label="메인 배너 (상단)" size="PC 2800x260 / 모바일 300x96" saving={bannerSaving === banner.id} onSave={handleBannerSave} hasMobile />
             ))}
 
             <h3 className="text-surface font-bold text-lg pt-4">사이드 배너</h3>
@@ -1893,7 +1893,7 @@ function BannerEditor({ banner, label, size, saving, onSave, hasMobile }: {
       <div className="space-y-4">
         <ImageUpload value={image} onChange={setImage} folder="banners" label={hasMobile ? "PC 배너 이미지" : "배너 이미지"} aspect="aspect-[4/1]" hint={hasMobile ? "권장 2800x260 (또는 1400x130)" : size} />
         {hasMobile && (
-          <ImageUpload value={imageMobile} onChange={setImageMobile} folder="banners" label="모바일 배너 이미지 (선택)" aspect="aspect-[8/1]" hint="권장 750x84 — 비워두면 PC 이미지를 사용" />
+          <ImageUpload value={imageMobile} onChange={setImageMobile} folder="banners" label="모바일 배너 이미지 (선택)" aspect="aspect-[300/96]" hint="권장 300x96 — 비워두면 PC 이미지를 사용" />
         )}
 
         <div>
