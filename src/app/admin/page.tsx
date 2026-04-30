@@ -800,7 +800,7 @@ export default function AdminPage() {
             <h3 className="text-surface font-bold text-lg pt-4">사이드 배너</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {banners.filter(b => b.position.startsWith("side")).map((banner, i) => (
-                <BannerEditor key={banner.id} banner={banner} label={`사이드 배너 ${i + 1}`} size="300 x 96px (권장)" saving={bannerSaving === banner.id} onSave={handleBannerSave} />
+                <BannerEditor key={banner.id} banner={banner} label={`사이드 배너 ${i + 1}`} size="PC 2800x260 / 모바일 300x96" saving={bannerSaving === banner.id} onSave={handleBannerSave} hasMobile />
               ))}
             </div>
           </div>
