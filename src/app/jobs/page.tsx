@@ -46,7 +46,14 @@ export default function JobsPage() {
       supabase.from("jobs").select("*").order("pinned_rank", { ascending: false }).order("created_at", { ascending: false }),
     ]).then(([{ data: d }, { data: j }]) => {
       const allJobs = j || [];
-      const profileDealers = (d || []).filter(p => p.status !== "비노출");
+      // 사용자별 최신 구직 글에서 role 가져오기 (profile.role은 시스템 권한 값이라 미사용)
+      const userIdToJobRole: Record<string, string> = {};
+      allJobs.filter(job => job.type === "구직" && job.user_id).forEach(job => {
+        if (!userIdToJobRole[job.user_id]) userIdToJobRole[job.user_id] = job.role || "딜러";
+      });
+      const profileDealers = (d || [])
+        .filter(p => p.status !== "비노출")
+        .map(p => ({ ...p, role: userIdToJobRole[p.id] || p.user_type || "딜러" }));
 
       // Merge: 구직글 작성자도 딜러 카드에 포함 (profiles에 없는 경우)
       const profileIds = new Set(profileDealers.map(p => p.id));
@@ -95,8 +102,7 @@ export default function JobsPage() {
     if (filterStatus !== "전체") result = result.filter(d => d.status === filterStatus);
     if (filterGender !== "전체") result = result.filter(d => d.gender === filterGender);
     if (filterRole !== "전체") {
-      if (filterRole === "매니저") result = result.filter(d => d.role === "매니저" || d.role === "플로어");
-      else result = result.filter(d => d.role === filterRole);
+      result = result.filter(d => d.role === filterRole);
     }
 
     // Sort: 지금 가능 > 예약 가능 > 일하는 중 > 미설정, then by update time
@@ -190,7 +196,8 @@ export default function JobsPage() {
             <button onClick={() => { setTab("jobs"); setFilterJobType("구인"); setFilterRole("전체"); }} className={`px-3 md:px-5 py-2 rounded-md text-[12px] md:text-[13px] font-semibold transition-all whitespace-nowrap ${tab === "jobs" && filterJobType === "구인" ? "bg-accent text-white" : "text-sub"}`}>일자리 찾기</button>
             <button onClick={() => { setTab("dealer"); setFilterRole("딜러"); }} className={`px-3 md:px-5 py-2 rounded-md text-[12px] md:text-[13px] font-semibold transition-all whitespace-nowrap ${tab === "dealer" && filterRole === "딜러" ? "bg-accent text-white" : "text-sub"}`}>딜러 찾기</button>
             <button onClick={() => { setTab("dealer"); setFilterRole("서빙"); }} className={`px-3 md:px-5 py-2 rounded-md text-[12px] md:text-[13px] font-semibold transition-all whitespace-nowrap ${tab === "dealer" && filterRole === "서빙" ? "bg-accent text-white" : "text-sub"}`}>서빙 찾기</button>
-            <button onClick={() => { setTab("dealer"); setFilterRole("매니저"); }} className={`px-3 md:px-5 py-2 rounded-md text-[12px] md:text-[13px] font-semibold transition-all whitespace-nowrap ${tab === "dealer" && (filterRole === "매니저" || filterRole === "플로어") ? "bg-accent text-white" : "text-sub"}`}>매니저/플로어</button>
+            <button onClick={() => { setTab("dealer"); setFilterRole("매니저"); }} className={`px-3 md:px-5 py-2 rounded-md text-[12px] md:text-[13px] font-semibold transition-all whitespace-nowrap ${tab === "dealer" && filterRole === "매니저" ? "bg-accent text-white" : "text-sub"}`}>매니저 찾기</button>
+            <button onClick={() => { setTab("dealer"); setFilterRole("플로어"); }} className={`px-3 md:px-5 py-2 rounded-md text-[12px] md:text-[13px] font-semibold transition-all whitespace-nowrap ${tab === "dealer" && filterRole === "플로어" ? "bg-accent text-white" : "text-sub"}`}>플로어 찾기</button>
             <button onClick={() => { setTab("jobs"); setFilterJobType("전체"); }} className={`px-3 md:px-5 py-2 rounded-md text-[12px] md:text-[13px] font-semibold transition-all whitespace-nowrap ${tab === "jobs" && filterJobType === "전체" ? "bg-accent text-white" : "text-sub"}`}>구인/구직글</button>
           </div>
         </div>
