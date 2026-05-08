@@ -185,6 +185,44 @@ export default function MyPage() {
             </div>
           </div>
 
+          {/* Referral / Tournament Tickets */}
+          {(profile as any)?.referral_code && (
+            <div className="bg-linear-to-br from-[#002a15] via-[#006b3a] to-[#00a05a] rounded-2xl card-shadow p-5 md:p-6 mb-6 text-white">
+              <div className="flex items-start justify-between gap-3 mb-4 flex-wrap">
+                <div>
+                  <p className="text-yellow-300 text-[11px] font-black tracking-widest uppercase mb-1">FRIEND REFERRAL</p>
+                  <h2 className="text-lg md:text-xl font-black">친구 초대 · 무료 토너권</h2>
+                  <p className="text-white/70 text-[12px] md:text-[13px] mt-1">친구가 내 링크로 가입하면 무료 토너권 +1장</p>
+                </div>
+                <div className="bg-white/15 backdrop-blur rounded-xl px-4 py-2 border border-white/20 text-center">
+                  <p className="text-white/70 text-[10px] mb-0.5">보유 토너권</p>
+                  <p className="text-white text-xl font-black">{(profile as any)?.tournament_tickets ?? 0}장</p>
+                </div>
+              </div>
+              {(() => {
+                const code = (profile as any).referral_code as string;
+                const url = typeof window !== "undefined" ? `${window.location.origin}/register?ref=${code}` : `/register?ref=${code}`;
+                return (
+                  <div className="space-y-2">
+                    <div className="bg-white/15 backdrop-blur rounded-lg border border-white/20 px-4 py-3 flex items-center gap-2">
+                      <p className="text-[12px] md:text-[13px] font-mono break-all flex-1">{url}</p>
+                      <button onClick={() => {
+                        navigator.clipboard.writeText(url);
+                        alert("초대 링크가 복사되었습니다");
+                      }} className="bg-white text-[#006b3a] text-[12px] font-black px-3 py-1.5 rounded-lg shrink-0 hover:bg-white/90 transition-all">
+                        복사
+                      </button>
+                    </div>
+                    <div className="flex items-center gap-2 text-[11px] md:text-[12px] text-white/75">
+                      <span>내 추천 코드:</span>
+                      <code className="bg-white/15 px-2 py-0.5 rounded font-mono">{code}</code>
+                    </div>
+                  </div>
+                );
+              })()}
+            </div>
+          )}
+
           {/* Tabs */}
           <div className="flex gap-1.5 overflow-x-auto hide-scrollbar mb-6 bg-white rounded-xl card-shadow p-1.5">
             {tabConfig.map(t => (

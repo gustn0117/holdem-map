@@ -116,6 +116,26 @@ export default function AdminPage() {
   const { stores, refresh: refreshStores } = useStores();
   const { notices, refresh: refreshNotices } = useNotices();
   const [events, setEvents] = useState<import("@/types").Event[]>([]);
+  const [tournamentApps, setTournamentApps] = useState<{ event_id: string; user_id: string | null; nickname: string; email: string; phone: string | null; created_at: string }[]>([]);
+  const [applicantsModal, setApplicantsModal] = useState<{ eventId: string; eventTitle: string } | null>(null);
+  const refreshTournamentApps = async () => {
+    const { data } = await supabase.from("tournament_applications").select("event_id, user_id, created_at");
+    if (!data || data.length === 0) { setTournamentApps([]); return; }
+    const userIds = [...new Set(data.map(d => d.user_id).filter(Boolean) as string[])];
+    const { data: profs } = await supabase.from("profiles").select("id, nickname, email, phone").in("id", userIds);
+    const map = new Map((profs || []).map(p => [p.id, p]));
+    setTournamentApps(data.map(d => {
+      const p = d.user_id ? map.get(d.user_id) : null;
+      return {
+        event_id: d.event_id,
+        user_id: d.user_id,
+        nickname: p?.nickname || "(알 수 없음)",
+        email: p?.email || "",
+        phone: p?.phone || null,
+        created_at: d.created_at,
+      };
+    }));
+  };
   const refreshEvents = async () => { const data = await api.getAllEvents(); setEvents(data); };
   const [jobs, setJobs] = useState<import("@/types").Job[]>([]);
   const refreshJobs = async () => { const data = await api.getJobs(); setJobs(data); };
@@ -135,7 +155,7 @@ export default function AdminPage() {
   const [marketListings, setMarketListings] = useState<MarketListing[]>([]);
   const [tradeItems, setTradeItems] = useState<TradeItemRow[]>([]);
 
-  useEffect(() => { api.getBanners().then(setBanners); api.getAllShorts().then(setShorts); refreshUsers(); refreshLiveGames(); refreshPromotions(); refreshInquiries(); refreshEvents(); refreshPosts(); refreshMarket(); refreshTrade(); refreshJobs(); }, []);
+  useEffect(() => { api.getBanners().then(setBanners); api.getAllShorts().then(setShorts); refreshUsers(); refreshLiveGames(); refreshPromotions(); refreshInquiries(); refreshEvents(); refreshPosts(); refreshMarket(); refreshTrade(); refreshJobs(); refreshTournamentApps(); }, []);
 
   const refreshTrade = async () => {
     const { data } = await supabase.from("trade_items").select("*").order("pinned_rank", { ascending: false }).order("created_at", { ascending: false });
@@ -722,7 +742,7 @@ export default function AdminPage() {
                     <th className="text-left text-muted text-sm font-medium px-5 py-4">제목</th>
                     <th className="text-left text-muted text-sm font-medium px-5 py-4 hidden md:table-cell">장소</th>
                     <th className="text-left text-muted text-sm font-medium px-5 py-4 hidden md:table-cell">날짜</th>
-                    <th className="text-left text-muted text-sm font-medium px-5 py-4 hidden md:table-cell">신청자</th>
+                    <th className="text-left text-muted text-sm font-medium px-5 py-4 hidden md:table-cell">제출자</th>
                     <th className="text-right text-muted text-sm font-medium px-5 py-4">관리</th>
                   </tr>
                 </thead>
@@ -755,6 +775,15 @@ export default function AdminPage() {
                                 className="text-[12px] font-semibold px-3 py-1.5 rounded-lg bg-yellow-50 text-yellow-700 hover:bg-yellow-100 transition-all">반려</button>
                             </>
                           )}
+                          {(() => {
+                            const cnt = tournamentApps.filter(a => a.event_id === event.id).length;
+                            return (
+                              <button onClick={() => setApplicantsModal({ eventId: event.id, eventTitle: event.title })}
+                                className="text-[12px] font-semibold px-3 py-1.5 rounded-lg bg-bg text-sub hover:bg-accent-light hover:text-accent transition-all whitespace-nowrap">
+                                신청자 {cnt}명
+                              </button>
+                            );
+                          })()}
                           <button onClick={() => setModal({ type: "edit", tab: "events", data: event as unknown as Record<string, unknown> })} className="text-muted hover:text-accent text-sm transition-colors">수정</button>
                           <button onClick={() => handleDelete("events", event.id)} className="text-muted hover:text-red text-sm transition-colors">삭제</button>
                         </div>
@@ -1316,6 +1345,54 @@ export default function AdminPage() {
         )}
 
         {/* Modal */}
+        {applicantsModal && (() => {
+          const list = tournamentApps.filter(a => a.event_id === applicantsModal.eventId)
+            .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+          return (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+              <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={() => setApplicantsModal(null)} />
+              <div className="relative bg-white rounded-3xl p-6 md:p-8 border border-border-custom w-full max-w-2xl max-h-[85vh] overflow-y-auto">
+                <div className="flex items-start justify-between gap-3 mb-5">
+                  <div className="min-w-0">
+                    <p className="text-muted text-[12px] mb-1">무료 토너먼트 신청자</p>
+                    <h2 className="text-surface font-bold text-xl truncate">{applicantsModal.eventTitle}</h2>
+                    <p className="text-accent text-[14px] font-bold mt-1">총 {list.length}명 신청</p>
+                  </div>
+                  <button onClick={() => setApplicantsModal(null)} className="text-muted hover:text-accent shrink-0">
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+                  </button>
+                </div>
+                {list.length === 0 ? (
+                  <div className="text-center py-12 text-muted text-sm">아직 신청자가 없습니다</div>
+                ) : (
+                  <div className="overflow-x-auto">
+                    <table className="w-full">
+                      <thead>
+                        <tr className="border-b border-border-custom">
+                          <th className="text-left text-muted text-[12px] font-medium px-3 py-2">닉네임</th>
+                          <th className="text-left text-muted text-[12px] font-medium px-3 py-2 hidden sm:table-cell">이메일</th>
+                          <th className="text-left text-muted text-[12px] font-medium px-3 py-2 hidden sm:table-cell">전화</th>
+                          <th className="text-right text-muted text-[12px] font-medium px-3 py-2">신청일시</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {list.map(a => (
+                          <tr key={`${a.event_id}-${a.user_id}-${a.created_at}`} className="border-b border-border-custom/50">
+                            <td className="px-3 py-2.5 text-surface text-[14px] font-semibold">{a.nickname}</td>
+                            <td className="px-3 py-2.5 text-sub text-[13px] hidden sm:table-cell">{a.email?.includes("@phone.holdemmap") ? "(전화번호 가입)" : a.email}</td>
+                            <td className="px-3 py-2.5 text-sub text-[13px] hidden sm:table-cell">{a.phone || "-"}</td>
+                            <td className="px-3 py-2.5 text-muted text-[12px] text-right">{a.created_at?.slice(0, 16).replace("T", " ")}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </div>
+            </div>
+          );
+        })()}
+
         {modal && (
           <AdminModal modal={modal} stores={stores} saving={saving} onClose={() => setModal(null)} onSave={handleSave} />
         )}

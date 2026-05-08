@@ -31,7 +31,7 @@ interface AuthContextType {
   user: User | null;
   profile: Profile | null;
   loading: boolean;
-  signUp: (email: string, password: string, nickname: string, userType?: string) => Promise<{ error: string | null }>;
+  signUp: (email: string, password: string, nickname: string, userType?: string, referralCode?: string) => Promise<{ error: string | null }>;
   signIn: (email: string, password: string) => Promise<{ error: string | null }>;
   signOut: () => Promise<void>;
   refreshProfile: () => Promise<void>;
@@ -85,17 +85,49 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => subscription.unsubscribe();
   }, []);
 
-  const signUp = async (email: string, password: string, nickname: string, userType: string = "일반") => {
+  const signUp = async (email: string, password: string, nickname: string, userType: string = "일반", referralCode?: string) => {
     const { data, error } = await supabase.auth.signUp({ email, password });
     if (error) return { error: error.message };
     if (data.user) {
+      // 추천인 조회
+      let referredBy: string | null = null;
+      if (referralCode && referralCode.trim()) {
+        const { data: ref } = await supabase
+          .from("profiles")
+          .select("id")
+          .eq("referral_code", referralCode.trim())
+          .maybeSingle();
+        if (ref?.id) referredBy = ref.id;
+      }
+
+      // 신규 회원 referral_code 생성
+      const newCode = Math.random().toString(36).slice(2, 10);
+
       await supabase.from("profiles").insert({
         id: data.user.id,
         email,
         nickname,
         role: "user",
         user_type: userType,
+        referral_code: newCode,
+        referred_by: referredBy,
+        tournament_tickets: 1,
       });
+
+      // 추천인에게 무료 토너권 +1
+      if (referredBy) {
+        const { data: refProfile } = await supabase
+          .from("profiles")
+          .select("tournament_tickets")
+          .eq("id", referredBy)
+          .maybeSingle();
+        const current = (refProfile?.tournament_tickets ?? 0) as number;
+        await supabase
+          .from("profiles")
+          .update({ tournament_tickets: current + 1 })
+          .eq("id", referredBy);
+      }
+
       await fetchProfile(data.user.id);
     }
     return { error: null };

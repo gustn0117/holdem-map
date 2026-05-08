@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Header from "@/components/Header";
 import { useAuth } from "@/contexts/AuthContext";
@@ -14,6 +14,21 @@ const USER_TYPES = [
 ];
 
 export default function RegisterPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex flex-col min-h-screen pb-16 md:pb-0">
+        <Header />
+        <div className="flex-1 flex items-center justify-center"><div className="w-8 h-8 border-2 border-accent/30 border-t-accent rounded-full animate-spin" /></div>
+      </div>
+    }>
+      <RegisterPageInner />
+    </Suspense>
+  );
+}
+
+function RegisterPageInner() {
+  const searchParams = useSearchParams();
+  const initialReferral = searchParams.get("ref") || "";
   const [step, setStep] = useState(1);
   const [userType, setUserType] = useState("");
   const [method, setMethod] = useState<"email" | "phone">("email");
@@ -22,6 +37,7 @@ export default function RegisterPage() {
   const [password, setPassword] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
   const [nickname, setNickname] = useState("");
+  const [referralCode, setReferralCode] = useState(initialReferral);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const { signUp } = useAuth();
@@ -39,7 +55,7 @@ export default function RegisterPage() {
     if (method === "email" && !email) { setError("이메일을 입력하세요."); return; }
 
     setLoading(true);
-    const { error } = await signUp(loginEmail, password, nickname, userType);
+    const { error } = await signUp(loginEmail, password, nickname, userType, referralCode);
     if (error) {
       setError(error.includes("already registered") ? "이미 등록된 계정입니다." : error);
       setLoading(false);
@@ -165,6 +181,13 @@ export default function RegisterPage() {
                   <label className="text-surface text-sm font-semibold mb-1.5 block">비밀번호 확인</label>
                   <input type="password" value={passwordConfirm} onChange={e => setPasswordConfirm(e.target.value)} required
                     className={inputClass} placeholder="비밀번호 재입력" />
+                </div>
+
+                <div>
+                  <label className="text-surface text-sm font-semibold mb-1.5 block">추천인 코드 <span className="text-muted font-normal">(선택)</span></label>
+                  <input type="text" value={referralCode} onChange={e => setReferralCode(e.target.value)}
+                    className={inputClass} placeholder="친구의 초대 코드 8자리" />
+                  {initialReferral && <p className="text-accent text-[12px] mt-1.5">친구 초대 링크로 가입 중입니다 — 친구에게 무료 토너권 1장이 추가 지급됩니다</p>}
                 </div>
 
                 <button type="submit" disabled={loading}

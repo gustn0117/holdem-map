@@ -9,21 +9,35 @@ import { useEvents } from "@/hooks/useData";
 import { supabase } from "@/lib/supabase";
 
 export default function TournamentPage() {
-  const { user, profile } = useAuth();
+  const { user, profile, refreshProfile } = useAuth();
   const { events } = useEvents();
   const [applied, setApplied] = useState<string[]>([]);
+  const [counts, setCounts] = useState<Record<string, number>>({});
 
   useEffect(() => {
-    if (user) {
-      supabase.from("tournament_applications").select("event_id").eq("user_id", user.id)
-        .then(({ data }) => setApplied(data?.map(a => a.event_id) || []));
-    }
+    supabase.from("tournament_applications").select("event_id, user_id")
+      .then(({ data }) => {
+        const c: Record<string, number> = {};
+        (data || []).forEach((a: { event_id: string }) => { c[a.event_id] = (c[a.event_id] || 0) + 1; });
+        setCounts(c);
+        if (user) setApplied((data || []).filter((a: { user_id: string | null }) => a.user_id === user.id).map((a: { event_id: string }) => a.event_id));
+      });
   }, [user]);
+
+  const tickets = (profile as { tournament_tickets?: number } | null)?.tournament_tickets ?? 0;
 
   const handleApply = async (eventId: string) => {
     if (!user) return;
-    await supabase.from("tournament_applications").insert({ user_id: user.id, event_id: eventId });
+    if (tickets <= 0) {
+      alert("보유한 무료 토너권이 없습니다. 친구를 초대하거나 이벤트에 참여해 추가 토너권을 받으세요.");
+      return;
+    }
+    const { error } = await supabase.from("tournament_applications").insert({ user_id: user.id, event_id: eventId });
+    if (error) { alert("신청에 실패했습니다."); return; }
+    await supabase.from("profiles").update({ tournament_tickets: Math.max(0, tickets - 1) }).eq("id", user.id);
     setApplied(prev => [...prev, eventId]);
+    setCounts(prev => ({ ...prev, [eventId]: (prev[eventId] || 0) + 1 }));
+    if (refreshProfile) await refreshProfile();
   };
 
   return (
@@ -44,12 +58,12 @@ export default function TournamentPage() {
                 <p className="text-white text-[15px] md:text-lg font-black">무료</p>
               </div>
               <div className="bg-white/15 backdrop-blur rounded-xl px-3 md:px-5 py-2.5 md:py-3 border border-white/20">
-                <p className="text-white/70 text-[10px] md:text-[11px] mb-0.5">혜택</p>
-                <p className="text-white text-[15px] md:text-lg font-black">무료 바인권</p>
+                <p className="text-white/70 text-[10px] md:text-[11px] mb-0.5">{user ? "내 보유 토너권" : "신규 가입 혜택"}</p>
+                <p className="text-white text-[15px] md:text-lg font-black">{user ? `${tickets}장` : "1장 지급"}</p>
               </div>
               <div className="bg-white/15 backdrop-blur rounded-xl px-3 md:px-5 py-2.5 md:py-3 border border-white/20">
-                <p className="text-white/70 text-[10px] md:text-[11px] mb-0.5">추천 보상</p>
-                <p className="text-white text-[13px] md:text-lg font-black">친구 1명당</p>
+                <p className="text-white/70 text-[10px] md:text-[11px] mb-0.5">친구 초대시</p>
+                <p className="text-white text-[13px] md:text-lg font-black">+1장 지급</p>
               </div>
             </div>
           </div>
@@ -120,9 +134,13 @@ export default function TournamentPage() {
                     </div>
                     {event.prize && <span className="bg-[#00874a] text-white text-[12px] font-bold px-3 py-1 rounded-full shrink-0">{event.prize}</span>}
                   </div>
-                  <div className="flex items-center gap-4 text-[13px] text-muted mb-4">
+                  <div className="flex items-center gap-4 text-[13px] text-muted mb-4 flex-wrap">
                     <span>{d.getFullYear()}.{d.getMonth()+1}.{d.getDate()}</span>
                     <span>{event.time}</span>
+                    <span className="inline-flex items-center gap-1 ml-auto bg-accent/10 text-accent text-[12px] font-bold px-2.5 py-1 rounded-full">
+                      <svg className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                      신청 {counts[event.id] || 0}명
+                    </span>
                   </div>
                   {user ? (
                     isApplied ? (
