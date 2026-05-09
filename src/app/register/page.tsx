@@ -48,14 +48,17 @@ function RegisterPageInner() {
     setError("");
     if (password.length < 6) { setError("비밀번호는 6자 이상이어야 합니다."); return; }
     if (password !== passwordConfirm) { setError("비밀번호가 일치하지 않습니다."); return; }
-    if (nickname.length < 2) { setError("닉네임은 2자 이상이어야 합니다."); return; }
+    const trimmedNickname = nickname.trim();
+    if (trimmedNickname.length < 2) { setError("닉네임은 2자 이상이어야 합니다."); return; }
+    if (/^\d{10,11}$/.test(trimmedNickname)) { setError("닉네임에 전화번호를 입력할 수 없습니다."); return; }
 
     const loginEmail = method === "phone" ? `${phone.replace(/-/g, "")}@phone.holdemmap.kr` : email;
     if (method === "phone" && !/^01[0-9]{8,9}$/.test(phone.replace(/-/g, ""))) { setError("올바른 전화번호를 입력하세요."); return; }
+    if (method === "phone" && trimmedNickname === phone.replace(/-/g, "")) { setError("닉네임은 전화번호와 다르게 설정해주세요."); return; }
     if (method === "email" && !email) { setError("이메일을 입력하세요."); return; }
 
     setLoading(true);
-    const { error } = await signUp(loginEmail, password, nickname, userType, referralCode);
+    const { error } = await signUp(loginEmail, password, trimmedNickname, userType, referralCode);
     if (error) {
       setError(error.includes("already registered") ? "이미 등록된 계정입니다." : error);
       setLoading(false);
@@ -152,20 +155,23 @@ function RegisterPageInner() {
 
                 <div>
                   <label className="text-surface text-sm font-semibold mb-1.5 block">닉네임</label>
-                  <input type="text" value={nickname} onChange={e => setNickname(e.target.value)} required
+                  <input type="text" name="nickname" autoComplete="nickname" inputMode="text" value={nickname}
+                    onChange={e => setNickname(e.target.value)} required
                     className={inputClass} placeholder={userType === "업주" ? "업체명 또는 닉네임" : "사용할 닉네임 (2자 이상)"} />
                 </div>
 
                 {method === "email" ? (
                   <div>
                     <label className="text-surface text-sm font-semibold mb-1.5 block">이메일</label>
-                    <input type="email" value={email} onChange={e => setEmail(e.target.value)} required
+                    <input type="email" name="email" autoComplete="email" value={email}
+                      onChange={e => setEmail(e.target.value)} required
                       className={inputClass} placeholder="example@email.com" />
                   </div>
                 ) : (
                   <div>
                     <label className="text-surface text-sm font-semibold mb-1.5 block">전화번호</label>
-                    <input type="tel" value={phone} onChange={e => setPhone(e.target.value)} required
+                    <input type="tel" name="phone" autoComplete="tel" value={phone}
+                      onChange={e => setPhone(e.target.value)} required
                       className={inputClass} placeholder="01012345678" />
                     <p className="text-muted text-[11px] mt-1">별도 인증 없이 번호만 입력하시면 됩니다</p>
                   </div>
@@ -173,13 +179,15 @@ function RegisterPageInner() {
 
                 <div>
                   <label className="text-surface text-sm font-semibold mb-1.5 block">비밀번호</label>
-                  <input type="password" value={password} onChange={e => setPassword(e.target.value)} required
+                  <input type="password" name="new-password" autoComplete="new-password" value={password}
+                    onChange={e => setPassword(e.target.value)} required
                     className={inputClass} placeholder="6자 이상" />
                 </div>
 
                 <div>
                   <label className="text-surface text-sm font-semibold mb-1.5 block">비밀번호 확인</label>
-                  <input type="password" value={passwordConfirm} onChange={e => setPasswordConfirm(e.target.value)} required
+                  <input type="password" name="new-password-confirm" autoComplete="new-password" value={passwordConfirm}
+                    onChange={e => setPasswordConfirm(e.target.value)} required
                     className={inputClass} placeholder="비밀번호 재입력" />
                 </div>
 
