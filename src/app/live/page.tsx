@@ -272,9 +272,9 @@ export default function LivePage() {
                 return (
                   <Link key={event.id} href={`/events/${event.id}`} className="block group anim-in" style={{ animationDelay: `${i * 0.05}s` }}>
                     <div className="bg-white rounded-xl border border-border-custom hover:border-accent/30 card-shadow hover:card-shadow-hover transition-all overflow-hidden h-full flex flex-col">
-                      <div className="relative h-28 md:h-40 bg-accent/5 overflow-hidden">
+                      <div className="relative aspect-4/3 bg-accent/5 overflow-hidden flex items-center justify-center">
                         {event.image ? (
-                          <img src={event.image} alt={event.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                          <img src={event.image} alt={event.title} className="max-w-full max-h-full object-contain group-hover:scale-105 transition-transform duration-500" />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center">
                             <svg className="w-10 h-10 text-accent/30" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
@@ -342,8 +342,8 @@ export default function LivePage() {
               <div key={game.id} onClick={() => setSelectedGame(game)} className="bg-white rounded-2xl card-shadow overflow-hidden hover:card-shadow-hover transition-all cursor-pointer">
                 {/* Poster image */}
                 {game.image && (
-                  <div className="h-40 bg-bg overflow-hidden">
-                    <img src={game.image} alt={game.title} className="w-full h-full object-cover" />
+                  <div className="aspect-4/3 bg-bg overflow-hidden flex items-center justify-center">
+                    <img src={game.image} alt={game.title} className="max-w-full max-h-full object-contain" />
                   </div>
                 )}
                 <div className="p-5">
@@ -425,8 +425,8 @@ export default function LivePage() {
               </button>
               {/* Poster */}
               {selectedGame.image && (
-                <div className="h-64 bg-bg overflow-hidden">
-                  <img src={selectedGame.image} alt={selectedGame.title} className="w-full h-full object-cover" />
+                <div className="bg-bg overflow-hidden flex items-center justify-center max-h-[60vh]">
+                  <img src={selectedGame.image} alt={selectedGame.title} className="max-w-full max-h-[60vh] object-contain" />
                 </div>
               )}
               <div className="p-6">
