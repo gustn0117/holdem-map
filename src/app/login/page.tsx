@@ -7,7 +7,7 @@ import Header from "@/components/Header";
 import { useAuth } from "@/contexts/AuthContext";
 
 export default function LoginPage() {
-  const [email, setEmail] = useState("");
+  const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -18,9 +18,13 @@ export default function LoginPage() {
     e.preventDefault();
     setError("");
     setLoading(true);
-    const { error } = await signIn(email, password);
+    const trimmed = identifier.trim();
+    const phoneDigits = trimmed.replace(/-/g, "");
+    const isPhone = /^01[0-9]{8,9}$/.test(phoneDigits);
+    const loginEmail = isPhone ? `${phoneDigits}@phone.holdemmap.kr` : trimmed;
+    const { error } = await signIn(loginEmail, password);
     if (error) {
-      setError(error === "Invalid login credentials" ? "이메일 또는 비밀번호가 올바르지 않습니다." : error);
+      setError(error === "Invalid login credentials" ? "이메일/전화번호 또는 비밀번호가 올바르지 않습니다." : error);
       setLoading(false);
     } else {
       router.push("/");
@@ -46,15 +50,16 @@ export default function LoginPage() {
             )}
 
             <div>
-              <label className="text-surface text-sm font-semibold mb-1.5 block">이메일</label>
-              <input type="email" value={email} onChange={e => setEmail(e.target.value)} required
+              <label className="text-surface text-sm font-semibold mb-1.5 block">이메일 또는 전화번호</label>
+              <input type="text" name="username" autoComplete="username" value={identifier} onChange={e => setIdentifier(e.target.value)} required
                 className="w-full border border-border-custom rounded-xl px-4 py-3 text-[15px] focus:outline-none focus:border-accent transition-colors bg-white"
-                placeholder="example@email.com" />
+                placeholder="example@email.com 또는 01012345678" />
+              <p className="text-muted text-[11px] mt-1">전화번호로 가입하신 분은 전화번호만 입력하시면 됩니다</p>
             </div>
 
             <div>
               <label className="text-surface text-sm font-semibold mb-1.5 block">비밀번호</label>
-              <input type="password" value={password} onChange={e => setPassword(e.target.value)} required
+              <input type="password" name="password" autoComplete="current-password" value={password} onChange={e => setPassword(e.target.value)} required
                 className="w-full border border-border-custom rounded-xl px-4 py-3 text-[15px] focus:outline-none focus:border-accent transition-colors bg-white"
                 placeholder="비밀번호 입력" />
             </div>
