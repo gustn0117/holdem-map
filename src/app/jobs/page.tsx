@@ -56,11 +56,12 @@ export default function JobsPage() {
         .map(p => ({ ...p, role: userIdToJobRole[p.id] || p.user_type || "딜러" }));
 
       // Merge: 구직글 작성자도 딜러 카드에 포함 (profiles에 없는 경우)
+      // ⚠️ 한 user_id가 여러 구직 글을 작성할 수 있으므로 카드 id는 job.id (글 ID) 사용해야 React key 충돌 방지
       const profileIds = new Set(profileDealers.map(p => p.id));
       const jobDealers = allJobs
         .filter(job => job.type === "구직" && !profileIds.has(job.user_id))
         .map(job => ({
-          id: job.user_id || job.id,
+          id: job.id,
           nickname: job.nickname,
           role: job.role || "딜러",
           status: "지금 가능",
@@ -72,15 +73,15 @@ export default function JobsPage() {
           contact_kakao: "",
           contact_telegram: "",
           contact_phone: "",
+          contact: (job as any).contact || "",
           created_at: job.created_at,
           gender: (job as any).gender || "",
         }));
 
-      // Parse contact field for job dealers
+      // Parse contact field for job dealers (각 카드의 contact 문자열에서 직접 파싱 — id별 매칭이라 정확)
       jobDealers.forEach(d => {
-        const job = allJobs.find(j => j.nickname === d.nickname && j.type === "구직");
-        if (job?.contact) {
-          const parts = job.contact.split(" / ");
+        if (d.contact) {
+          const parts = d.contact.split(" / ");
           parts.forEach((p: string) => {
             if (p.startsWith("카카오톡:")) d.contact_kakao = p.replace("카카오톡: ", "");
             if (p.startsWith("텔레그램:")) d.contact_telegram = p.replace("텔레그램: ", "");
