@@ -7,8 +7,7 @@ import Footer from "@/components/Footer";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
 import RankInsignia from "@/components/RankInsignia";
-import { useUserRanks } from "@/hooks/useUserRanks";
-import { Rank } from "@/lib/rank";
+import { useUserProfiles, UserProfileLite } from "@/hooks/useUserRanks";
 
 interface Post {
   id: string; user_id: string | null; nickname: string; title: string; content: string;
@@ -55,7 +54,7 @@ export default function BoardPage() {
     return { pinned, hot, regular };
   }, [posts, query]);
 
-  const rankMap = useUserRanks(posts.map(p => p.user_id));
+  const profileMap = useUserProfiles(posts.map(p => p.user_id));
 
   return (
     <div className="flex flex-col min-h-screen pb-16 md:pb-0">
@@ -111,13 +110,13 @@ export default function BoardPage() {
               </div>
 
               {/* Pinned */}
-              {pinned.map(p => <PostRow key={p.id} post={p} type="pinned" rank={p.user_id ? rankMap[p.user_id] : undefined} />)}
+              {pinned.map(p => <PostRow key={p.id} post={p} type="pinned" profile={p.user_id ? profileMap[p.user_id] : undefined} />)}
 
               {/* HOT */}
-              {hot.map(p => <PostRow key={p.id} post={p} type="hot" rank={p.user_id ? rankMap[p.user_id] : undefined} />)}
+              {hot.map(p => <PostRow key={p.id} post={p} type="hot" profile={p.user_id ? profileMap[p.user_id] : undefined} />)}
 
               {/* Regular */}
-              {regular.map(p => <PostRow key={p.id} post={p} type="regular" rank={p.user_id ? rankMap[p.user_id] : undefined} />)}
+              {regular.map(p => <PostRow key={p.id} post={p} type="regular" profile={p.user_id ? profileMap[p.user_id] : undefined} />)}
 
               {pinned.length === 0 && hot.length === 0 && regular.length === 0 && (
                 <div className="text-center py-16 text-muted">{query ? "검색 결과가 없습니다" : "아직 게시글이 없습니다"}</div>
@@ -131,7 +130,9 @@ export default function BoardPage() {
   );
 }
 
-function PostRow({ post, type, rank }: { post: any; type: "pinned" | "hot" | "regular"; rank?: Rank }) {
+function PostRow({ post, type, profile }: { post: any; type: "pinned" | "hot" | "regular"; profile?: UserProfileLite }) {
+  const rank = profile?.rank;
+  const displayName = profile?.nickname || post.nickname;
   return (
     <Link href={`/board/${post.id}`}
       className={`grid grid-cols-1 md:grid-cols-12 gap-1 md:gap-4 px-5 py-3 border-b border-border-custom last:border-b-0 hover:bg-[#fafafa] transition-colors group ${
@@ -152,14 +153,14 @@ function PostRow({ post, type, rank }: { post: any; type: "pinned" | "hot" | "re
         </div>
         <p className="md:hidden text-muted text-[11px] mt-0.5 inline-flex items-center gap-1">
           {rank && <span className={`inline-flex items-center gap-0.5 rounded px-1 ${rank.color}`}><RankInsignia rank={rank} size="xs" /></span>}
-          <span>{post.nickname}</span>
+          <span>{displayName}</span>
           <span>· {post.created_at?.slice(5, 10)} · 조회 {post.views} · 👍 {post.likes || 0}</span>
         </p>
       </div>
       <div className="hidden md:block md:col-span-2 text-sub text-[13px]">
         <span className="inline-flex items-center gap-1.5">
           {rank && <span className={`inline-flex items-center rounded px-1 py-0.5 ${rank.color}`}><RankInsignia rank={rank} size="xs" /></span>}
-          {post.nickname}
+          {displayName}
         </span>
       </div>
       <div className="hidden md:block md:col-span-1 text-center text-muted text-[13px]">{post.views}</div>

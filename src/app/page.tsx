@@ -8,7 +8,7 @@ import Footer from "@/components/Footer";
 import StoreCard from "@/components/StoreCard";
 import RankInsignia from "@/components/RankInsignia";
 import { useStores, useEvents, useNotices } from "@/hooks/useData";
-import { useUserRanks } from "@/hooks/useUserRanks";
+import { useUserProfiles } from "@/hooks/useUserRanks";
 import { getBanners, getShorts, getJobs } from "@/lib/api";
 import { Store, Banner, Short, Job } from "@/types";
 import { supabase } from "@/lib/supabase";
@@ -41,7 +41,7 @@ export default function Home() {
       .then(({ data }) => setLiveGames(data || []));
   }, []);
 
-  const postRanks = useUserRanks(posts.map(p => p.user_id));
+  const postProfiles = useUserProfiles(posts.map(p => p.user_id));
   const sideBanners = banners.filter(b => b.position.startsWith("side")).sort((a, b) => a.position.localeCompare(b.position));
   const filteredStores = selectedRegion === "전체" ? stores : stores.filter((s) => s.region === selectedRegion);
   const recommendedStores = stores.filter((s) => s.is_recommended);
@@ -77,14 +77,16 @@ export default function Home() {
             <Link href="/board/write" className="text-accent text-[12px] font-semibold mt-1 inline-block hover:underline">첫 글 작성하기 →</Link>
           </div>
         ) : posts.map((post) => {
-          const r = post.user_id ? postRanks[post.user_id] : undefined;
+          const pf = post.user_id ? postProfiles[post.user_id] : undefined;
+          const r = pf?.rank;
+          const displayName = pf?.nickname || post.nickname;
           return (
           <Link key={post.id} href="/board" className="flex items-center gap-2 px-3 py-2.5 rounded-xl hover:bg-bg group transition">
             <span className="w-1 h-1 rounded-full bg-accent shrink-0" />
             <p className="text-sub text-[13px] truncate flex-1 group-hover:text-accent transition-colors">{post.title}</p>
             <span className="text-muted text-[11px] shrink-0 inline-flex items-center gap-1">
               {r && <span className={`inline-flex items-center rounded px-1 ${r.color}`}><RankInsignia rank={r} size="xs" /></span>}
-              {post.nickname}
+              {displayName}
             </span>
           </Link>
           );
@@ -309,7 +311,9 @@ export default function Home() {
           ) : (
             <div className="px-4 pb-3">
               {posts.slice(0, 4).map(post => {
-                const r = post.user_id ? postRanks[post.user_id] : undefined;
+                const pf = post.user_id ? postProfiles[post.user_id] : undefined;
+                const r = pf?.rank;
+                const displayName = pf?.nickname || post.nickname;
                 return (
                 <Link key={post.id} href="/board" className="flex items-center gap-3 py-2.5 border-b border-border-custom/50 last:border-b-0 group">
                   <span className="w-10 h-10 rounded-lg bg-gray-100 border border-gray-200 flex items-center justify-center shrink-0">
@@ -319,7 +323,7 @@ export default function Home() {
                     <p className="text-surface text-[14px] font-bold truncate group-hover:text-accent transition-colors">{post.title}</p>
                     <p className="text-sub text-[12px] inline-flex items-center gap-1">
                       {r && <span className={`inline-flex items-center rounded px-1 ${r.color}`}><RankInsignia rank={r} size="xs" /></span>}
-                      {post.nickname} · 조회 {post.views}
+                      {displayName} · 조회 {post.views}
                     </p>
                   </div>
                   <svg className="w-4 h-4 text-[#ccc] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
