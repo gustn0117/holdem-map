@@ -31,17 +31,22 @@ const ROLE_TO_KEY: Record<string, RoleKey> = {
 };
 const GENDER_TO_KEY: Record<string, GenderKey> = { "남": "male", "여": "female" };
 
-export default function JobAvatarPicker({ value, onChange, role, gender }: {
+export default function JobAvatarPicker({ value, onChange, role, gender, restrict }: {
   value: string;
   onChange: (v: string) => void;
   role?: string;
   gender?: string;
+  /** 'avatar' = 인물 아바타만(구직글), 'poster' = 매장 포스터만(구인글), 기본 = 둘 다 */
+  restrict?: "avatar" | "poster";
 }) {
   const [open, setOpen] = useState(false);
-  const [mode, setMode] = useState<Mode>("avatar");
+  const [mode, setMode] = useState<Mode>(restrict || "avatar");
   const [pickerGender, setPickerGender] = useState<GenderKey>(gender ? GENDER_TO_KEY[gender] || "male" : "male");
   const [pickerRole, setPickerRole] = useState<RoleKey>(role ? ROLE_TO_KEY[role] || "dealer" : "dealer");
   const [pickerPoster, setPickerPoster] = useState<PosterKey>("daily");
+
+  // restrict 변경 시 mode 강제 동기화 (구인 ↔ 구직 토글에 따라 즉시 반영)
+  if (restrict && mode !== restrict) setMode(restrict);
 
   const openPicker = () => {
     if (gender) setPickerGender(GENDER_TO_KEY[gender] || "male");
@@ -111,21 +116,23 @@ export default function JobAvatarPicker({ value, onChange, role, gender }: {
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
                 </button>
               </div>
-              {/* Mode toggle */}
-              <div className="px-5 pb-3">
-                <div className="flex bg-bg rounded-xl p-1">
-                  <button type="button" onClick={() => setMode("avatar")}
-                    className={`flex-1 py-2 rounded-lg text-[13px] font-bold transition-all inline-flex items-center justify-center gap-1.5 ${mode === "avatar" ? "bg-white text-accent shadow-sm" : "text-muted"}`}>
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
-                    인물 아바타 (32종)
-                  </button>
-                  <button type="button" onClick={() => setMode("poster")}
-                    className={`flex-1 py-2 rounded-lg text-[13px] font-bold transition-all inline-flex items-center justify-center gap-1.5 ${mode === "poster" ? "bg-white text-accent shadow-sm" : "text-muted"}`}>
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>
-                    매장 포스터 (9종)
-                  </button>
+              {/* Mode toggle (restrict 지정 시 숨김) */}
+              {!restrict && (
+                <div className="px-5 pb-3">
+                  <div className="flex bg-bg rounded-xl p-1">
+                    <button type="button" onClick={() => setMode("avatar")}
+                      className={`flex-1 py-2 rounded-lg text-[13px] font-bold transition-all inline-flex items-center justify-center gap-1.5 ${mode === "avatar" ? "bg-white text-accent shadow-sm" : "text-muted"}`}>
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+                      인물 아바타 (32종)
+                    </button>
+                    <button type="button" onClick={() => setMode("poster")}
+                      className={`flex-1 py-2 rounded-lg text-[13px] font-bold transition-all inline-flex items-center justify-center gap-1.5 ${mode === "poster" ? "bg-white text-accent shadow-sm" : "text-muted"}`}>
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.8} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>
+                      매장 포스터 (9종)
+                    </button>
+                  </div>
                 </div>
-              </div>
+              )}
               {mode === "avatar" ? (
                 <>
                   <div className="px-5 pb-3">

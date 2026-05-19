@@ -1835,6 +1835,7 @@ function AdminModal({ modal, stores, saving, onClose, onSave }: {
               onChange={v => set("photo", v)}
               role={(form.role as string) || ""}
               gender={(form.gender as string) || ""}
+              restrict={(form.type as string) === "구인" ? "poster" : "avatar"}
             />
           </div>
         )}

@@ -70,10 +70,12 @@ export default function LoginPage() {
             </button>
           </form>
 
-          <p className="text-center text-muted text-sm mt-6">
-            계정이 없으신가요?{" "}
+          <div className="flex items-center justify-center gap-3 text-sm mt-6">
+            <Link href="/forgot-password" className="text-muted hover:text-accent transition-colors">아이디·비밀번호 찾기</Link>
+            <span className="text-border-custom">|</span>
+            <span className="text-muted">계정이 없으신가요?</span>
             <Link href="/register" className="text-accent font-semibold hover:underline">회원가입</Link>
-          </p>
+          </div>
         </div>
       </main>
     </div>

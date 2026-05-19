@@ -305,12 +305,13 @@ function JobWritePageInner() {
             </div>
           </div>
 
-          {/* Photo + Avatar */}
+          {/* Photo + Avatar — 구인글: 매장 포스터 / 구직글: 인물 아바타 */}
           <JobAvatarPicker
             value={form.photo}
             onChange={v => set("photo", v)}
             role={form.role}
             gender={form.gender}
+            restrict={form.type === "구인" ? "poster" : "avatar"}
           />
 
           {/* Message */}
