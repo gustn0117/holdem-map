@@ -37,6 +37,18 @@ export default function Header() {
     }
   };
 
+  const handleShareSheet = async () => {
+    const url = typeof window !== "undefined" ? window.location.origin : "https://holdem-map.hsweb.pics";
+    try {
+      if (typeof navigator !== "undefined" && (navigator as any).share) {
+        await (navigator as any).share({ title: "홀덤맵KOREA", text: "전국 홀덤 매장·대회 정보 - 홀덤맵KOREA", url });
+      } else if (typeof navigator !== "undefined" && navigator.clipboard) {
+        await navigator.clipboard.writeText(url);
+        alert("링크가 복사되었습니다. Safari의 공유 버튼을 직접 눌러 '홈 화면에 추가'를 선택해주세요.");
+      }
+    } catch { /* 사용자가 취소한 경우 무시 */ }
+  };
+
   const toggleDark = () => {
     const next = !dark;
     setDark(next);
@@ -250,12 +262,25 @@ export default function Header() {
               <h3 className="text-surface text-lg font-black">홀덤맵KOREA 앱 설치</h3>
               <p className="text-muted text-sm mt-1">홈 화면에 추가하여 앱처럼 사용하세요</p>
             </div>
+            {/* Big CTA: open share sheet directly */}
+            <button onClick={handleShareSheet}
+              className="w-full bg-accent hover:bg-accent-hover text-white font-bold py-3.5 rounded-xl mb-5 flex items-center justify-center gap-2 transition-all shadow-md shadow-accent/20">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>
+              공유 시트 바로 열기
+            </button>
+            <p className="text-muted text-[11px] text-center mb-4">위 버튼이 안 보이면 아래 안내대로 진행해주세요</p>
             <div className="space-y-4">
               <div className="flex items-start gap-3">
                 <span className="w-7 h-7 rounded-full bg-accent text-white text-[13px] font-bold flex items-center justify-center shrink-0">1</span>
-                <p className="text-sub text-[14px]">하단 브라우저 메뉴에서 <span className="inline-flex items-center">
-                  <svg className="w-4 h-4 text-blue-500 mx-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>
-                </span> <strong>공유</strong> 버튼을 눌러주세요</p>
+                <p className="text-sub text-[14px] flex-1">
+                  하단 브라우저 메뉴에서{" "}
+                  <button onClick={handleShareSheet}
+                    className="inline-flex items-center gap-1 text-accent font-bold underline underline-offset-2 hover:text-accent-hover">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>
+                    공유 버튼
+                  </button>
+                  을 눌러주세요
+                </p>
               </div>
               <div className="flex items-start gap-3">
                 <span className="w-7 h-7 rounded-full bg-accent text-white text-[13px] font-bold flex items-center justify-center shrink-0">2</span>
