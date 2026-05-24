@@ -898,6 +898,17 @@ export default function AdminPage() {
                     </span>
                   </div>
                   <div className="md:col-span-2 flex gap-2 justify-end">
+                    <button onClick={async () => {
+                      const next = prompt("새 닉네임을 입력하세요", u.nickname || "");
+                      if (next === null) return;
+                      const trimmed = next.trim();
+                      if (trimmed.length < 2) { alert("닉네임은 2자 이상이어야 합니다."); return; }
+                      const { error } = await supabase.from("profiles").update({ nickname: trimmed }).eq("id", u.id);
+                      if (error) alert("변경 실패: " + error.message);
+                      else { alert("닉네임이 변경되었습니다."); refreshUsers(); }
+                    }} className="text-[12px] font-semibold px-3 py-1.5 rounded-lg bg-bg text-sub hover:bg-accent-light hover:text-accent transition-all">
+                      닉네임
+                    </button>
                     <button onClick={() => handleBlockUser(u.id, !u.is_blocked)}
                       className={`text-[12px] font-semibold px-3 py-1.5 rounded-lg transition-all ${u.is_blocked ? "bg-accent-light text-accent hover:bg-accent/20" : "bg-red-50 text-red-500 hover:bg-red-100"}`}>
                       {u.is_blocked ? "차단 해제" : "차단"}
