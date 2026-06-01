@@ -81,7 +81,9 @@ export default function EventDetailPage() {
           </div>
           <h1 className="text-3xl md:text-4xl font-extrabold text-surface mb-4 leading-tight">{event.title}</h1>
           {event.location && (
-            <p className="text-accent text-lg font-medium">📍 {event.location}</p>
+            <p className="text-accent text-lg font-medium inline-flex items-center gap-1.5">
+              <svg className="w-4 h-4 inline-block" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+              {event.location}</p>
           )}
         </div>
 

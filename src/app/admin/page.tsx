@@ -1061,7 +1061,7 @@ export default function AdminPage() {
                       <span className="text-muted text-[11px]">{inq.created_at?.slice(0, 16).replace("T", " ")}</span>
                     </div>
                     <p className="text-surface text-[15px] font-bold truncate">{inq.store_name}</p>
-                    {inq.store_address && <p className="text-sub text-[13px] mt-0.5 truncate">📍 {inq.store_address}</p>}
+                    {inq.store_address && <p className="text-sub text-[13px] mt-0.5 truncate inline-flex items-center gap-1"><svg className="w-3 h-3 shrink-0" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>{inq.store_address}</p>}
                     <p className="text-muted text-[12px] mt-0.5">신청자: {inq.name} · {inq.phone}</p>
                     {inq.message && <p className="text-sub text-[13px] mt-2 bg-[#f9f9f9] rounded-lg p-3 whitespace-pre-wrap">{inq.message}</p>}
                     {inq.store_images && inq.store_images.length > 0 && (
@@ -1108,7 +1108,7 @@ export default function AdminPage() {
                 <div className="px-5 py-4 flex items-start justify-between gap-4">
                   <Link href={`/board/${p.id}`} target="_blank" className="flex-1 min-w-0 hover:bg-[#f9f9f9] -m-2 p-2 rounded-lg transition-colors">
                     <div className="flex items-center gap-2 mb-1.5 flex-wrap">
-                      {p.status === "hidden" && <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-red-100 text-red-600">⚠️ 숨김</span>}
+                      {p.status === "hidden" && <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-red-100 text-red-600 inline-flex items-center gap-0.5"><svg className="w-2.5 h-2.5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L1 21h22L12 2zm1 14h-2v2h2v-2zm0-6h-2v4h2v-4z"/></svg>숨김</span>}
                       {p.pinned && <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-accent text-white"><svg className="w-3 h-3 inline-block align-middle mr-1" fill="currentColor" viewBox="0 0 24 24"><path d="M16 12V4h1V2H7v2h1v8l-2 2v2h5.2v6h1.6v-6H18v-2z"/></svg>공지</span>}
                       {p.category && <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-bg text-sub">{p.category}</span>}
                       {(p.report_count ?? 0) > 0 && <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-yellow-50 text-yellow-700"><svg className="w-3 h-3 inline-block align-middle mr-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L1 21h22L12 2zm1 14h-2v2h2v-2zm0-6h-2v4h2v-4z"/></svg>신고 {p.report_count}</span>}
@@ -1186,7 +1186,7 @@ export default function AdminPage() {
                   <Link href={`/market/${l.id}`} target="_blank" className="flex-1 min-w-0 hover:bg-[#f9f9f9] -m-2 p-2 rounded-lg transition-colors">
                     <div className="flex items-center gap-2 mb-1.5 flex-wrap">
                       {((l as MarketListing & { pinned_rank?: number }).pinned_rank || 0) > 0 && <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-accent text-white"><svg className="w-3 h-3 inline-block align-middle mr-1" fill="currentColor" viewBox="0 0 24 24"><path d="M16 12V4h1V2H7v2h1v8l-2 2v2h5.2v6h1.6v-6H18v-2z"/></svg>{(l as MarketListing & { pinned_rank?: number }).pinned_rank}</span>}
-                      {l.is_hidden && <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-red-100 text-red-600">⚠️ 숨김</span>}
+                      {l.is_hidden && <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-red-100 text-red-600 inline-flex items-center gap-0.5"><svg className="w-2.5 h-2.5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L1 21h22L12 2zm1 14h-2v2h2v-2zm0-6h-2v4h2v-4z"/></svg>숨김</span>}
                       {l.is_featured && <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-red-50 text-red-500"><svg className="w-3 h-3 inline-block align-middle mr-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l2.6 7.6h7.9l-6.4 4.7 2.4 7.7L12 17.3 5.5 22l2.4-7.7-6.4-4.7h7.9z"/></svg>추천</span>}
                       <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${
                         l.type === "매매" ? "bg-red-100 text-red-600" :

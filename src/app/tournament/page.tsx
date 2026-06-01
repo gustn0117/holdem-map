@@ -74,19 +74,31 @@ export default function TournamentPage() {
           <h2 className="text-surface text-lg md:text-xl font-black mb-4">이벤트 안내</h2>
           <div className="space-y-4 text-sub text-[14px] md:text-[15px] leading-relaxed">
             <div>
-              <p className="text-surface font-bold mb-1">🎯 참가 방법</p>
+              <p className="text-surface font-bold mb-1 inline-flex items-center gap-1.5">
+                <svg className="w-4 h-4 text-accent" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" /><circle cx="12" cy="12" r="5" /><circle cx="12" cy="12" r="1.5" fill="currentColor" /></svg>
+                참가 방법
+              </p>
               <p className="text-muted text-[13px] md:text-[14px]">홀덤맵KOREA 회원가입 후 아래 토너먼트 목록에서 원하는 대회를 선택하여 무료 참가 신청하세요.</p>
             </div>
             <div>
-              <p className="text-surface font-bold mb-1">🎁 신규 가입 혜택</p>
+              <p className="text-surface font-bold mb-1 inline-flex items-center gap-1.5">
+                <svg className="w-4 h-4 text-accent" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" /></svg>
+                신규 가입 혜택
+              </p>
               <p className="text-muted text-[13px] md:text-[14px]">가입 즉시 무료 참가권 1장 + 웰컴 쿠폰이 지급됩니다.</p>
             </div>
             <div>
-              <p className="text-surface font-bold mb-1">👥 친구 초대 혜택</p>
+              <p className="text-surface font-bold mb-1 inline-flex items-center gap-1.5">
+                <svg className="w-4 h-4 text-accent" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                친구 초대 혜택
+              </p>
               <p className="text-muted text-[13px] md:text-[14px]">친구를 초대할 때마다 추가 무료 참가권이 지급됩니다. 초대 링크는 마이페이지에서 확인하세요.</p>
             </div>
             <div>
-              <p className="text-surface font-bold mb-1">⚠️ 유의사항</p>
+              <p className="text-surface font-bold mb-1 inline-flex items-center gap-1.5">
+                <svg className="w-4 h-4 text-accent" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L1 21h22L12 2zm1 14h-2v2h2v-2zm0-6h-2v4h2v-4z"/></svg>
+                유의사항
+              </p>
               <div className="text-muted text-[13px] md:text-[14px] space-y-1.5">
                 <p>참가 신청은 매장별 정원 내에서 선착순으로 마감됩니다. 현장 확인을 위해 본인 신분증을 지참해 주세요.</p>
                 <p className="pt-1.5 border-t border-border-custom/60 mt-2 text-[12px] md:text-[13px]">※ 본 토너먼트는 홀덤맵KOREA와 무관하며, 각 업장에서 개별적으로 진행됩니다.</p>

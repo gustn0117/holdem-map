@@ -94,5 +94,6 @@ export function classifyFields(fields: Record<string, string>): FilterResult {
 /** alert 에 사용할 사람이 읽기 쉬운 메시지. */
 export function formatFilterMessage(result: FilterResult): string {
   if (result.action === "allow") return "";
-  return "⛔ 게시가 차단되었습니다.\n\n" + result.reasons.join("\n") + "\n\n수정 후 다시 등록해주세요.";
+  // alert() 텍스트라 SVG 불가 → 텍스트로 표기
+  return "[차단] 게시가 차단되었습니다.\n\n" + result.reasons.join("\n") + "\n\n수정 후 다시 등록해주세요.";
 }

@@ -154,7 +154,9 @@ function PostRow({ post, type, profile }: { post: any; type: "pinned" | "hot" | 
         <p className="md:hidden text-muted text-[11px] mt-0.5 inline-flex items-center gap-1">
           {rank && <span className={`inline-flex items-center gap-0.5 rounded px-1 ${rank.color}`}><RankInsignia rank={rank} size="xs" /></span>}
           <span>{displayName}</span>
-          <span>· {post.created_at?.slice(5, 10)} · 조회 {post.views} · 👍 {post.likes || 0}</span>
+          <span className="inline-flex items-center gap-0.5">· {post.created_at?.slice(5, 10)} · 조회 {post.views} ·
+            <svg className="w-3 h-3 inline-block" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5" /></svg>
+            {post.likes || 0}</span>
         </p>
       </div>
       <div className="hidden md:block md:col-span-2 text-sub text-[13px]">
