@@ -7,6 +7,7 @@ import Footer from "@/components/Footer";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
 import { useEvents } from "@/hooks/useData";
+import ImageUpload from "@/components/ImageUpload";
 
 interface LiveGame {
   id: string; store_id: string; store_name: string; category: string;
@@ -196,10 +197,14 @@ export default function LivePage() {
                 <textarea className={inputClass + " resize-none"} rows={2} value={form.description} onChange={e => set("description", e.target.value)} placeholder="추가 정보 (선택)" />
               </div>
 
-              <div>
-                <label className="text-sub text-sm font-semibold mb-1.5 block">포스터 이미지 URL <span className="text-muted font-normal">(선택)</span></label>
-                <input className={inputClass} value={form.image} onChange={e => set("image", e.target.value)} placeholder="https://..." />
-              </div>
+              <ImageUpload
+                value={form.image}
+                onChange={v => set("image", v)}
+                folder="live"
+                label="포스터 이미지"
+                hint="선택"
+                aspect="aspect-4/3"
+              />
 
               <div>
                 <label className="text-sub text-sm font-semibold mb-1.5 block">연락처 <span className="text-muted font-normal">(하나 이상 입력)</span></label>

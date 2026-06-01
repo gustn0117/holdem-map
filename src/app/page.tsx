@@ -43,6 +43,9 @@ export default function Home() {
 
   const postProfiles = useUserProfiles(posts.map(p => p.user_id));
   const sideBanners = banners.filter(b => b.position.startsWith("side")).sort((a, b) => a.position.localeCompare(b.position));
+  const mainBanner = banners.find(b => b.position === "main");
+  const mainBannerPC = mainBanner?.image;
+  const mainBannerMobile = mainBanner?.image_mobile || mainBanner?.image;
   const filteredStores = selectedRegion === "전체" ? stores : stores.filter((s) => s.region === selectedRegion);
   const recommendedStores = stores.filter((s) => s.is_recommended);
   const hotStores = stores.filter((s) => s.is_hot).slice(0, 5);
@@ -254,7 +257,7 @@ export default function Home() {
             <div className="relative h-25 overflow-hidden">
               <div className="absolute top-0 left-0 right-0 h-3 bg-linear-to-b from-white to-transparent z-10 pointer-events-none" />
               <div className="absolute bottom-0 left-0 right-0 h-3 bg-linear-to-t from-white to-transparent z-10 pointer-events-none" />
-              <div className="ticker-scroll px-4" style={{ animationDuration: "18s" }}>
+              <div className="ticker-scroll px-4">
                 {[...liveGames, ...liveGames].map((game, i) => (
                   <Link key={`${game.id}-${i}`} href="/live" className="flex items-center gap-3 py-2.5 group">
                     <span className={`w-10 h-10 rounded-lg flex items-center justify-center text-[10px] font-extrabold shrink-0 ${
@@ -348,10 +351,11 @@ export default function Home() {
           </div>
         </section>
 
-        {/* 5. 무료 토너먼트 배너 */}
+        {/* 5. 무료 토너먼트 배너 — 최상단 배너와 동일 */}
         <section className="px-4 py-5">
           <Link href="/tournament" className="block rounded-2xl overflow-hidden relative group">
-            <img src="/tournament-banner.jpeg" alt="무료 토너먼트 신청" className="w-full h-20 object-cover block group-hover:brightness-110 transition-all" />
+            <img src={mainBannerMobile || "/tournament-banner.jpeg"} alt="무료 토너먼트 신청"
+              className="w-full aspect-300/96 object-cover block group-hover:brightness-110 transition-all" />
           </Link>
         </section>
 
@@ -458,7 +462,8 @@ export default function Home() {
                 <img src="/event-banner.jpeg" alt="진행중인 이벤트" className="w-full h-28 object-cover block group-hover:brightness-110 transition-all" />
               </Link>
               <Link href="/tournament" className="block rounded-2xl overflow-hidden group">
-                <img src="/tournament-banner.jpeg" alt="무료 토너먼트 신청" className="w-full h-28 object-cover block group-hover:brightness-110 transition-all" />
+                <img src={mainBannerPC || "/tournament-banner.jpeg"} alt="무료 토너먼트 신청"
+                  className="w-full aspect-2800/260 object-cover block group-hover:brightness-110 transition-all" />
               </Link>
             </div>
           </div>
