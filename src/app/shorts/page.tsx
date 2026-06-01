@@ -62,12 +62,19 @@ export default function ShortsPage() {
 function ShortCard({ short, playing, onPlay }: { short: Short; playing: boolean; onPlay: () => void }) {
   const videoRef = useRef<HTMLVideoElement>(null);
 
+  const [muted, setMuted] = useState(false); // 사용자가 클릭해서 재생할 때는 소리 ON 기본
+
   useEffect(() => {
-    if (videoRef.current) {
-      if (playing) videoRef.current.play();
-      else { videoRef.current.pause(); videoRef.current.currentTime = 0; }
+    const v = videoRef.current;
+    if (!v) return;
+    if (playing) {
+      v.muted = muted;
+      v.play().catch(() => { v.muted = true; setMuted(true); v.play(); });
+    } else {
+      v.pause();
+      v.currentTime = 0;
     }
-  }, [playing]);
+  }, [playing, muted]);
 
   return (
     <div className="group cursor-pointer" onClick={onPlay}>
@@ -81,6 +88,19 @@ function ShortCard({ short, playing, onPlay }: { short: Short; playing: boolean;
           loop
           playsInline
         />
+
+        {/* Mute toggle (재생 중일 때만 노출) */}
+        {playing && (
+          <button onClick={e => { e.stopPropagation(); setMuted(m => !m); }}
+            className="absolute top-3 right-3 w-9 h-9 bg-black/60 hover:bg-black/80 text-white rounded-full flex items-center justify-center shadow-lg transition-colors z-10"
+            aria-label={muted ? "소리 켜기" : "소리 끄기"}>
+            {muted ? (
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" /><path strokeLinecap="round" strokeLinejoin="round" d="M17 14l5-5m0 5l-5-5" /></svg>
+            ) : (
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" /></svg>
+            )}
+          </button>
+        )}
 
         {/* Play overlay */}
         {!playing && (
