@@ -289,11 +289,10 @@ export default function Home() {
           )}
         </section>
 
-        {/* 이벤트 배너 — 토너 배너와 동일 비율 */}
+        {/* 이벤트 배너 */}
         <section className="px-4 pb-2 pt-3">
           <Link href="/banners" className="block rounded-2xl overflow-hidden relative group">
-            <img src="/event-banner.jpeg" alt="진행중인 이벤트"
-              className="w-full aspect-300/96 object-cover block group-hover:brightness-110 transition-all" />
+            <img src="/event-banner.jpeg" alt="진행중인 이벤트" className="w-full h-20 object-cover block group-hover:brightness-110 transition-all" />
           </Link>
         </section>
 
@@ -352,11 +351,11 @@ export default function Home() {
           </div>
         </section>
 
-        {/* 5. 무료 토너먼트 배너 — 최상단 배너와 동일 */}
+        {/* 5. 무료 토너먼트 배너 */}
         <section className="px-4 py-5">
           <Link href="/tournament" className="block rounded-2xl overflow-hidden relative group">
             <img src={mainBannerMobile || "/tournament-banner.jpeg"} alt="무료 토너먼트 신청"
-              className="w-full aspect-300/96 object-cover block group-hover:brightness-110 transition-all" />
+              className="w-full h-20 object-cover block group-hover:brightness-110 transition-all" />
           </Link>
         </section>
 
@@ -460,12 +459,11 @@ export default function Home() {
           <div className="max-w-350 mx-auto px-5 md:px-10 py-6">
             <div className="grid grid-cols-2 gap-4">
               <Link href="/banners" className="block rounded-2xl overflow-hidden group">
-                <img src="/event-banner.jpeg" alt="진행중인 이벤트"
-                  className="w-full aspect-2800/260 object-cover block group-hover:brightness-110 transition-all" />
+                <img src="/event-banner.jpeg" alt="진행중인 이벤트" className="w-full h-28 object-cover block group-hover:brightness-110 transition-all" />
               </Link>
               <Link href="/tournament" className="block rounded-2xl overflow-hidden group">
                 <img src={mainBannerPC || "/tournament-banner.jpeg"} alt="무료 토너먼트 신청"
-                  className="w-full aspect-2800/260 object-cover block group-hover:brightness-110 transition-all" />
+                  className="w-full h-28 object-cover block group-hover:brightness-110 transition-all" />
               </Link>
             </div>
           </div>
