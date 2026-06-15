@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { useAuth } from "@/contexts/AuthContext";
@@ -23,9 +24,11 @@ interface DealerProfile {
   experience: string; areas: string[]; bio: string; avatar: string;
   contact_kakao: string; contact_telegram: string; contact_phone: string;
   created_at: string; gender: string;
+  jobId?: string | null; // 상세 페이지로 라우팅할 jobs.id (없으면 클릭 비활성)
 }
 
 export default function JobsPage() {
+  const router = useRouter();
   const { user } = useAuth();
   const [tab, setTab] = useState<"dealer" | "jobs">("dealer");
   const [dealers, setDealers] = useState<DealerProfile[]>([]);
@@ -46,14 +49,20 @@ export default function JobsPage() {
       supabase.from("jobs").select("*").order("pinned_rank", { ascending: false }).order("created_at", { ascending: false }),
     ]).then(([{ data: d }, { data: j }]) => {
       const allJobs = j || [];
-      // 사용자별 최신 구직 글에서 role 가져오기 (profile.role은 시스템 권한 값이라 미사용)
+      // 사용자별 최신 구직 글에서 role/jobId 가져오기 (profile.role은 시스템 권한 값이라 미사용)
       const userIdToJobRole: Record<string, string> = {};
+      const userIdToJobId: Record<string, string> = {};
       allJobs.filter(job => job.type === "구직" && job.user_id).forEach(job => {
         if (!userIdToJobRole[job.user_id]) userIdToJobRole[job.user_id] = job.role || "딜러";
+        if (!userIdToJobId[job.user_id]) userIdToJobId[job.user_id] = job.id;
       });
       const profileDealers = (d || [])
         .filter(p => p.status !== "비노출")
-        .map(p => ({ ...p, role: userIdToJobRole[p.id] || p.user_type || "딜러" }));
+        .map(p => ({
+          ...p,
+          role: userIdToJobRole[p.id] || p.user_type || "딜러",
+          jobId: userIdToJobId[p.id] || null,
+        }));
 
       // Merge: 구직글 작성자도 딜러 카드에 포함 (profiles에 없는 경우)
       // [중요] 한 user_id가 여러 구직 글을 작성할 수 있으므로 카드 id는 job.id (글 ID) 사용해야 React key 충돌 방지
@@ -62,6 +71,7 @@ export default function JobsPage() {
         .filter(job => job.type === "구직" && !profileIds.has(job.user_id))
         .map(job => ({
           id: job.id,
+          jobId: job.id, // 본인 글이 곧 상세 페이지
           nickname: job.nickname,
           role: job.role || "딜러",
           status: "지금 가능",
@@ -308,7 +318,12 @@ export default function JobsPage() {
                 )}
               </div>
             ) : filteredDealers.map(d => (
-              <div key={d.id} className="bg-white rounded-2xl card-shadow overflow-hidden hover:card-shadow-hover transition-all flex md:flex-col">
+              <div key={d.id}
+                onClick={() => { if (d.jobId) router.push(`/jobs/${d.jobId}`); }}
+                role={d.jobId ? "link" : undefined}
+                tabIndex={d.jobId ? 0 : undefined}
+                onKeyDown={e => { if (d.jobId && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); router.push(`/jobs/${d.jobId}`); } }}
+                className={`bg-white rounded-2xl card-shadow overflow-hidden hover:card-shadow-hover transition-all flex md:flex-col ${d.jobId ? "cursor-pointer" : ""}`}>
                 {/* Photo / Placeholder */}
                 <div className="w-32 md:w-full md:aspect-square shrink-0 bg-bg overflow-hidden relative">
                   {d.avatar ? (
