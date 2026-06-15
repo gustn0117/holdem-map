@@ -65,17 +65,39 @@ export default function JobDetailPage() {
 
             <div className="p-6 md:p-8">
               {/* Badges */}
-              <div className="flex items-center gap-2 mb-4">
+              {/* Type label - 구인/구직 시각 강조 */}
+              <div className={`inline-flex items-center gap-1.5 mb-3 px-3 py-1.5 rounded-lg text-[11px] font-bold ${
+                job.type === "구인" ? "bg-blue-50 text-blue-600 border border-blue-200" : "bg-emerald-50 text-emerald-700 border border-emerald-200"
+              }`}>
+                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                  {job.type === "구인" ? (
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                  ) : (
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                  )}
+                </svg>
+                {job.type === "구인" ? "매장에서 사람을 구합니다" : "구직 신청 — 일자리 찾아요"}
+              </div>
+
+              <div className="flex items-center gap-2 mb-4 flex-wrap">
                 <span className={`text-[12px] font-bold px-3 py-1 rounded-full ${
-                  job.type === "구인" ? "bg-blue-50 text-blue-500 border border-blue-100" : "bg-accent/8 text-accent border border-accent/15"
-                }`}>
-                  {job.type}
-                </span>
-                <span className={`text-[12px] font-bold px-3 py-1 rounded-full ${
-                  job.role === "딜러" ? "bg-accent-light text-accent" : "bg-blue-50 text-blue-500"
+                  job.role === "딜러" ? "bg-emerald-100 text-emerald-700" :
+                  job.role === "서빙" ? "bg-amber-100 text-amber-700" :
+                  job.role === "매니저" ? "bg-indigo-100 text-indigo-700" :
+                  job.role === "플로어" ? "bg-rose-100 text-rose-700" :
+                  "bg-gray-100 text-gray-600"
                 }`}>
                   {job.role}
                 </span>
+                {job.gender && (
+                  <span className={`text-[12px] font-bold px-3 py-1 rounded-full ${
+                    job.gender === "남" ? "bg-blue-50 text-blue-600 border border-blue-100" :
+                    job.gender === "여" ? "bg-rose-50 text-rose-600 border border-rose-100" :
+                    "bg-gray-50 text-gray-600 border border-gray-100"
+                  }`}>
+                    {job.gender}
+                  </span>
+                )}
               </div>
 
               {/* Title */}
@@ -94,7 +116,7 @@ export default function JobDetailPage() {
                   </svg>
                   <div>
                     <p className="text-muted text-[12px] mb-0.5">경력</p>
-                    <p className="text-surface text-[15px] font-semibold">{job.experience}</p>
+                    <p className="text-surface text-[15px] font-semibold">{job.experience || "미입력"}</p>
                   </div>
                 </div>
 
@@ -104,20 +126,59 @@ export default function JobDetailPage() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                   </svg>
                   <div>
-                    <p className="text-muted text-[12px] mb-0.5">희망 지역</p>
+                    <p className="text-muted text-[12px] mb-0.5">{job.type === "구인" ? "근무 지역" : "희망 지역"}</p>
                     <div className="flex flex-wrap gap-1.5 mt-1">
-                      {job.areas.map(area => (
+                      {(job.areas || []).map(area => (
                         <span key={area} className="text-[12px] bg-white border border-border-custom text-sub px-2.5 py-0.5 rounded-lg">{area}</span>
                       ))}
                     </div>
                   </div>
                 </div>
+
+                {/* 급여 (있을 때만) */}
+                {job.salary && (
+                  <div className="flex items-start gap-3 bg-[#f9f9f9] rounded-xl p-4">
+                    <svg className="w-5 h-5 text-accent mt-0.5 shrink-0" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <div>
+                      <p className="text-muted text-[12px] mb-0.5">급여</p>
+                      <p className="text-surface text-[15px] font-semibold">{job.salary}</p>
+                    </div>
+                  </div>
+                )}
+
+                {/* 근무 시간 (있을 때만) */}
+                {job.work_hours && (
+                  <div className="flex items-start gap-3 bg-[#f9f9f9] rounded-xl p-4">
+                    <svg className="w-5 h-5 text-accent mt-0.5 shrink-0" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <div>
+                      <p className="text-muted text-[12px] mb-0.5">근무 시간</p>
+                      <p className="text-surface text-[15px] font-semibold">{job.work_hours}</p>
+                    </div>
+                  </div>
+                )}
+
+                {/* 모집 인원 (있을 때만) */}
+                {job.headcount && (
+                  <div className="flex items-start gap-3 bg-[#f9f9f9] rounded-xl p-4">
+                    <svg className="w-5 h-5 text-accent mt-0.5 shrink-0" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                    <div>
+                      <p className="text-muted text-[12px] mb-0.5">모집 인원</p>
+                      <p className="text-surface text-[15px] font-semibold">{job.headcount}</p>
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Message */}
               {job.message && (
                 <div className="mb-6">
-                  <h3 className="text-surface font-bold text-[15px] mb-2">소개</h3>
+                  <h3 className="text-surface font-bold text-[15px] mb-2">{job.type === "구인" ? "상세 내용" : "자기 소개"}</h3>
                   <p className="text-sub text-[15px] leading-relaxed whitespace-pre-wrap bg-[#f9f9f9] rounded-xl p-4">{job.message}</p>
                 </div>
               )}
