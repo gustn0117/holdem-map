@@ -74,25 +74,40 @@ export default function TournamentPage() {
           <h2 className="text-surface text-lg md:text-xl font-black mb-4">이벤트 안내</h2>
           <div className="space-y-4 text-sub text-[14px] md:text-[15px] leading-relaxed">
             <div>
-              <p className="text-surface font-bold mb-1 inline-flex items-center gap-1.5">
+              <p className="text-surface font-bold mb-3 inline-flex items-center gap-1.5">
                 <svg className="w-4 h-4 text-accent" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" /><circle cx="12" cy="12" r="5" /><circle cx="12" cy="12" r="1.5" fill="currentColor" /></svg>
                 참가 방법
               </p>
-              <p className="text-muted text-[13px] md:text-[14px]">홀덤맵KOREA 회원가입 후 아래 토너먼트 목록에서 원하는 대회를 선택하여 무료 참가 신청하세요.</p>
-            </div>
-            <div>
-              <p className="text-surface font-bold mb-1 inline-flex items-center gap-1.5">
-                <svg className="w-4 h-4 text-accent" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" /></svg>
-                신규 가입 혜택
-              </p>
-              <p className="text-muted text-[13px] md:text-[14px]">가입 즉시 무료 참가권 1장 + 웰컴 쿠폰이 지급됩니다.</p>
-            </div>
-            <div>
-              <p className="text-surface font-bold mb-1 inline-flex items-center gap-1.5">
-                <svg className="w-4 h-4 text-accent" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
-                친구 초대 혜택
-              </p>
-              <p className="text-muted text-[13px] md:text-[14px]">친구를 초대할 때마다 추가 무료 참가권이 지급됩니다. 초대 링크는 마이페이지에서 확인하세요.</p>
+              <div className="space-y-3">
+                {/* Step 1 */}
+                <div className="flex gap-3">
+                  <span className="shrink-0 w-7 h-7 rounded-full bg-accent text-white text-[13px] font-bold flex items-center justify-center">1</span>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sub text-[14px] md:text-[15px] mb-2">
+                      <strong className="text-surface">네이버 카페 가입</strong> 후 <strong className="text-surface">홀덤 무료토너 신청 게시판</strong>에 글 작성
+                    </p>
+                    <a href="https://cafe.naver.com/incheonholdem" target="_blank" rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 bg-[#03c75a] hover:bg-[#029f4a] text-white font-bold text-[13px] px-3 py-1.5 rounded-lg transition-all break-all">
+                      <span className="font-black text-[14px] leading-none">N</span>
+                      네이버 카페 바로가기
+                    </a>
+                  </div>
+                </div>
+                {/* Step 2 */}
+                <div className="flex gap-3">
+                  <span className="shrink-0 w-7 h-7 rounded-full bg-accent text-white text-[13px] font-bold flex items-center justify-center">2</span>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sub text-[14px] md:text-[15px] mb-2">
+                      <strong className="text-surface">카톡 오픈채팅 참여</strong> 후 방장에게 <strong className="text-surface">카페 닉네임</strong> 전달하면 <strong className="text-accent">무료토너 신청권 1장 지급</strong>
+                    </p>
+                    <a href="https://open.kakao.com/o/pcew2Eoi" target="_blank" rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 bg-[#FEE500] hover:bg-[#e6cf00] text-[#3C1E1E] font-bold text-[13px] px-3 py-1.5 rounded-lg transition-all break-all">
+                      <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3C6.477 3 2 6.463 2 10.691c0 2.72 1.8 5.108 4.516 6.467-.197.735-.714 2.666-.818 3.08-.128.512.188.504.395.367.163-.108 2.592-1.76 3.637-2.477.733.104 1.49.16 2.27.16 5.523 0 10-3.463 10-7.691S17.523 3 12 3z"/></svg>
+                      카카오톡 오픈채팅 입장
+                    </a>
+                  </div>
+                </div>
+              </div>
             </div>
             <div>
               <p className="text-surface font-bold mb-1 inline-flex items-center gap-1.5">
