@@ -29,7 +29,7 @@ export default function TournamentPage() {
   const handleApply = async (eventId: string) => {
     if (!user) return;
     if (tickets <= 0) {
-      alert("보유한 무료 토너권이 없습니다. 친구를 초대하거나 이벤트에 참여해 추가 토너권을 받으세요.");
+      alert("보유한 무료 토너권이 없습니다. 네이버 카페 · 카톡 오픈채팅을 통해 신청 후 지급받아 주세요.");
       return;
     }
     const { error } = await supabase.from("tournament_applications").insert({ user_id: user.id, event_id: eventId });
@@ -51,21 +51,13 @@ export default function TournamentPage() {
           <div className="relative p-8 md:p-12 text-white">
             <span className="inline-block text-[10px] md:text-[11px] font-black text-yellow-300 bg-yellow-400/15 px-3 py-1 rounded-full border border-yellow-400/30 uppercase tracking-widest mb-3">FREE TOURNAMENT</span>
             <h1 className="text-3xl md:text-4xl font-black mb-3 leading-tight">무료 토너먼트 신청</h1>
-            <p className="text-white/85 text-[15px] md:text-lg mb-6">가입만 하면 무료 참가 · 친구 초대하면 추가 참가권 지급</p>
-            <div className="grid grid-cols-3 gap-2 md:gap-3">
-              <div className="bg-white/15 backdrop-blur rounded-xl px-3 md:px-5 py-2.5 md:py-3 border border-white/20">
-                <p className="text-white/70 text-[10px] md:text-[11px] mb-0.5">참가비</p>
-                <p className="text-white text-[15px] md:text-lg font-black">무료</p>
+            <p className="text-white/85 text-[15px] md:text-lg">네이버 카페 가입 후 카톡 오픈채팅 참여하면 무료토너 신청권 지급</p>
+            {user && (
+              <div className="mt-5 inline-flex items-center gap-2 bg-white/15 backdrop-blur rounded-xl px-4 py-2.5 border border-white/20">
+                <span className="text-white/70 text-[12px]">내 보유 토너권</span>
+                <span className="text-white text-[16px] font-black">{tickets}장</span>
               </div>
-              <div className="bg-white/15 backdrop-blur rounded-xl px-3 md:px-5 py-2.5 md:py-3 border border-white/20">
-                <p className="text-white/70 text-[10px] md:text-[11px] mb-0.5">{user ? "내 보유 토너권" : "신규 가입 혜택"}</p>
-                <p className="text-white text-[15px] md:text-lg font-black">{user ? `${tickets}장` : "1장 지급"}</p>
-              </div>
-              <div className="bg-white/15 backdrop-blur rounded-xl px-3 md:px-5 py-2.5 md:py-3 border border-white/20">
-                <p className="text-white/70 text-[10px] md:text-[11px] mb-0.5">친구 초대시</p>
-                <p className="text-white text-[13px] md:text-lg font-black">+1장 지급</p>
-              </div>
-            </div>
+            )}
           </div>
         </div>
 
@@ -126,8 +118,8 @@ export default function TournamentPage() {
 
         {!user && (
           <div className="bg-white rounded-2xl card-shadow p-6 md:p-8 mb-8 text-center">
-            <h2 className="text-xl font-black text-surface mb-2">회원가입하고 무료로 참가하세요!</h2>
-            <p className="text-muted text-[14px] mb-5">가입 시 무료 참가권 + 쿠폰이 지급됩니다</p>
+            <h2 className="text-xl font-black text-surface mb-2">홀덤맵KOREA에 가입하고 토너 참가하세요!</h2>
+            <p className="text-muted text-[14px] mb-5">무료 토너 참가는 위 안내된 네이버 카페 · 카톡 오픈채팅을 통해 신청 가능합니다</p>
             <div className="flex gap-3 justify-center">
               <Link href="/register" className="bg-accent hover:bg-accent-hover text-white font-bold px-8 py-3 rounded-xl transition-all">회원가입</Link>
               <Link href="/login" className="border border-border-custom text-sub font-semibold px-8 py-3 rounded-xl hover:bg-[#f5f6f8] transition-all">로그인</Link>
