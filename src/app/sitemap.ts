@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { supabase } from "@/lib/supabase";
+import { regionData } from "@/data/areas";
 
 const SITE_URL = "https://holdemmapkorea.com";
 
@@ -20,16 +21,28 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${SITE_URL}/trade`, changeFrequency: "daily", priority: 0.6 },
     { url: `${SITE_URL}/search`, changeFrequency: "monthly", priority: 0.4 },
     { url: `${SITE_URL}/recommended`, changeFrequency: "weekly", priority: 0.5 },
+    { url: `${SITE_URL}/region`, changeFrequency: "weekly", priority: 0.8 },
+    { url: `${SITE_URL}/blog`, changeFrequency: "daily", priority: 0.7 },
     { url: `${SITE_URL}/privacy`, changeFrequency: "yearly", priority: 0.2 },
     { url: `${SITE_URL}/terms`, changeFrequency: "yearly", priority: 0.2 },
   ];
 
+  const regionRoutes: MetadataRoute.Sitemap = Object.entries(regionData).flatMap(([city, districts]) => [
+    { url: `${SITE_URL}/region/${encodeURIComponent(city)}`, changeFrequency: "weekly" as const, priority: 0.7 },
+    ...districts.map(d => ({
+      url: `${SITE_URL}/region/${encodeURIComponent(city)}/${encodeURIComponent(d)}`,
+      changeFrequency: "weekly" as const,
+      priority: 0.6,
+    })),
+  ]);
+
   try {
-    const [storesRes, eventsRes, postsRes, jobsRes] = await Promise.all([
+    const [storesRes, eventsRes, postsRes, jobsRes, blogRes] = await Promise.all([
       supabase.from("stores").select("id, updated_at").limit(5000),
       supabase.from("events").select("id, updated_at, date").limit(5000),
       supabase.from("posts").select("id, updated_at, created_at").eq("status", "approved").limit(5000),
       supabase.from("jobs").select("id, updated_at, created_at").limit(5000),
+      supabase.from("blog_posts").select("slug, updated_at, created_at").eq("published", true).limit(5000),
     ]);
 
     const stores = (storesRes.data || []).map((s: { id: string; updated_at?: string }) => ({
@@ -60,8 +73,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.6,
     }));
 
-    return [...staticRoutes, ...stores, ...events, ...posts, ...jobs];
+    const blogPosts = (blogRes.data || []).map((b: { slug: string; updated_at?: string; created_at?: string }) => ({
+      url: `${SITE_URL}/blog/${encodeURIComponent(b.slug)}`,
+      lastModified: b.updated_at ? new Date(b.updated_at) : (b.created_at ? new Date(b.created_at) : undefined),
+      changeFrequency: "weekly" as const,
+      priority: 0.7,
+    }));
+
+    return [...staticRoutes, ...regionRoutes, ...stores, ...events, ...posts, ...jobs, ...blogPosts];
   } catch {
-    return staticRoutes;
+    return [...staticRoutes, ...regionRoutes];
   }
 }

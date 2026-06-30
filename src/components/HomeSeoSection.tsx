@@ -1,19 +1,15 @@
 import Link from "next/link";
+import JsonLdScript from "@/components/JsonLd";
+import { faqSchema } from "@/lib/schema";
 
-const REGIONS = [
-  { name: "서울", slug: "seoul" },
-  { name: "인천", slug: "incheon" },
-  { name: "부산", slug: "busan" },
-  { name: "대구", slug: "daegu" },
-  { name: "대전", slug: "daejeon" },
-  { name: "광주", slug: "gwangju" },
-  { name: "수원", slug: "suwon" },
-  { name: "성남", slug: "seongnam" },
-  { name: "고양", slug: "goyang" },
-  { name: "용인", slug: "yongin" },
-  { name: "청주", slug: "cheongju" },
-  { name: "천안", slug: "cheonan" },
+const FAQS: Array<{ q: string; a: string }> = [
+  { q: "홀덤펍 이용은 합법인가요?", a: "국내 홀덤펍은 사행행위가 아닌 스포츠·여가 목적의 매장으로 운영되며, 현금 판돈이 오가지 않는 방식으로 운영됩니다. 자세한 운영 기준은 각 매장 안내를 따라주세요." },
+  { q: "홀덤 토너먼트 참가는 어떻게 하나요?", a: "홀덤맵코리아의 토너먼트 페이지에서 일정을 확인하고 매장별 선착순 신청을 진행하실 수 있습니다. 무료 참가권 이벤트는 가입 안내를 참고하세요." },
+  { q: "홀덤 딜러가 되려면 어떻게 해야 하나요?", a: "대부분의 매장은 자체 교육 프로그램(2~4주)을 운영하며, 신입 딜러도 채용합니다. 구인구직 페이지에서 교육 가능·신입 가능 공고를 확인하세요." },
+  { q: "홀덤펍 입장 조건은 어떻게 되나요?", a: "만 19세 이상 성인부터 입장 가능하며, 신분증 확인이 필수입니다. 일부 매장은 드레스코드나 회원제로 운영되니 방문 전 매장에 문의해 주세요." },
 ];
+
+const REGIONS = ["서울", "경기", "인천", "부산", "대구", "대전", "광주", "울산", "강원", "충북", "충남", "전북", "전남", "경북", "경남", "제주"];
 
 const KEYWORDS = [
   "강남 홀덤펍", "홍대 홀덤펍", "송도 홀덤펍", "부평 홀덤펍",
@@ -86,10 +82,10 @@ export default function HomeSeoSection() {
         <div className="mb-8">
           <h3 className="text-surface text-[16px] md:text-[17px] font-bold mb-3">지역별 홀덤펍 바로가기</h3>
           <div className="flex flex-wrap gap-2">
-            {REGIONS.map(r => (
-              <Link key={r.slug} href={`/map?region=${encodeURIComponent(r.name)}`}
-                className="inline-flex items-center gap-1 bg-[#f5f6f8] hover:bg-accent/10 hover:text-accent text-sub text-[13px] font-semibold px-3 py-1.5 rounded-full transition-colors">
-                {r.name} 홀덤펍
+            {REGIONS.map(name => (
+              <Link key={name} href={`/region/${encodeURIComponent(name)}`}
+                className="inline-flex items-center gap-1 bg-bg hover:bg-accent/10 hover:text-accent text-sub text-[13px] font-semibold px-3 py-1.5 rounded-full transition-colors">
+                {name} 홀덤펍
               </Link>
             ))}
           </div>
@@ -110,24 +106,15 @@ export default function HomeSeoSection() {
         <div className="bg-[#fafbfc] border border-border-custom rounded-2xl p-5 md:p-6">
           <h3 className="text-surface text-[16px] md:text-[17px] font-bold mb-3">자주 묻는 질문 (FAQ)</h3>
           <div className="space-y-4 text-[14px] leading-relaxed">
-            <div>
-              <p className="text-surface font-bold mb-1">Q. 홀덤펍 이용은 합법인가요?</p>
-              <p className="text-muted">국내 홀덤펍은 사행행위가 아닌 스포츠·여가 목적의 매장으로 운영되며, 현금 판돈이 오가지 않는 방식으로 운영됩니다. 자세한 운영 기준은 각 매장 안내를 따라주세요.</p>
-            </div>
-            <div>
-              <p className="text-surface font-bold mb-1">Q. 홀덤 토너먼트 참가는 어떻게 하나요?</p>
-              <p className="text-muted">홀덤맵코리아의 <Link href="/tournament" className="text-accent underline">토너먼트 페이지</Link>에서 일정을 확인하고 매장별 선착순 신청을 진행하실 수 있습니다. 무료 참가권 이벤트는 가입 안내를 참고하세요.</p>
-            </div>
-            <div>
-              <p className="text-surface font-bold mb-1">Q. 홀덤 딜러가 되려면 어떻게 해야 하나요?</p>
-              <p className="text-muted">대부분의 매장은 자체 교육 프로그램(2~4주)을 운영하며, 신입 딜러도 채용합니다. <Link href="/jobs" className="text-accent underline">구인구직 페이지</Link>에서 교육 가능·신입 가능 공고를 확인하세요.</p>
-            </div>
-            <div>
-              <p className="text-surface font-bold mb-1">Q. 홀덤펍 입장 조건은 어떻게 되나요?</p>
-              <p className="text-muted">만 19세 이상 성인부터 입장 가능하며, 신분증 확인이 필수입니다. 일부 매장은 드레스코드나 회원제로 운영되니 방문 전 매장에 문의해 주세요.</p>
-            </div>
+            {FAQS.map((f, i) => (
+              <div key={i}>
+                <p className="text-surface font-bold mb-1">Q. {f.q}</p>
+                <p className="text-muted">{f.a}</p>
+              </div>
+            ))}
           </div>
         </div>
+        <JsonLdScript data={faqSchema(FAQS)} />
 
         <p className="text-muted text-[12px] mt-6 leading-relaxed">
           홀덤맵코리아는 매장 정보·토너먼트·구인구직 정보를 공유하는 정보 제공 플랫폼이며,

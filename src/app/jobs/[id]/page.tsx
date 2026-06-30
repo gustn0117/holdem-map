@@ -8,6 +8,8 @@ import Footer from "@/components/Footer";
 import { supabase } from "@/lib/supabase";
 import { Job } from "@/types";
 import { sanitizeHtml, isHtml, plainTextToHtml } from "@/lib/sanitize";
+import JsonLdScript from "@/components/JsonLd";
+import { jobPostingSchema, breadcrumbSchema } from "@/lib/schema";
 
 export default function JobDetailPage() {
   const { id } = useParams();
@@ -45,8 +47,23 @@ export default function JobDetailPage() {
     </div>
   );
 
+  const schemas = [
+    jobPostingSchema({
+      id: job.id, type: job.type, role: job.role, store_name: job.store_name,
+      areas: job.areas, message: job.message, experience: job.experience,
+      gender: job.gender, salary: job.salary, work_hours: job.work_hours,
+      headcount: job.headcount, created_at: job.created_at, photo: job.photo,
+    }),
+    breadcrumbSchema([
+      { name: "홈", path: "/" },
+      { name: "구인구직", path: "/jobs" },
+      { name: `${job.areas?.[0] || ""} ${job.role || "딜러"} ${job.type}`, path: `/jobs/${job.id}` },
+    ]),
+  ].filter(Boolean);
+
   return (
     <div className="flex flex-col min-h-screen pb-16 md:pb-0">
+      <JsonLdScript data={schemas as Parameters<typeof JsonLdScript>[0]["data"]} />
       <Header />
       <main className="w-full mx-auto px-5 md:px-10 py-8 flex-1" style={{ maxWidth: "1400px" }}>
         <div className="max-w-2xl mx-auto">

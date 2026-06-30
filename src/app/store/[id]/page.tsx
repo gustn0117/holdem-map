@@ -7,8 +7,10 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import StoreMap from "@/components/StoreMap";
 import LinkifyText from "@/components/LinkifyText";
+import JsonLdScript from "@/components/JsonLd";
 import { getStore, getEventsByStore } from "@/lib/api";
 import { Store, Event } from "@/types";
+import { localBusinessSchema, breadcrumbSchema, eventSchema } from "@/lib/schema";
 
 export default function StorePage() {
   const params = useParams();
@@ -28,8 +30,27 @@ export default function StorePage() {
   if (loading) return <div className="flex flex-col min-h-screen pb-16 md:pb-0"><Header /><div className="flex-1 flex items-center justify-center"><div className="w-8 h-8 border-2 border-accent/30 border-t-accent rounded-full animate-spin" /></div></div>;
   if (!store) return <div className="flex flex-col min-h-screen pb-16 md:pb-0"><Header /><div className="flex-1 flex items-center justify-center text-center"><div><h1 className="text-2xl font-bold text-surface mb-3">매장을 찾을 수 없습니다</h1><Link href="/" className="text-accent text-base">홈으로 돌아가기</Link></div></div><Footer /></div>;
 
+  const schemas = [
+    localBusinessSchema({
+      id: store.id, name: store.name, address: store.address, region: store.region,
+      phone: store.phone, hours: store.hours, image: store.images?.[0],
+      description: store.description, lat: store.lat, lng: store.lng,
+    }),
+    breadcrumbSchema([
+      { name: "홈", path: "/" },
+      { name: "매장 지도", path: "/map" },
+      { name: store.name, path: `/store/${store.id}` },
+    ]),
+    ...storeEvents.map(e => eventSchema({
+      id: e.id, title: e.title, store_name: store.name, date: e.date,
+      time: e.time, end_date: e.end_date, prize: e.prize, image: e.image,
+      description: e.description, store_address: store.address,
+    })),
+  ];
+
   return (
     <div className="flex flex-col min-h-screen pb-16 md:pb-0">
+      <JsonLdScript data={schemas} />
       <Header />
       <main className="flex-1 max-w-4xl mx-auto px-4 py-10 w-full">
         {/* Breadcrumb */}

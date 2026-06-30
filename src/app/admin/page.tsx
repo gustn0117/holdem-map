@@ -110,6 +110,13 @@ export default function AdminPage() {
   const [authed, setAuthed] = useState(false);
   const [pw, setPw] = useState("");
   const [pwError, setPwError] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== "undefined" && sessionStorage.getItem("hm_admin") === ADMIN_PASSWORD) {
+      setAuthed(true);
+    }
+  }, []);
+
   const [activeTab, setActiveTab] = useState<Tab>("stores");
   const [modal, setModal] = useState<{ type: "create" | "edit"; tab: Tab; data?: Record<string, unknown> } | null>(null);
   const [saving, setSaving] = useState(false);
@@ -400,6 +407,7 @@ export default function AdminPage() {
     if (pw === ADMIN_PASSWORD) {
       setAuthed(true);
       setPwError(false);
+      try { sessionStorage.setItem("hm_admin", ADMIN_PASSWORD); } catch {}
     } else {
       setPwError(true);
     }
@@ -641,8 +649,9 @@ export default function AdminPage() {
             <span className="text-xs text-muted bg-gray-100 px-2.5 py-1 rounded-lg font-semibold">ADMIN</span>
           </div>
           <div className="flex items-center gap-4">
+            <Link href="/admin/blog" className="text-muted hover:text-accent text-sm font-semibold transition-colors">블로그 관리</Link>
             <Link href="/" className="text-muted hover:text-accent text-sm transition-colors">사이트 보기</Link>
-            <button onClick={() => setAuthed(false)} className="text-muted hover:text-red text-sm transition-colors">로그아웃</button>
+            <button onClick={() => { try { sessionStorage.removeItem("hm_admin"); } catch {} ; setAuthed(false); }} className="text-muted hover:text-red text-sm transition-colors">로그아웃</button>
           </div>
         </div>
       </header>

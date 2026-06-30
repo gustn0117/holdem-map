@@ -7,6 +7,8 @@ import Footer from "@/components/Footer";
 import { useAuth } from "@/contexts/AuthContext";
 import { useEvents } from "@/hooks/useData";
 import { supabase } from "@/lib/supabase";
+import JsonLdScript from "@/components/JsonLd";
+import { eventSchema, breadcrumbSchema } from "@/lib/schema";
 
 export default function TournamentPage() {
   const { user, profile, refreshProfile } = useAuth();
@@ -40,8 +42,26 @@ export default function TournamentPage() {
     if (refreshProfile) await refreshProfile();
   };
 
+  const todayMsSchema = new Date().setHours(0, 0, 0, 0);
+  const schemas = [
+    breadcrumbSchema([
+      { name: "홈", path: "/" },
+      { name: "무료 토너먼트", path: "/tournament" },
+    ]),
+    ...events
+      .filter(e => !e.submitted_by)
+      .filter(e => new Date(e.end_date || e.date).getTime() >= todayMsSchema)
+      .slice(0, 50)
+      .map(e => eventSchema({
+        id: e.id, title: e.title, store_name: e.store_name, date: e.date,
+        time: e.time, end_date: e.end_date, prize: e.prize, image: e.image,
+        description: e.description,
+      })),
+  ];
+
   return (
     <div className="flex flex-col min-h-screen pb-16 md:pb-0">
+      <JsonLdScript data={schemas} />
       <Header />
       <main className="w-full mx-auto px-5 md:px-10 py-8 flex-1" style={{ maxWidth: "1400px" }}>
         {/* Hero Banner */}
@@ -122,7 +142,7 @@ export default function TournamentPage() {
             <p className="text-muted text-[14px] mb-5">무료 토너 참가는 위 안내된 네이버 카페 · 카톡 오픈채팅을 통해 신청 가능합니다</p>
             <div className="flex gap-3 justify-center">
               <Link href="/register" className="bg-accent hover:bg-accent-hover text-white font-bold px-8 py-3 rounded-xl transition-all">회원가입</Link>
-              <Link href="/login" className="border border-border-custom text-sub font-semibold px-8 py-3 rounded-xl hover:bg-[#f5f6f8] transition-all">로그인</Link>
+              <Link href="/login" className="border border-border-custom text-sub font-semibold px-8 py-3 rounded-xl hover:bg-bg transition-all">로그인</Link>
             </div>
           </div>
         )}

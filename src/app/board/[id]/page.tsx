@@ -12,6 +12,8 @@ import { classifyContent, formatFilterMessage } from "@/lib/contentFilter";
 import RankInsignia from "@/components/RankInsignia";
 import { useUserProfiles } from "@/hooks/useUserRanks";
 import { sanitizeHtml, isHtml, plainTextToHtml } from "@/lib/sanitize";
+import JsonLdScript from "@/components/JsonLd";
+import { articleSchema, breadcrumbSchema } from "@/lib/schema";
 
 interface Post {
   id: string; user_id: string; nickname: string; title: string; content: string;
@@ -132,8 +134,22 @@ export default function BoardDetailPage() {
   const postRank = postProfile?.rank;
   const postDisplayName = postProfile?.nickname || post.nickname;
 
+  const schemas = [
+    articleSchema({
+      id: post.id, title: post.title, content: post.content,
+      nickname: post.nickname, created_at: post.created_at,
+      image: post.image,
+    }),
+    breadcrumbSchema([
+      { name: "홈", path: "/" },
+      { name: "커뮤니티", path: "/board" },
+      { name: post.title, path: `/board/${post.id}` },
+    ]),
+  ];
+
   return (
     <div className="flex flex-col min-h-screen pb-16 md:pb-0">
+      <JsonLdScript data={schemas} />
       <Header />
       <main className="w-full mx-auto px-5 md:px-10 py-8 flex-1" style={{ maxWidth: "1400px" }}>
         <div className="max-w-3xl mx-auto">

@@ -99,3 +99,20 @@ export interface Notice {
   pinned_rank?: number;
   created_at?: string;
 }
+
+export interface BlogPost {
+  id: string;
+  slug: string;
+  title: string;
+  content: string;
+  excerpt?: string | null;
+  cover_image?: string | null;
+  tags?: string[] | null;
+  category?: string | null;
+  author_nickname?: string | null;
+  author_id?: string | null;
+  published: boolean;
+  views?: number;
+  created_at?: string;
+  updated_at?: string;
+}
