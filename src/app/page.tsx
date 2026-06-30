@@ -7,6 +7,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import StoreCard from "@/components/StoreCard";
 import RankInsignia from "@/components/RankInsignia";
+import HomeSeoSection from "@/components/HomeSeoSection";
 import { useStores, useEvents, useNotices } from "@/hooks/useData";
 import { useUserProfiles } from "@/hooks/useUserRanks";
 import { getBanners, getShorts, getJobs } from "@/lib/api";
@@ -652,6 +653,8 @@ export default function Home() {
           </div>
         </section>
       </div>
+
+      <HomeSeoSection />
 
       <Footer />
     </div>
