@@ -9,8 +9,10 @@ import { createJob } from "@/lib/api";
 import { regionData, allRegions } from "@/data/areas";
 import Select from "@/components/Select";
 import JobAvatarPicker from "@/components/JobAvatarPicker";
+import RichEditor from "@/components/RichEditor";
 import { useAuth } from "@/contexts/AuthContext";
 import { classifyContent, formatFilterMessage } from "@/lib/contentFilter";
+import { sanitizeHtml } from "@/lib/sanitize";
 
 export default function JobWritePage() {
   return (
@@ -108,7 +110,8 @@ function JobWritePageInner() {
       alert("연락처를 하나 이상 입력해주세요. (카카오톡, 텔레그램, 전화번호 중 택1)");
       return;
     }
-    const filter = classifyContent(`${form.experience}\n${form.message}\n${form.store_name}`);
+    const plainMessage = form.message.replace(/<[^>]+>/g, " ").replace(/&nbsp;/g, " ").replace(/\s+/g, " ").trim();
+    const filter = classifyContent(`${form.experience}\n${plainMessage}\n${form.store_name}`);
     if (filter.action === "block") {
       alert(formatFilterMessage(filter));
       return;
@@ -125,7 +128,7 @@ function JobWritePageInner() {
         contact_type: "복수",
         contact: contacts.join(" / "),
         photo: form.photo,
-        message: form.message,
+        message: sanitizeHtml(form.message),
         store_name: form.store_name,
         user_id: user.id,
       });
@@ -317,7 +320,14 @@ function JobWritePageInner() {
           {/* Message */}
           <div>
             <label className="text-sub text-sm font-semibold block mb-2">{form.type === "구인" ? "상세 내용" : "자기소개"} <span className="text-muted font-normal">(선택)</span></label>
-            <textarea className={inputClass + " resize-none"} rows={4} value={form.message} onChange={e => set("message", e.target.value)} placeholder={form.type === "구인" ? "근무 조건, 급여, 근무 시간 등" : "간단한 자기소개를 작성해주세요"} />
+            <RichEditor
+              value={form.message}
+              onChange={v => set("message", v)}
+              placeholder={form.type === "구인" ? "근무 조건, 급여, 근무 시간 등을 자유롭게 작성하세요" : "간단한 자기소개를 작성해주세요"}
+              minHeight={180}
+              maxChars={5000}
+              storageFolder="jobs"
+            />
           </div>
 
           {/* Submit */}

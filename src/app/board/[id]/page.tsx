@@ -11,6 +11,7 @@ import { addPoints } from "@/lib/rank";
 import { classifyContent, formatFilterMessage } from "@/lib/contentFilter";
 import RankInsignia from "@/components/RankInsignia";
 import { useUserProfiles } from "@/hooks/useUserRanks";
+import { sanitizeHtml, isHtml, plainTextToHtml } from "@/lib/sanitize";
 
 interface Post {
   id: string; user_id: string; nickname: string; title: string; content: string;
@@ -164,7 +165,8 @@ export default function BoardDetailPage() {
                 <span>조회 {post.views}</span>
                 {isAuthor && <button onClick={handleDelete} className="ml-auto text-red-400 hover:text-red-500 text-[12px] font-semibold">삭제</button>}
               </div>
-              <div className="py-6 text-sub text-[15px] leading-relaxed whitespace-pre-wrap min-h-[200px]">{post.content}</div>
+              <div className="py-6 text-sub text-[15px] leading-relaxed min-h-50 rich-html"
+                dangerouslySetInnerHTML={{ __html: sanitizeHtml(isHtml(post.content) ? post.content : plainTextToHtml(post.content)) }} />
               {post.image && (
                 <div className="mb-4">
                   <img src={post.image} alt="" className="rounded-xl max-w-full h-auto" />

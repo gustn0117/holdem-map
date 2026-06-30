@@ -7,6 +7,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { supabase } from "@/lib/supabase";
 import { Job } from "@/types";
+import { sanitizeHtml, isHtml, plainTextToHtml } from "@/lib/sanitize";
 
 export default function JobDetailPage() {
   const { id } = useParams();
@@ -179,7 +180,8 @@ export default function JobDetailPage() {
               {job.message && (
                 <div className="mb-6">
                   <h3 className="text-surface font-bold text-[15px] mb-2">{job.type === "구인" ? "상세 내용" : "자기 소개"}</h3>
-                  <p className="text-sub text-[15px] leading-relaxed whitespace-pre-wrap bg-[#f9f9f9] rounded-xl p-4">{job.message}</p>
+                  <div className="text-sub text-[15px] leading-relaxed bg-[#f9f9f9] rounded-xl p-4 rich-html"
+                    dangerouslySetInnerHTML={{ __html: sanitizeHtml(isHtml(job.message) ? job.message : plainTextToHtml(job.message)) }} />
                 </div>
               )}
 

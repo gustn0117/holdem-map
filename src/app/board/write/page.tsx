@@ -7,8 +7,10 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
 import Link from "next/link";
 import ImageUpload from "@/components/ImageUpload";
+import RichEditor from "@/components/RichEditor";
 import { addPoints, POINT_RULES } from "@/lib/rank";
 import { classifyContent, formatFilterMessage } from "@/lib/contentFilter";
+import { sanitizeHtml } from "@/lib/sanitize";
 
 export default function BoardWritePage() {
   const [title, setTitle] = useState("");
@@ -41,10 +43,13 @@ export default function BoardWritePage() {
     );
   }
 
+  const stripHtml = (h: string) => h.replace(/<[^>]+>/g, " ").replace(/&nbsp;/g, " ").replace(/\s+/g, " ").trim();
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!title.trim() || !content.trim()) return;
-    const filter = classifyContent(`${title}\n${content}`);
+    const plainContent = stripHtml(content);
+    if (!title.trim() || !plainContent) return;
+    const filter = classifyContent(`${title}\n${plainContent}`);
     if (filter.action === "block") {
       alert(formatFilterMessage(filter));
       return;
@@ -54,7 +59,7 @@ export default function BoardWritePage() {
       user_id: user.id,
       nickname: profile?.nickname || "익명",
       title: title.trim(),
-      content: content.trim(),
+      content: sanitizeHtml(content),
       image,
       status: "approved",
     });
@@ -84,11 +89,9 @@ export default function BoardWritePage() {
             </div>
             <div>
               <label className="text-surface text-sm font-semibold mb-1.5 block">내용</label>
-              <textarea value={content} onChange={e => setContent(e.target.value)} required rows={12}
-                className="w-full border border-border-custom rounded-xl px-4 py-3 text-[15px] focus:outline-none focus:border-accent bg-white resize-none"
-                placeholder="내용을 입력하세요" />
+              <RichEditor value={content} onChange={setContent} placeholder="내용을 입력하세요. 본문 안에 이미지·링크·서식을 자유롭게 넣을 수 있습니다." storageFolder="posts" />
             </div>
-            <ImageUpload value={image} onChange={setImage} folder="posts" label="이미지 첨부 (선택)" />
+            <ImageUpload value={image} onChange={setImage} folder="posts" label="대표 이미지 (선택, 목록에서 노출됨)" />
             <div className="flex gap-3">
               <button type="button" onClick={() => router.back()}
                 className="flex-1 border border-border-custom text-sub font-semibold py-3 rounded-xl hover:bg-[#f5f6f8] transition-all">

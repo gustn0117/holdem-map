@@ -1,4 +1,32 @@
 @import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+/* RichEditor content */
+.ProseMirror p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  float: left;
+  color: #999;
+  pointer-events: none;
+  height: 0;
+}
+.ProseMirror:focus { outline: none; }
+.rich-html { line-height: 1.7; word-break: break-word; }
+.rich-html h1 { font-size: 1.5rem; font-weight: 800; margin: 1rem 0 .5rem; }
+.rich-html h2 { font-size: 1.25rem; font-weight: 700; margin: 1rem 0 .5rem; }
+.rich-html h3 { font-size: 1.1rem; font-weight: 700; margin: .75rem 0 .4rem; }
+.rich-html p { margin: .5rem 0; }
+.rich-html ul { list-style: disc; padding-left: 1.5rem; margin: .5rem 0; }
+.rich-html ol { list-style: decimal; padding-left: 1.5rem; margin: .5rem 0; }
+.rich-html a { color: #03c75a; text-decoration: underline; }
+.rich-html img { border-radius: .75rem; max-width: 100%; margin: .75rem 0; }
+.rich-html strong { font-weight: 700; }
+.rich-html em { font-style: italic; }
+.rich-html u { text-decoration: underline; }
+.rich-html s { text-decoration: line-through; }
+.rich-html blockquote { border-left: 3px solid #03c75a; padding-left: 1rem; color: #555; margin: .75rem 0; }
+.rich-html code { background: #f1f3f5; padding: .1rem .3rem; border-radius: .25rem; font-family: monospace; }
+.rich-html pre { background: #f1f3f5; padding: 1rem; border-radius: .5rem; overflow-x: auto; }
+.rich-html pre code { background: transparent; padding: 0; }
 
 @theme inline {
   --color-primary: #ffffff;
