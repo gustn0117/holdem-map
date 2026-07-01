@@ -8,6 +8,7 @@ import Footer from "@/components/Footer";
 import StoreCard from "@/components/StoreCard";
 import RankInsignia from "@/components/RankInsignia";
 import HomeSeoSection from "@/components/HomeSeoSection";
+import ShortsLightbox from "@/components/ShortsLightbox";
 import { useStores, useEvents, useNotices } from "@/hooks/useData";
 import { useUserProfiles } from "@/hooks/useUserRanks";
 import { getBanners, getShorts, getJobs } from "@/lib/api";
@@ -29,6 +30,7 @@ export default function Home() {
   const [jobs, setJobs] = useState<Job[]>([]);
   const [posts, setPosts] = useState<Post[]>([]);
   const [liveGames, setLiveGames] = useState<any[]>([]);
+  const [shortsIdx, setShortsIdx] = useState<number | null>(null);
   const [showAllStores, setShowAllStores] = useState(false);
   const PC_STORE_PREVIEW = 6;
 
@@ -409,13 +411,18 @@ export default function Home() {
             </div>
             <div className="flex gap-3 overflow-x-auto hide-scrollbar -mx-4 px-4">
               {shorts.slice(0, 8).map((short, i) => (
-                <Link key={short.id} href="/shorts" className="shrink-0 w-32 group">
+                <button key={short.id} type="button" onClick={() => setShortsIdx(i)} className="shrink-0 w-32 group text-left" aria-label={`숏츠 재생: ${short.title}`}>
                   <div className="aspect-9/16 rounded-2xl overflow-hidden card-shadow relative">
                     <video src={short.video_url} poster={short.thumbnail || undefined} className="w-full h-full object-cover" muted loop playsInline autoPlay={i === 0} />
+                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 bg-black/25 transition-opacity">
+                      <span className="w-10 h-10 rounded-full bg-white/90 text-black flex items-center justify-center">
+                        <svg className="w-5 h-5 ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                      </span>
+                    </div>
                     {i === 0 && <div className="absolute top-2 left-2 bg-accent text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full flex items-center gap-1"><span className="w-1 h-1 bg-white rounded-full pulse-dot" />LIVE</div>}
                   </div>
                   <p className="text-surface text-[12px] font-semibold mt-2 truncate">{short.title}</p>
-                </Link>
+                </button>
               ))}
             </div>
           </section>
@@ -628,13 +635,18 @@ export default function Home() {
               </div>
               <div className="flex gap-3 overflow-x-auto hide-scrollbar">
                 {shorts.slice(0, 8).map((short, i) => (
-                  <Link key={short.id} href="/shorts" className="shrink-0 w-32 group">
+                  <button key={short.id} type="button" onClick={() => setShortsIdx(i)} className="shrink-0 w-32 group text-left" aria-label={`숏츠 재생: ${short.title}`}>
                     <div className="aspect-9/16 rounded-2xl overflow-hidden card-shadow relative group-hover:card-shadow-hover transition-shadow">
                       <video src={short.video_url} poster={short.thumbnail || undefined} className="w-full h-full object-cover" muted loop playsInline autoPlay={i === 0} />
+                      <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 bg-black/25 transition-opacity">
+                        <span className="w-11 h-11 rounded-full bg-white/90 text-black flex items-center justify-center">
+                          <svg className="w-6 h-6 ml-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                        </span>
+                      </div>
                       {i === 0 && <div className="absolute top-2 left-2 bg-accent text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full flex items-center gap-1"><span className="w-1 h-1 bg-white rounded-full pulse-dot" />LIVE</div>}
                     </div>
                     <p className="text-surface text-[12px] font-semibold mt-2 truncate">{short.title}</p>
-                  </Link>
+                  </button>
                 ))}
               </div>
             </div>
@@ -655,6 +667,15 @@ export default function Home() {
       </div>
 
       <HomeSeoSection />
+
+      {shortsIdx !== null && (
+        <ShortsLightbox
+          shorts={shorts.slice(0, 8)}
+          index={shortsIdx}
+          onClose={() => setShortsIdx(null)}
+          onIndexChange={setShortsIdx}
+        />
+      )}
 
       <Footer />
     </div>
