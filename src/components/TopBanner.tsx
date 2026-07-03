@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { getBanners } from "@/lib/api";
 import { Banner } from "@/types";
+import { normalizeExternalUrl } from "@/lib/url";
 
 export default function TopBanner() {
   const pathname = usePathname();
@@ -49,7 +50,7 @@ export default function TopBanner() {
         {current?.image ? (
           <div className="relative overflow-hidden rounded-xl">
             {current.link ? (
-              <a href={current.link} target="_blank" rel="noopener noreferrer" aria-label="배너 링크로 이동">
+              <a href={normalizeExternalUrl(current.link)} target="_blank" rel="noopener noreferrer" aria-label="배너 링크로 이동">
                 <img src={mobileSrc} alt="" className="block md:hidden w-full aspect-300/96 object-cover rounded-xl" />
                 <img src={pcSrc} alt="" className="hidden md:block w-full aspect-2800/260 object-cover rounded-xl" />
               </a>

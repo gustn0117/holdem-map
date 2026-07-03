@@ -6,6 +6,7 @@ import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { supabase } from "@/lib/supabase";
+import { normalizeExternalUrl } from "@/lib/url";
 
 interface Promotion {
   id: string; title: string; content: string; image: string;
@@ -90,7 +91,7 @@ export default function PromotionDetailPage() {
               )}
 
               {promo.link && (
-                <a href={promo.link} target="_blank" rel="noopener noreferrer"
+                <a href={normalizeExternalUrl(promo.link)} target="_blank" rel="noopener noreferrer"
                   className="block w-full bg-accent hover:bg-accent-hover text-white font-bold py-3.5 rounded-xl text-center transition-all">
                   바로가기
                 </a>

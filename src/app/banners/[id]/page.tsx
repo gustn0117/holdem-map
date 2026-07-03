@@ -7,6 +7,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SmartLinkify from "@/components/SmartLinkify";
 import { supabase } from "@/lib/supabase";
+import { normalizeExternalUrl } from "@/lib/url";
 
 interface BannerLink { label: string; url: string; }
 interface Banner {
@@ -102,7 +103,7 @@ export default function BannerDetailPage() {
               {banner.links && banner.links.length > 0 && (
                 <div className="space-y-2 mb-3">
                   {banner.links.filter(l => l.url && l.label).map((l, i) => (
-                    <a key={i} href={l.url} target="_blank" rel="noopener noreferrer"
+                    <a key={i} href={normalizeExternalUrl(l.url)} target="_blank" rel="noopener noreferrer"
                       className="flex items-center justify-center gap-2 w-full bg-white border-2 border-accent text-accent hover:bg-accent hover:text-white font-bold py-3 rounded-xl text-center transition-all">
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg>
                       {l.label}
@@ -112,7 +113,7 @@ export default function BannerDetailPage() {
               )}
 
               {banner.link && (
-                <a href={banner.link} target="_blank" rel="noopener noreferrer"
+                <a href={normalizeExternalUrl(banner.link)} target="_blank" rel="noopener noreferrer"
                   className="block w-full bg-accent hover:bg-accent-hover text-white font-bold py-3.5 rounded-xl text-center transition-all">
                   바로가기
                 </a>
