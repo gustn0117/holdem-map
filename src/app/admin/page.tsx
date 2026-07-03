@@ -705,7 +705,7 @@ export default function AdminPage() {
         {/* Action bar */}
         <div className="flex items-center justify-between mb-5">
           <h2 className="text-lg font-bold text-surface">{tabs.find(t => t.key === activeTab)?.label} 관리</h2>
-          {activeTab !== "inquiries" && activeTab !== "board" && (
+          {!["inquiries", "board", "banners", "shorts", "promotions", "users"].includes(activeTab) && (
             <button
               onClick={() => setModal({ type: "create", tab: activeTab })}
               className="bg-accent hover:bg-accent-hover text-white px-5 py-2.5 rounded-full text-sm font-semibold shadow-lg shadow-accent/20 flex items-center gap-2"
