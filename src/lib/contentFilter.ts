@@ -45,20 +45,30 @@ export interface FilterResult {
   hits?: string[];
 }
 
-export function classifyContent(text: string): FilterResult {
+export interface ClassifyOptions {
+  /** 외부 URL 차단 여부 (기본 true). 게시판/블로그 등 링크 공유가 자연스러운 곳은 false. */
+  blockUrls?: boolean;
+  /** 메신저 ID/전화번호 차단 여부 (기본 true). */
+  blockContacts?: boolean;
+}
+
+export function classifyContent(text: string, options: ClassifyOptions = {}): FilterResult {
   if (!text || !text.trim()) return { action: "allow", reasons: [] };
+  const { blockUrls = true, blockContacts = true } = options;
 
   const reasons: string[] = [];
   const hits: string[] = [];
 
-  // 1) 연락처·메신저·외부 링크 — 즉시 차단
-  for (const { re, label } of CONTACT_REGEXES) {
-    if (re.test(text)) {
-      reasons.push(`${label}는(은) 본문에 입력할 수 없습니다. 전용 연락처 필드를 이용해주세요.`);
-      hits.push(label);
+  // 1) 연락처·메신저 — 즉시 차단
+  if (blockContacts) {
+    for (const { re, label } of CONTACT_REGEXES) {
+      if (re.test(text)) {
+        reasons.push(`${label}는(은) 본문에 입력할 수 없습니다. 전용 연락처 필드를 이용해주세요.`);
+        hits.push(label);
+      }
     }
   }
-  if (URL_REGEX.test(text)) {
+  if (blockUrls && URL_REGEX.test(text)) {
     reasons.push("외부 링크는 입력할 수 없습니다.");
     hits.push("외부 링크");
   }

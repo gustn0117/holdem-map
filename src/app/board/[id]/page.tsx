@@ -85,7 +85,7 @@ export default function BoardDetailPage() {
   const handleComment = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!commentText.trim() || !user) return;
-    const filter = classifyContent(commentText);
+    const filter = classifyContent(commentText, { blockUrls: false });
     if (filter.action === "block") {
       alert(formatFilterMessage(filter));
       return;

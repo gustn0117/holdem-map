@@ -48,18 +48,15 @@ export default function TopBanner() {
       <div className="mx-auto" style={{ maxWidth: "1400px" }}>
         {current?.image ? (
           <div className="relative overflow-hidden rounded-xl">
-            {/* Mobile: 권장 300x96, ratio 3.125:1 */}
-            <Link href="/banners" className="block md:hidden">
-              <img src={mobileSrc} alt="" className="w-full aspect-300/96 object-cover rounded-xl" />
-            </Link>
-            {/* PC: 권장 2800x260 (또는 1400x130), ratio 10.77:1 */}
             {current.link ? (
-              <a href={current.link} target="_blank" rel="noopener noreferrer" className="hidden md:block">
-                <img src={pcSrc} alt="" className="w-full aspect-2800/260 object-cover rounded-xl" />
+              <a href={current.link} target="_blank" rel="noopener noreferrer" aria-label="배너 링크로 이동">
+                <img src={mobileSrc} alt="" className="block md:hidden w-full aspect-300/96 object-cover rounded-xl" />
+                <img src={pcSrc} alt="" className="hidden md:block w-full aspect-2800/260 object-cover rounded-xl" />
               </a>
             ) : (
-              <Link href={`/banners/${current.id}`} className="hidden md:block">
-                <img src={pcSrc} alt="" className="w-full aspect-2800/260 object-cover rounded-xl" />
+              <Link href={`/banners/${current.id}`}>
+                <img src={mobileSrc} alt="" className="block md:hidden w-full aspect-300/96 object-cover rounded-xl" />
+                <img src={pcSrc} alt="" className="hidden md:block w-full aspect-2800/260 object-cover rounded-xl" />
               </Link>
             )}
             {banners.length > 1 && (

@@ -49,7 +49,7 @@ export default function BoardWritePage() {
     e.preventDefault();
     const plainContent = stripHtml(content);
     if (!title.trim() || !plainContent) return;
-    const filter = classifyContent(`${title}\n${plainContent}`);
+    const filter = classifyContent(`${title}\n${plainContent}`, { blockUrls: false });
     if (filter.action === "block") {
       alert(formatFilterMessage(filter));
       return;
