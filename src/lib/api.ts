@@ -176,6 +176,21 @@ export async function updateBanner(id: string, updates: Partial<Banner>) {
   return data;
 }
 
+export async function createBanner(position: string): Promise<Banner> {
+  const { data, error } = await supabase
+    .from("banners")
+    .insert({ position, image: "", link: "", active: true })
+    .select()
+    .single();
+  if (error) throw error;
+  return data as Banner;
+}
+
+export async function deleteBanner(id: string): Promise<void> {
+  const { error } = await supabase.from("banners").delete().eq("id", id);
+  if (error) throw error;
+}
+
 // Shorts
 export async function getShorts(): Promise<Short[]> {
   const { data, error } = await supabase.from("shorts").select("*").eq("active", true).order("pinned_rank", { ascending: false }).order("sort_order");

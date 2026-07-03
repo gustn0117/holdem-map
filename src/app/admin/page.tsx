@@ -379,6 +379,33 @@ export default function AdminPage() {
     setBannerSaving(null);
   };
 
+  const handleBannerAdd = async (kind: "main" | "side") => {
+    try {
+      const usedNums = banners
+        .filter(b => b.position.startsWith(kind))
+        .map(b => parseInt(b.position.replace(kind, ""), 10))
+        .filter(n => Number.isFinite(n));
+      const nextNum = usedNums.length ? Math.max(...usedNums) + 1 : (kind === "main" ? 1 : 1);
+      const position = kind === "main" && banners.every(b => b.position !== "main")
+        ? "main"
+        : `${kind}${nextNum || 1}`;
+      await api.createBanner(position);
+      await refreshBanners();
+    } catch (e) {
+      alert("배너 추가 실패: " + (e instanceof Error ? e.message : String(e)));
+    }
+  };
+
+  const handleBannerDelete = async (id: string) => {
+    if (!confirm("이 배너를 완전히 삭제하시겠습니까? (되돌릴 수 없음)")) return;
+    try {
+      await api.deleteBanner(id);
+      await refreshBanners();
+    } catch (e) {
+      alert("삭제 실패: " + (e instanceof Error ? e.message : String(e)));
+    }
+  };
+
   const tabs: { key: Tab; label: string; count: number }[] = [
     { key: "stores", label: "매장", count: stores.length },
     { key: "events", label: "대회/이벤트", count: events.filter(e => e.status === "pending").length },
@@ -831,16 +858,32 @@ export default function AdminPage() {
         {activeTab === "banners" && (
           <div className="space-y-6">
             {/* Main Banner */}
+            <div className="flex items-center justify-between">
+              <h3 className="text-surface font-bold text-lg">메인 배너 (상단)</h3>
+              {banners.every(b => b.position !== "main") && (
+                <button onClick={() => handleBannerAdd("main")} className="text-accent border border-accent hover:bg-accent hover:text-white font-bold px-4 py-2 rounded-lg text-sm transition-all">
+                  + 메인 배너 추가
+                </button>
+              )}
+            </div>
             {banners.filter(b => b.position === "main").map(banner => (
-              <BannerEditor key={banner.id} banner={banner} label="메인 배너 (상단)" size="PC 2800x260 / 모바일 300x96" saving={bannerSaving === banner.id} onSave={handleBannerSave} hasMobile />
+              <BannerEditor key={banner.id} banner={banner} label="메인 배너 (상단)" size="PC 2800x260 / 모바일 300x96" saving={bannerSaving === banner.id} onSave={handleBannerSave} onDelete={handleBannerDelete} hasMobile />
             ))}
 
-            <h3 className="text-surface font-bold text-lg pt-4">사이드 배너</h3>
+            <div className="flex items-center justify-between pt-4">
+              <h3 className="text-surface font-bold text-lg">사이드 배너 ({banners.filter(b => b.position.startsWith("side")).length}개)</h3>
+              <button onClick={() => handleBannerAdd("side")} className="bg-accent hover:bg-accent-hover text-white font-bold px-4 py-2 rounded-lg text-sm transition-all">
+                + 사이드 배너 추가
+              </button>
+            </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {banners.filter(b => b.position.startsWith("side")).map((banner, i) => (
-                <BannerEditor key={banner.id} banner={banner} label={`사이드 배너 ${i + 1}`} size="PC 2800x260 / 모바일 300x96" saving={bannerSaving === banner.id} onSave={handleBannerSave} hasMobile />
+                <BannerEditor key={banner.id} banner={banner} label={`사이드 배너 ${i + 1}`} size="PC 2800x260 / 모바일 300x96" saving={bannerSaving === banner.id} onSave={handleBannerSave} onDelete={handleBannerDelete} hasMobile />
               ))}
             </div>
+            {banners.length === 0 && (
+              <p className="text-muted text-sm py-8 text-center">등록된 배너가 없습니다. 위 버튼으로 추가하세요.</p>
+            )}
           </div>
         )}
 
@@ -1953,8 +1996,9 @@ function AdminModal({ modal, stores, saving, onClose, onSave }: {
 }
 
 // ─── Banner Editor ───
-function BannerEditor({ banner, label, size, saving, onSave, hasMobile }: {
+function BannerEditor({ banner, label, size, saving, onSave, onDelete, hasMobile }: {
   banner: import("@/types").Banner & { title?: string; description?: string; contact?: string; detail_images?: string[]; links?: import("@/types").BannerLink[] };
+  onDelete?: (id: string) => void;
   label: string;
   size: string;
   saving: boolean;
@@ -1982,10 +2026,18 @@ function BannerEditor({ banner, label, size, saving, onSave, hasMobile }: {
           </h4>
           <p className="text-muted text-sm mt-0.5">권장 사이즈: <span className="text-accent font-semibold">{size}</span></p>
         </div>
-        <button onClick={() => onSave(banner.id, image, link, title, description, contact, detailImages, links, pinnedRank, imageMobile)} disabled={saving}
-          className="bg-accent hover:bg-accent-hover text-white text-sm font-bold px-5 py-2 rounded-lg transition-all disabled:opacity-50">
-          {saving ? "저장 중..." : "저장"}
-        </button>
+        <div className="flex gap-2">
+          {onDelete && (
+            <button onClick={() => onDelete(banner.id)} disabled={saving}
+              className="border border-red-300 text-red-500 hover:bg-red-50 text-sm font-bold px-4 py-2 rounded-lg transition-all disabled:opacity-50">
+              삭제
+            </button>
+          )}
+          <button onClick={() => onSave(banner.id, image, link, title, description, contact, detailImages, links, pinnedRank, imageMobile)} disabled={saving}
+            className="bg-accent hover:bg-accent-hover text-white text-sm font-bold px-5 py-2 rounded-lg transition-all disabled:opacity-50">
+            {saving ? "저장 중..." : "저장"}
+          </button>
+        </div>
       </div>
 
       <div className="space-y-4">
