@@ -177,9 +177,12 @@ export async function updateBanner(id: string, updates: Partial<Banner>) {
 }
 
 export async function createBanner(position: string): Promise<Banner> {
+  const id = typeof crypto !== "undefined" && "randomUUID" in crypto
+    ? crypto.randomUUID()
+    : `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
   const { data, error } = await supabase
     .from("banners")
-    .insert({ position, image: "", link: "", active: true })
+    .insert({ id, position, image: "", link: "", active: true })
     .select()
     .single();
   if (error) throw error;

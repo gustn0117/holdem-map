@@ -379,6 +379,19 @@ export default function AdminPage() {
     setBannerSaving(null);
   };
 
+  const extractErrorMessage = (e: unknown): string => {
+    if (!e) return "unknown";
+    if (e instanceof Error) return e.message;
+    if (typeof e === "string") return e;
+    if (typeof e === "object") {
+      const obj = e as Record<string, unknown>;
+      const parts = [obj.message, obj.details, obj.hint, obj.code].filter(Boolean);
+      if (parts.length > 0) return parts.map(String).join(" · ");
+      try { return JSON.stringify(e); } catch { return String(e); }
+    }
+    return String(e);
+  };
+
   const handleBannerAdd = async (kind: "main" | "side") => {
     try {
       const usedNums = banners
@@ -392,7 +405,8 @@ export default function AdminPage() {
       await api.createBanner(position);
       await refreshBanners();
     } catch (e) {
-      alert("배너 추가 실패: " + (e instanceof Error ? e.message : String(e)));
+      console.error("[banner add]", e);
+      alert("배너 추가 실패: " + extractErrorMessage(e));
     }
   };
 
@@ -402,7 +416,8 @@ export default function AdminPage() {
       await api.deleteBanner(id);
       await refreshBanners();
     } catch (e) {
-      alert("삭제 실패: " + (e instanceof Error ? e.message : String(e)));
+      console.error("[banner delete]", e);
+      alert("삭제 실패: " + extractErrorMessage(e));
     }
   };
 
