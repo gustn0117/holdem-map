@@ -197,7 +197,7 @@ body {
   0% { transform: translateY(0); }
   100% { transform: translateY(-50%); }
 }
-.ticker-scroll { animation: tickerScroll 90s linear infinite; }
+.ticker-scroll { animation: tickerScroll 120s linear infinite; }
 .ticker-scroll:hover { animation-play-state: paused; }
 
 @keyframes livePulse {
