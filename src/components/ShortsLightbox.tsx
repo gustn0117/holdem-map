@@ -114,9 +114,9 @@ export default function ShortsLightbox({ shorts, index, onClose, onIndexChange }
         </button>
       )}
 
-      {/* Video stage */}
+      {/* Video stage — 컨테이너는 크게, 영상은 잘리지 않고 전체가 보이도록 object-contain */}
       <div
-        className="relative h-[90vh] max-h-[900px] aspect-9/16 max-w-[95vw] mx-auto rounded-2xl overflow-hidden bg-black shadow-2xl"
+        className="relative flex items-center justify-center h-[92vh] max-h-[1000px] w-[95vw] max-w-[560px] mx-auto rounded-2xl overflow-hidden bg-black shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
         <video
@@ -124,7 +124,7 @@ export default function ShortsLightbox({ shorts, index, onClose, onIndexChange }
           key={current.id}
           src={current.video_url}
           poster={current.thumbnail || undefined}
-          className="w-full h-full object-cover"
+          className="w-full h-full object-contain"
           autoPlay
           loop
           playsInline
