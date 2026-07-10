@@ -12,7 +12,53 @@ import JobAvatarPicker from "@/components/JobAvatarPicker";
 
 import { supabase } from "@/lib/supabase";
 
-type Tab = "stores" | "events" | "notices" | "banners" | "shorts" | "users" | "live" | "promotions" | "inquiries" | "board" | "market" | "trade" | "jobs";
+type Tab = "dashboard" | "stores" | "events" | "notices" | "banners" | "shorts" | "users" | "live" | "promotions" | "inquiries" | "board" | "market" | "trade" | "jobs";
+
+const TAB_ICON: Record<Tab, React.ReactNode> = {
+  dashboard: <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>,
+  stores: <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0zM15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>,
+  events: <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>,
+  promotions: <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A2 2 0 013 12V7a4 4 0 014-4z"/></svg>,
+  notices: <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"/></svg>,
+  banners: <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v3a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v3a1 1 0 01-1 1H5a1 1 0 01-1-1v-3zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"/></svg>,
+  shorts: <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>,
+  users: <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>,
+  live: <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M8 12a4 4 0 118 0 4 4 0 01-8 0z"/><path strokeLinecap="round" strokeLinejoin="round" d="M12 2v2m0 16v2m10-10h-2M4 12H2m15.364-6.364l-1.414 1.414M7.05 16.95l-1.414 1.414m0-12.728l1.414 1.414m9.9 9.9l1.414 1.414"/></svg>,
+  inquiries: <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>,
+  board: <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"/></svg>,
+  market: <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M3 21V10.5L12 3l9 7.5V21M9 21V13a3 3 0 013-3v0a3 3 0 013 3v8"/></svg>,
+  trade: <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>,
+  jobs: <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>,
+};
+
+interface NavGroup {
+  label: string;
+  items: Tab[];
+}
+
+const NAV_GROUPS: NavGroup[] = [
+  { label: "홈", items: ["dashboard"] },
+  { label: "콘텐츠", items: ["stores", "events", "promotions", "notices", "banners", "shorts"] },
+  { label: "커뮤니티", items: ["board", "inquiries", "jobs", "market", "trade", "live"] },
+  { label: "회원", items: ["users"] },
+];
+
+const TAB_LABEL: Record<Tab, string> = {
+  dashboard: "대시보드",
+  stores: "매장",
+  events: "대회/이벤트",
+  promotions: "프로모션",
+  notices: "공지",
+  banners: "배너 광고",
+  shorts: "숏츠",
+  users: "회원",
+  live: "실시간 게임",
+  inquiries: "매장 문의",
+  board: "자유게시판",
+  market: "대관/매매",
+  trade: "중고거래",
+  jobs: "구인구직",
+};
 
 interface TradeItemRow {
   id: string;
@@ -117,7 +163,8 @@ export default function AdminPage() {
     }
   }, []);
 
-  const [activeTab, setActiveTab] = useState<Tab>("stores");
+  const [activeTab, setActiveTab] = useState<Tab>("dashboard");
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [modal, setModal] = useState<{ type: "create" | "edit"; tab: Tab; data?: Record<string, unknown> } | null>(null);
   const [saving, setSaving] = useState(false);
   const { stores, refresh: refreshStores } = useStores();
@@ -681,46 +728,198 @@ export default function AdminPage() {
   }
 
   // ─── Admin Dashboard ───
+  const countByKey: Record<Tab, number> = tabs.reduce((acc, t) => ({ ...acc, [t.key]: t.count }), {} as Record<Tab, number>);
+  const pendingEvents = events.filter(e => e.status === "pending").length;
+  const pendingInquiries = inquiries.filter(i => i.status === "pending").length;
+  const hiddenPosts = posts.filter(p => p.status === "hidden").length;
+  const totalUrgent = pendingEvents + pendingInquiries + hiddenPosts;
+
+  const activeTabLabel = TAB_LABEL[activeTab];
+
   return (
     <div className="min-h-screen bg-[#f5f5f5]">
-      {/* Admin Header */}
-      <header className="sticky top-0 z-50 bg-white border-b border-border-custom">
-        <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <img src="/logo.png" alt="홀덤맵KOREA" className="h-8 w-auto" />
-            <span className="text-xs text-muted bg-gray-100 px-2.5 py-1 rounded-lg font-semibold">ADMIN</span>
+      {/* Top Header */}
+      <header className="sticky top-0 z-40 bg-white border-b border-border-custom">
+        <div className="mx-auto px-4 h-14 flex items-center justify-between max-w-350">
+          <div className="flex items-center gap-2">
+            <button onClick={() => setSidebarOpen(v => !v)} className="lg:hidden p-2 -ml-2 rounded-lg hover:bg-bg" aria-label="메뉴">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
+            </button>
+            <img src="/logo.png" alt="홀덤맵KOREA" className="h-7 w-auto" />
+            <span className="text-[10px] text-muted bg-gray-100 px-2 py-0.5 rounded font-bold ml-1">ADMIN</span>
           </div>
-          <div className="flex items-center gap-4">
-            <Link href="/admin/pointshop" className="text-muted hover:text-accent text-sm font-semibold transition-colors">포인트샵 관리</Link>
-            <Link href="/admin/blog" className="text-muted hover:text-accent text-sm font-semibold transition-colors">블로그 관리</Link>
-            <Link href="/" className="text-muted hover:text-accent text-sm transition-colors">사이트 보기</Link>
-            <button onClick={() => { try { sessionStorage.removeItem("hm_admin"); } catch {} ; setAuthed(false); }} className="text-muted hover:text-red text-sm transition-colors">로그아웃</button>
+          <div className="flex items-center gap-2 md:gap-4">
+            <Link href="/admin/pointshop" className="hidden md:inline-flex items-center gap-1.5 text-sub hover:text-accent text-[13px] font-semibold px-3 py-1.5 rounded-lg hover:bg-accent-light transition-colors">
+              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+              포인트샵
+            </Link>
+            <Link href="/admin/blog" className="hidden md:inline-flex items-center gap-1.5 text-sub hover:text-accent text-[13px] font-semibold px-3 py-1.5 rounded-lg hover:bg-accent-light transition-colors">
+              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+              블로그
+            </Link>
+            <Link href="/" target="_blank" className="text-muted hover:text-accent text-[13px] inline-flex items-center gap-1">
+              사이트
+              <svg className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+            </Link>
+            <button onClick={() => { try { sessionStorage.removeItem("hm_admin"); } catch {} ; setAuthed(false); }} className="text-muted hover:text-red-500 text-[13px] px-2 py-1 rounded-md hover:bg-red-50 transition-colors">로그아웃</button>
           </div>
         </div>
       </header>
 
-      <main className="max-w-6xl mx-auto px-4 py-8">
-        {/* Stats */}
-        <div className="grid grid-cols-3 md:grid-cols-6 gap-4 mb-8">
-          {tabs.map(tab => (
-            <button
-              key={tab.key}
-              onClick={() => setActiveTab(tab.key)}
-              className={`p-5 rounded-2xl border text-left transition-all ${
-                activeTab === tab.key
-                  ? "bg-accent/10 border-accent/20"
-                  : "bg-white border-border-custom hover:border-accent/20"
-              }`}
-            >
-              <p className={`text-3xl font-bold ${activeTab === tab.key ? "text-accent" : "text-surface"}`}>{tab.count}</p>
-              <p className="text-muted/50 text-sm mt-1">{tab.label}</p>
-            </button>
-          ))}
-        </div>
+      <div className="flex mx-auto max-w-350">
+        {/* Sidebar */}
+        <aside className={`${sidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"} fixed lg:sticky top-14 left-0 z-30 w-64 h-[calc(100vh-56px)] bg-white border-r border-border-custom overflow-y-auto transition-transform`}>
+          <nav className="p-3">
+            {NAV_GROUPS.map(group => (
+              <div key={group.label} className="mb-4">
+                <p className="text-[10px] font-black text-muted uppercase tracking-widest px-3 mb-1.5">{group.label}</p>
+                <ul className="space-y-0.5">
+                  {group.items.map(key => {
+                    const count = countByKey[key] ?? 0;
+                    const urgent = (key === "events" && pendingEvents) || (key === "inquiries" && pendingInquiries) || (key === "board" && hiddenPosts);
+                    const active = activeTab === key;
+                    return (
+                      <li key={key}>
+                        <button onClick={() => { setActiveTab(key); setSidebarOpen(false); }}
+                          className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-[13px] font-semibold transition-colors ${active ? "bg-accent text-white" : "text-sub hover:bg-bg hover:text-accent"}`}>
+                          <span className={active ? "text-white" : "text-muted"}>{TAB_ICON[key]}</span>
+                          <span className="flex-1 text-left">{TAB_LABEL[key]}</span>
+                          {key !== "dashboard" && (
+                            <span className={`text-[10px] font-black px-1.5 py-0.5 rounded-full ${urgent ? "bg-red-500 text-white" : active ? "bg-white/20 text-white" : "bg-bg text-muted"}`}>
+                              {urgent ? `${urgent}` : count}
+                            </span>
+                          )}
+                        </button>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+            ))}
+            <div className="mt-4 pt-4 border-t border-border-custom mx-3">
+              <p className="text-[10px] font-black text-muted uppercase tracking-widest mb-1.5">외부 페이지</p>
+              <Link href="/admin/pointshop" className="w-full flex items-center gap-2.5 px-0 py-2 rounded-lg text-[13px] font-semibold text-sub hover:text-accent">
+                <svg className="w-4 h-4 text-muted" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+                포인트샵 관리
+              </Link>
+              <Link href="/admin/blog" className="w-full flex items-center gap-2.5 px-0 py-2 rounded-lg text-[13px] font-semibold text-sub hover:text-accent">
+                <svg className="w-4 h-4 text-muted" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253"/></svg>
+                블로그 관리
+              </Link>
+            </div>
+          </nav>
+        </aside>
+        {sidebarOpen && <div className="lg:hidden fixed inset-0 top-14 bg-black/40 z-20" onClick={() => setSidebarOpen(false)} />}
 
+        <main className="flex-1 min-w-0 px-4 md:px-6 py-5 md:py-6">
+          {/* Breadcrumb + Title */}
+          <div className="flex items-center gap-2 text-[12px] text-muted mb-1">
+            <span>관리자</span>
+            <svg className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" d="M9 5l7 7-7 7"/></svg>
+            <span className="text-sub font-semibold">{activeTabLabel}</span>
+          </div>
+
+          {activeTab === "dashboard" && (
+            <div>
+              <h1 className="text-2xl font-black text-surface mb-1">대시보드</h1>
+              <p className="text-muted text-[13px] mb-6">사이트 전반의 상태를 한눈에 확인하세요.</p>
+
+              {/* Urgent alerts */}
+              {totalUrgent > 0 && (
+                <div className="bg-linear-to-r from-red-50 to-amber-50 border border-red-200 rounded-2xl p-5 mb-6">
+                  <div className="flex items-center gap-2 mb-3">
+                    <svg className="w-5 h-5 text-red-500" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L1 21h22L12 2zm1 14h-2v2h2v-2zm0-6h-2v4h2v-4z"/></svg>
+                    <h2 className="text-surface font-black text-[15px]">처리 필요 <span className="text-red-500 ml-1">{totalUrgent}건</span></h2>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    {pendingEvents > 0 && (
+                      <button onClick={() => setActiveTab("events")} className="bg-white border border-red-200 rounded-xl p-4 text-left hover:border-red-400 transition-colors">
+                        <p className="text-red-500 font-black text-2xl">{pendingEvents}</p>
+                        <p className="text-sub text-[12px] font-semibold mt-1">대회 승인 대기</p>
+                      </button>
+                    )}
+                    {pendingInquiries > 0 && (
+                      <button onClick={() => setActiveTab("inquiries")} className="bg-white border border-red-200 rounded-xl p-4 text-left hover:border-red-400 transition-colors">
+                        <p className="text-red-500 font-black text-2xl">{pendingInquiries}</p>
+                        <p className="text-sub text-[12px] font-semibold mt-1">매장 문의 응답 대기</p>
+                      </button>
+                    )}
+                    {hiddenPosts > 0 && (
+                      <button onClick={() => setActiveTab("board")} className="bg-white border border-red-200 rounded-xl p-4 text-left hover:border-red-400 transition-colors">
+                        <p className="text-red-500 font-black text-2xl">{hiddenPosts}</p>
+                        <p className="text-sub text-[12px] font-semibold mt-1">숨김 처리된 게시글</p>
+                      </button>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Quick stats grid */}
+              <h2 className="text-surface font-bold text-[15px] mb-3">현황</h2>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-8">
+                {(["stores", "events", "jobs", "users", "board", "market", "trade", "banners"] as Tab[]).map(key => (
+                  <button key={key} onClick={() => setActiveTab(key)}
+                    className="bg-white border border-border-custom rounded-2xl p-4 text-left hover:border-accent hover:card-shadow-hover transition-all">
+                    <div className="flex items-center gap-2 text-muted mb-2">
+                      {TAB_ICON[key]}
+                      <span className="text-[11px] font-semibold">{TAB_LABEL[key]}</span>
+                    </div>
+                    <p className="text-surface font-black text-2xl">{countByKey[key]?.toLocaleString() ?? 0}</p>
+                  </button>
+                ))}
+              </div>
+
+              {/* Quick actions */}
+              <h2 className="text-surface font-bold text-[15px] mb-3">빠른 등록</h2>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-8">
+                {(["stores", "events", "notices", "jobs"] as Tab[]).map(key => (
+                  <button key={key} onClick={() => { setActiveTab(key); setModal({ type: "create", tab: key }); }}
+                    className="group bg-white border border-dashed border-border-custom rounded-2xl p-4 text-left hover:border-accent hover:bg-accent/5 transition-all">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-accent">{TAB_ICON[key]}</span>
+                      <span className="text-surface font-bold text-[13px]">{TAB_LABEL[key]}</span>
+                    </div>
+                    <p className="text-muted text-[11px] group-hover:text-accent">+ 새로 등록</p>
+                  </button>
+                ))}
+              </div>
+
+              {/* External admin shortcuts */}
+              <h2 className="text-surface font-bold text-[15px] mb-3">별도 관리 페이지</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <Link href="/admin/pointshop" className="bg-white border border-border-custom rounded-2xl p-5 hover:border-accent transition-colors">
+                  <div className="flex items-start gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-accent/10 text-accent flex items-center justify-center shrink-0">
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+                    </div>
+                    <div>
+                      <p className="text-surface font-black text-[15px]">포인트샵 관리</p>
+                      <p className="text-muted text-[12px] mt-0.5">상품 등록·주문 승인·발송·환불 처리</p>
+                    </div>
+                  </div>
+                </Link>
+                <Link href="/admin/blog" className="bg-white border border-border-custom rounded-2xl p-5 hover:border-accent transition-colors">
+                  <div className="flex items-start gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-accent/10 text-accent flex items-center justify-center shrink-0">
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13"/></svg>
+                    </div>
+                    <div>
+                      <p className="text-surface font-black text-[15px]">블로그 관리</p>
+                      <p className="text-muted text-[12px] mt-0.5">SEO 콘텐츠 · 카테고리 · 태그 · 공개 설정</p>
+                    </div>
+                  </div>
+                </Link>
+              </div>
+            </div>
+          )}
+
+        {activeTab !== "dashboard" && (<>
         {/* Action bar */}
         <div className="flex items-center justify-between mb-5">
-          <h2 className="text-lg font-bold text-surface">{tabs.find(t => t.key === activeTab)?.label} 관리</h2>
+          <div>
+            <h1 className="text-xl md:text-2xl font-black text-surface">{activeTabLabel}</h1>
+            <p className="text-muted text-[12px] mt-0.5">총 {countByKey[activeTab]?.toLocaleString() ?? 0}건</p>
+          </div>
           {!["inquiries", "board", "banners", "shorts", "promotions", "users"].includes(activeTab) && (
             <button
               onClick={() => setModal({ type: "create", tab: activeTab })}
@@ -1471,11 +1670,13 @@ export default function AdminPage() {
             </div>
           );
         })()}
+        </>)}
 
         {modal && (
           <AdminModal modal={modal} stores={stores} saving={saving} onClose={() => setModal(null)} onSave={handleSave} />
         )}
       </main>
+      </div>
     </div>
   );
 }
