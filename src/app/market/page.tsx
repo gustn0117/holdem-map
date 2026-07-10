@@ -6,6 +6,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
+import { allRegions } from "@/data/areas";
 
 interface Listing {
   id: string; type: string; title: string; region: string; address: string;
@@ -62,7 +63,7 @@ export default function MarketPage() {
           <select value={filterRegion} onChange={e => setFilterRegion(e.target.value)}
             className="bg-white border border-border-custom rounded-lg px-3 py-2 text-[13px] text-sub focus:outline-none focus:border-accent">
             <option value="전체">전체 지역</option>
-            {["서울", "경기", "인천", "충청", "전라", "경상", "강원", "제주"].map(r => <option key={r} value={r}>{r}</option>)}
+            {allRegions.map(r => <option key={r} value={r}>{r}</option>)}
           </select>
         </div>
 

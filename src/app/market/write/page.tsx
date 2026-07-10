@@ -9,14 +9,15 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
 import ImageUpload from "@/components/ImageUpload";
 import { classifyContent, formatFilterMessage } from "@/lib/contentFilter";
+import { regionData, allRegions } from "@/data/areas";
 
 const TYPES = ["매매", "대관", "단기운영"];
-const REGIONS = ["서울", "경기", "인천", "충청", "전라", "경상", "강원", "제주"];
 
 export default function MarketWritePage() {
   const { user, profile } = useAuth();
   const router = useRouter();
   const [saving, setSaving] = useState(false);
+  const [district, setDistrict] = useState("");
   const [form, setForm] = useState({
     type: "매매",
     title: "",
@@ -27,6 +28,8 @@ export default function MarketWritePage() {
     images: [] as string[],
     contact: "",
   });
+
+  const districts = regionData[form.region] || [];
 
   const set = (key: string, value: unknown) => setForm(prev => ({ ...prev, [key]: value }));
 
@@ -66,12 +69,15 @@ export default function MarketWritePage() {
       return;
     }
     setSaving(true);
+    const composedAddress = district
+      ? (form.address.trim() ? `${district} ${form.address.trim()}` : district)
+      : form.address.trim();
     const { error } = await supabase.from("market_listings").insert({
       user_id: user.id,
       type: form.type,
       title: form.title,
       region: form.region,
-      address: form.address,
+      address: composedAddress,
       price: form.price || "협의",
       description: form.description,
       images: form.images,
@@ -119,17 +125,24 @@ export default function MarketWritePage() {
               <input className={inputClass} value={form.title} onChange={e => set("title", e.target.value)} placeholder="예: 강남 홀덤펍 매매" required />
             </div>
 
-            {/* Region + Address */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Region + District + Address */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
-                <label className="text-sub text-sm font-semibold mb-2 block">지역 *</label>
-                <select className={inputClass} value={form.region} onChange={e => set("region", e.target.value)}>
-                  {REGIONS.map(r => <option key={r} value={r}>{r}</option>)}
+                <label className="text-sub text-sm font-semibold mb-2 block">시·도 *</label>
+                <select className={inputClass} value={form.region} onChange={e => { set("region", e.target.value); setDistrict(""); }}>
+                  {allRegions.map(r => <option key={r} value={r}>{r}</option>)}
+                </select>
+              </div>
+              <div>
+                <label className="text-sub text-sm font-semibold mb-2 block">시·군·구</label>
+                <select className={inputClass} value={district} onChange={e => setDistrict(e.target.value)}>
+                  <option value="">선택 안 함</option>
+                  {districts.map(d => <option key={d} value={d}>{d}</option>)}
                 </select>
               </div>
               <div>
                 <label className="text-sub text-sm font-semibold mb-2 block">상세 주소</label>
-                <input className={inputClass} value={form.address} onChange={e => set("address", e.target.value)} placeholder="예: 강남구 역삼동" />
+                <input className={inputClass} value={form.address} onChange={e => set("address", e.target.value)} placeholder="예: 역삼동 123-4" />
               </div>
             </div>
 

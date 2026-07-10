@@ -9,9 +9,9 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
 import ImageUpload from "@/components/ImageUpload";
 import { classifyContent, formatFilterMessage } from "@/lib/contentFilter";
+import { allRegions } from "@/data/areas";
 
 const TYPES = ["매매", "대관", "단기운영"];
-const REGIONS = ["서울", "경기", "인천", "충청", "전라", "경상", "강원", "제주"];
 const STATUS_OPTIONS = ["모집중", "거래완료"];
 
 interface FormState {
@@ -174,7 +174,7 @@ export default function MarketEditPage() {
               <div>
                 <label className="text-sub text-sm font-semibold mb-2 block">지역 *</label>
                 <select className={inputClass} value={form.region} onChange={e => set("region", e.target.value)}>
-                  {REGIONS.map(r => <option key={r} value={r}>{r}</option>)}
+                  {allRegions.map(r => <option key={r} value={r}>{r}</option>)}
                 </select>
               </div>
               <div>
