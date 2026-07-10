@@ -129,7 +129,12 @@ export default function PointshopDetailPage() {
                 <div className="w-full h-full flex items-center justify-center text-muted">이미지 없음</div>
               )}
               <div className="absolute top-3 left-3 flex flex-col gap-1.5">
-                {isHot && <span className="text-[11px] font-black text-white bg-red-500 px-2.5 py-1 rounded-md shadow-md">🔥 HOT</span>}
+                {isHot && (
+                  <span className="inline-flex items-center gap-1 text-[11px] font-black text-white bg-red-500 px-2.5 py-1 rounded-md shadow-md">
+                    <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2s1 4 4 6c2 1.3 3 3.5 3 6 0 3.9-3.1 7-7 7s-7-3.1-7-7c0-2 1-4 3-5-1 4 1 6 2 6-1-3 1-7 2-9 0 3 2 4 3 5 0-3-3-6-3-9z"/></svg>
+                    HOT
+                  </span>
+                )}
                 {isNew && <span className="text-[11px] font-black text-white bg-emerald-500 px-2.5 py-1 rounded-md shadow-md">NEW</span>}
               </div>
               {soldOut && (
@@ -155,7 +160,12 @@ export default function PointshopDetailPage() {
             <div className="flex flex-wrap items-center gap-1.5 mb-3">
               {product.category && <span className="text-[11px] font-bold text-accent bg-accent-light px-2.5 py-1 rounded-full">{product.category}</span>}
               {isNew && <span className="text-[11px] font-bold text-white bg-emerald-500 px-2.5 py-1 rounded-full">NEW</span>}
-              {isHot && <span className="text-[11px] font-bold text-white bg-red-500 px-2.5 py-1 rounded-full">🔥 HOT</span>}
+              {isHot && (
+                <span className="inline-flex items-center gap-1 text-[11px] font-bold text-white bg-red-500 px-2.5 py-1 rounded-full">
+                  <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2s1 4 4 6c2 1.3 3 3.5 3 6 0 3.9-3.1 7-7 7s-7-3.1-7-7c0-2 1-4 3-5-1 4 1 6 2 6-1-3 1-7 2-9 0 3 2 4 3 5 0-3-3-6-3-9z"/></svg>
+                  HOT
+                </span>
+              )}
             </div>
             <h1 className="text-2xl md:text-3xl font-black text-surface leading-tight mb-4">{product.name}</h1>
 
@@ -207,7 +217,10 @@ export default function PointshopDetailPage() {
 
             {user && !eligibility.eligible && (
               <div className="mt-4 bg-amber-50 border border-amber-200 rounded-xl p-3 text-[12px] text-amber-800">
-                <p className="font-bold mb-1">⚠️ 이용 조건 미달</p>
+                <p className="font-bold mb-1 inline-flex items-center gap-1">
+                  <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L1 21h22L12 2zm1 14h-2v2h2v-2zm0-6h-2v4h2v-4z"/></svg>
+                  이용 조건 미달
+                </p>
                 <ul className="space-y-0.5">
                   {eligibility.reasons.map((r, i) => <li key={i}>• {r}</li>)}
                 </ul>

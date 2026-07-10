@@ -105,7 +105,12 @@ export default async function DistrictPage({ params }: { params: Params }) {
                     <span className="shrink-0 text-[11px] font-bold text-accent bg-accent-light px-2 py-0.5 rounded-full">{s.region}</span>
                   </div>
                   <p className="text-muted text-[13px] truncate">{s.address}</p>
-                  {s.hours && <p className="text-sub text-[12px] mt-1">⏰ {s.hours}</p>}
+                  {s.hours && (
+                    <p className="text-sub text-[12px] mt-1 inline-flex items-center gap-1">
+                      <svg className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path strokeLinecap="round" d="M12 7v5l3 2"/></svg>
+                      {s.hours}
+                    </p>
+                  )}
                 </Link>
               ))}
             </div>

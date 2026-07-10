@@ -10,13 +10,22 @@ import { listProducts, checkEligibility, POINTSHOP_MIN_POINTS, POINTSHOP_MIN_DAY
 import type { PointshopProduct } from "@/types";
 import { getRank } from "@/lib/rank";
 
+const CATEGORY_ICONS: Record<string, React.ReactNode> = {
+  "전체": <svg className="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>,
+  "굿즈": <svg className="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"/></svg>,
+  "기프티콘": <svg className="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z"/></svg>,
+  "제휴": <svg className="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>,
+  "이벤트": <svg className="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/></svg>,
+  "기타": <svg className="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-14L4 7m8 4v10M4 7v10l8 4"/></svg>,
+};
+
 const CATEGORIES = [
-  { key: "전체", icon: "🛍️", color: "bg-gray-100 text-gray-700" },
-  { key: "굿즈", icon: "🎁", color: "bg-pink-100 text-pink-700" },
-  { key: "기프티콘", icon: "🎫", color: "bg-purple-100 text-purple-700" },
-  { key: "제휴", icon: "🤝", color: "bg-blue-100 text-blue-700" },
-  { key: "이벤트", icon: "🎉", color: "bg-amber-100 text-amber-700" },
-  { key: "기타", icon: "📦", color: "bg-emerald-100 text-emerald-700" },
+  { key: "전체", color: "bg-gray-100 text-gray-700" },
+  { key: "굿즈", color: "bg-pink-100 text-pink-700" },
+  { key: "기프티콘", color: "bg-purple-100 text-purple-700" },
+  { key: "제휴", color: "bg-blue-100 text-blue-700" },
+  { key: "이벤트", color: "bg-amber-100 text-amber-700" },
+  { key: "기타", color: "bg-emerald-100 text-emerald-700" },
 ];
 
 const SORT_OPTIONS: { key: string; label: string }[] = [
@@ -144,7 +153,7 @@ export default function PointshopPage() {
             {CATEGORIES.map(c => (
               <button key={c.key} onClick={() => setCategory(c.key)}
                 className={`group flex flex-col items-center gap-1.5 md:gap-2 p-2 md:p-3 rounded-2xl border transition-all ${category === c.key ? "border-accent bg-accent/5" : "border-transparent hover:border-border-custom bg-white"}`}>
-                <span className={`w-10 h-10 md:w-14 md:h-14 rounded-full flex items-center justify-center text-lg md:text-2xl ${c.color}`}>{c.icon}</span>
+                <span className={`w-10 h-10 md:w-14 md:h-14 rounded-full flex items-center justify-center ${c.color}`}>{CATEGORY_ICONS[c.key]}</span>
                 <span className={`text-[11px] md:text-[13px] font-bold ${category === c.key ? "text-accent" : "text-sub"}`}>{c.key}</span>
               </button>
             ))}
@@ -157,7 +166,8 @@ export default function PointshopPage() {
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
                 <span className="inline-flex items-center gap-1 bg-red-500 text-white text-[11px] font-black px-2.5 py-1 rounded-full">
-                  🔥 BEST
+                  <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2s1 4 4 6c2 1.3 3 3.5 3 6 0 3.9-3.1 7-7 7s-7-3.1-7-7c0-2 1-4 3-5-1 4 1 6 2 6-1-3 1-7 2-9 0 3 2 4 3 5 0-3-3-6-3-9z"/></svg>
+                  BEST
                 </span>
                 <h2 className="text-surface text-[16px] md:text-[18px] font-black">인기 상품 TOP 4</h2>
               </div>

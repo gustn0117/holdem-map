@@ -25,7 +25,12 @@ export default function PointshopProductCard({ product, size = "md" }: { product
 
         {/* Badges */}
         <div className="absolute top-2.5 left-2.5 flex flex-col gap-1">
-          {isHot && <span className="text-[10px] font-black text-white bg-red-500 px-2 py-0.5 rounded-md shadow-md">🔥 HOT</span>}
+          {isHot && (
+            <span className="inline-flex items-center gap-0.5 text-[10px] font-black text-white bg-red-500 px-2 py-0.5 rounded-md shadow-md">
+              <svg className="w-2.5 h-2.5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2s1 4 4 6c2 1.3 3 3.5 3 6 0 3.9-3.1 7-7 7s-7-3.1-7-7c0-2 1-4 3-5-1 4 1 6 2 6-1-3 1-7 2-9 0 3 2 4 3 5 0-3-3-6-3-9z"/></svg>
+              HOT
+            </span>
+          )}
           {isBest && <span className="text-[10px] font-black text-white bg-orange-500 px-2 py-0.5 rounded-md shadow-md">BEST</span>}
           {isNew && <span className="text-[10px] font-black text-white bg-emerald-500 px-2 py-0.5 rounded-md shadow-md">NEW</span>}
         </div>

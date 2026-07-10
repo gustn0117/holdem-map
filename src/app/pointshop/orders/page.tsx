@@ -179,13 +179,16 @@ export default function PointshopOrdersPage() {
                     {(o.tracking_number || o.admin_memo) && (
                       <div className="mt-3 space-y-1.5">
                         {o.tracking_number && (
-                          <div className="bg-blue-50 border border-blue-100 rounded-lg px-3 py-2 text-[12px]">
-                            <span className="text-blue-700 font-bold">📦 송장 번호</span> <span className="text-blue-900 font-mono ml-1">{o.tracking_number}</span>
+                          <div className="bg-blue-50 border border-blue-100 rounded-lg px-3 py-2 text-[12px] flex items-center gap-1.5">
+                            <svg className="w-3.5 h-3.5 text-blue-700" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-14L4 7m8 4v10M4 7v10l8 4"/></svg>
+                            <span className="text-blue-700 font-bold">송장 번호</span>
+                            <span className="text-blue-900 font-mono">{o.tracking_number}</span>
                           </div>
                         )}
                         {o.admin_memo && (
-                          <div className="bg-emerald-50 border border-emerald-100 rounded-lg px-3 py-2 text-[12px] text-emerald-800">
-                            <span className="font-bold">💬 관리자 메시지:</span> {o.admin_memo}
+                          <div className="bg-emerald-50 border border-emerald-100 rounded-lg px-3 py-2 text-[12px] text-emerald-800 flex items-start gap-1.5">
+                            <svg className="w-3.5 h-3.5 mt-0.5 shrink-0" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+                            <span><span className="font-bold">관리자 메시지:</span> {o.admin_memo}</span>
                           </div>
                         )}
                       </div>
