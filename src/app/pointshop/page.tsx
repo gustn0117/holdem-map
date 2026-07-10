@@ -60,7 +60,8 @@ export default function PointshopPage() {
       <Header />
 
       {/* Hero — 이미지 자연 중심 정렬, 좌측 텍스트 뒤쪽만 국소 그라디언트 */}
-      <section className="relative min-h-64 overflow-hidden bg-[#101426] md:aspect-3/1 md:min-h-56 md:max-h-96">
+      {/* aspect + max-h 조합은 폭까지 좁히므로 w-full + 고정 h-* 로 처리 */}
+      <section className="relative w-full h-64 md:h-80 lg:h-96 overflow-hidden bg-[#101426]">
         <Image
           src="/images/pointshop/pointshop-hero.png"
           alt="에메랄드 포커칩과 골드 리워드 코인"
