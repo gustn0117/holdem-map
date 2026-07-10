@@ -10,6 +10,38 @@
   height: 0;
 }
 .ProseMirror:focus { outline: none; }
+
+/* 빗금 placeholder — 실제 이미지 들어오기 전 자리 */
+.hatch-bg {
+  background-color: #f0f2f5;
+  background-image: repeating-linear-gradient(
+    -45deg,
+    #d9dde3,
+    #d9dde3 1px,
+    transparent 1px,
+    transparent 14px
+  );
+}
+.hatch-bg-dark {
+  background-color: #16192a;
+  background-image: repeating-linear-gradient(
+    -45deg,
+    rgba(255, 255, 255, 0.07),
+    rgba(255, 255, 255, 0.07) 1px,
+    transparent 1px,
+    transparent 14px
+  );
+}
+.hatch-bg-accent {
+  background-color: #eafaf1;
+  background-image: repeating-linear-gradient(
+    -45deg,
+    #c8e6d5,
+    #c8e6d5 1px,
+    transparent 1px,
+    transparent 14px
+  );
+}
 .rich-html { line-height: 1.7; word-break: break-word; }
 .rich-html h1 { font-size: 1.5rem; font-weight: 800; margin: 1rem 0 .5rem; }
 .rich-html h2 { font-size: 1.25rem; font-weight: 700; margin: 1rem 0 .5rem; }
