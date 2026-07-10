@@ -9,6 +9,7 @@ import { geocodeAddress } from "@/lib/geocode";
 import Select from "@/components/Select";
 import ImageUpload from "@/components/ImageUpload";
 import JobAvatarPicker from "@/components/JobAvatarPicker";
+import { allRegions } from "@/data/areas";
 
 import { supabase } from "@/lib/supabase";
 
@@ -1733,11 +1734,8 @@ function AdminModal({ modal, stores, saving, onClose, onSave }: {
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="text-sub text-sm font-medium block mb-2">지역 *</label>
-                <Select value={(form.region as string) || "서울"} onChange={v => set("region", v)} options={[
-                  { value: "서울", label: "서울" }, { value: "경기", label: "경기" }, { value: "인천", label: "인천" },
-                  { value: "충청", label: "충청" }, { value: "경상", label: "경상" }, { value: "전라", label: "전라" },
-                  { value: "강원", label: "강원" }, { value: "제주", label: "제주" },
-                ]} />
+                <Select value={(form.region as string) || "서울"} onChange={v => set("region", v)}
+                  options={allRegions.map(r => ({ value: r, label: r }))} />
               </div>
               <div>
                 <label className="text-sub text-sm font-medium block mb-2">추천 매장</label>
@@ -1905,9 +1903,8 @@ function AdminModal({ modal, stores, saving, onClose, onSave }: {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="text-sub text-sm font-medium block mb-2">지역 *</label>
-                <Select value={(form.region as string) || "서울"} onChange={v => set("region", v)} options={[
-                  { value: "서울", label: "서울" }, { value: "경기", label: "경기" }, { value: "인천", label: "인천" },
-                ]} />
+                <Select value={(form.region as string) || "서울"} onChange={v => set("region", v)}
+                  options={allRegions.map(r => ({ value: r, label: r }))} />
               </div>
               <div>
                 <label className="text-sub text-sm font-medium block mb-2">상세 주소</label>
