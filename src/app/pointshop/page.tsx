@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import PointshopProductCard from "@/components/PointshopProductCard";
@@ -58,9 +59,17 @@ export default function PointshopPage() {
     <div className="flex flex-col min-h-screen pb-16 md:pb-0">
       <Header />
 
-      {/* Hero — 배경 이미지 자리(빗금). 텍스트 좌측 */}
-      <section className="relative">
-        <div className="hatch-bg-dark w-full aspect-3/1 max-h-96 min-h-56" />
+      {/* Hero */}
+      <section className="relative min-h-64 overflow-hidden bg-[#101426] md:aspect-3/1 md:min-h-56 md:max-h-96">
+        <Image
+          src="/images/pointshop/pointshop-hero.png"
+          alt="에메랄드 포커칩과 골드 리워드 코인"
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover object-[64%_center] md:object-center"
+        />
+        <div className="absolute inset-0 bg-linear-to-r from-[#080b16]/95 via-[#080b16]/55 to-transparent md:via-[#080b16]/15" />
         <div className="absolute inset-0 flex items-center">
           <div className="max-w-350 mx-auto px-5 md:px-10 w-full text-white">
             <p className="text-yellow-300 text-[11px] font-black uppercase tracking-widest mb-2">POINT SHOP</p>
@@ -157,9 +166,17 @@ export default function PointshopPage() {
           </section>
         )}
 
-        {/* Editorial split — 이미지 자리 + 카피 */}
+        {/* Editorial split */}
         <section className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center mb-16">
-          <div className="hatch-bg-accent aspect-4/3" />
+          <div className="relative aspect-4/3 overflow-hidden bg-accent-light">
+            <Image
+              src="/images/pointshop/earn-points.png"
+              alt="선물 상자에 쌓이는 포인트 코인과 포커칩"
+              fill
+              sizes="(min-width: 768px) 50vw, 100vw"
+              className="object-cover transition-transform duration-700 hover:scale-[1.02]"
+            />
+          </div>
           <div>
             <p className="text-accent text-[11px] font-black tracking-widest uppercase mb-2">Earn More</p>
             <h2 className="text-surface text-2xl md:text-3xl font-black leading-tight mb-4">
