@@ -59,7 +59,7 @@ export default function PointshopPage() {
     <div className="flex flex-col min-h-screen pb-16 md:pb-0">
       <Header />
 
-      {/* Hero */}
+      {/* Hero — 이미지 자연 중심 정렬, 좌측 텍스트 뒤쪽만 국소 그라디언트 */}
       <section className="relative min-h-64 overflow-hidden bg-[#101426] md:aspect-3/1 md:min-h-56 md:max-h-96">
         <Image
           src="/images/pointshop/pointshop-hero.png"
@@ -67,17 +67,17 @@ export default function PointshopPage() {
           fill
           priority
           sizes="100vw"
-          className="object-cover object-right md:object-[75%_center]"
+          className="object-cover object-center"
         />
-        {/* 왼쪽 텍스트가 이미지와 안 겹치도록 좌측을 진하게 → 우측은 이미지가 살아있게 투명 */}
-        <div className="absolute inset-0 bg-linear-to-r from-[#080b16]/95 via-[#080b16]/70 to-transparent md:via-[#080b16]/40" />
+        {/* 좌측 30% 영역에만 어두운 그라디언트로 텍스트 가독성 확보 */}
+        <div className="absolute inset-0 bg-linear-to-r from-black/70 from-0% via-black/20 via-30% to-transparent to-55%" />
         <div className="absolute inset-0 flex items-center">
           <div className="max-w-350 mx-auto px-5 md:px-10 w-full text-white">
-            <p className="text-yellow-300 text-[11px] font-black uppercase tracking-widest mb-2">POINT SHOP</p>
-            <h1 className="text-4xl md:text-5xl font-black leading-none mb-3">
+            <p className="text-yellow-300 text-[11px] font-black uppercase tracking-widest mb-2 drop-shadow">POINT SHOP</p>
+            <h1 className="text-4xl md:text-5xl font-black leading-none mb-3 drop-shadow-lg">
               모아서 <span className="text-yellow-300">교환</span>
             </h1>
-            <p className="text-white/80 text-[14px] md:text-[15px] max-w-md">활동으로 쌓은 포인트를 굿즈·기프티콘·제휴 상품으로 바꿔가세요.</p>
+            <p className="text-white/90 text-[14px] md:text-[15px] max-w-md drop-shadow">활동으로 쌓은 포인트를 굿즈·기프티콘·제휴 상품으로 바꿔가세요.</p>
           </div>
         </div>
       </section>
