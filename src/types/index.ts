@@ -100,6 +100,44 @@ export interface Notice {
   created_at?: string;
 }
 
+export interface PointshopProduct {
+  id: string;
+  name: string;
+  description?: string | null;
+  image?: string | null;
+  images?: string[] | null;
+  price: number; // 포인트 가격
+  stock: number; // 재고 (-1이면 무제한)
+  category?: string | null;
+  active: boolean;
+  sort_order?: number;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export type PointshopOrderStatus = "pending" | "approved" | "shipped" | "completed" | "cancelled";
+
+export interface PointshopOrder {
+  id: string;
+  user_id: string;
+  user_nickname?: string | null;
+  product_id: string;
+  product_name: string;
+  product_image?: string | null;
+  price: number;
+  quantity: number;
+  total_price: number;
+  status: PointshopOrderStatus;
+  recipient_name?: string | null;
+  recipient_phone?: string | null;
+  recipient_address?: string | null;
+  memo?: string | null;
+  admin_memo?: string | null;
+  tracking_number?: string | null;
+  created_at?: string;
+  updated_at?: string;
+}
+
 export interface BlogPost {
   id: string;
   slug: string;

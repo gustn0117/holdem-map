@@ -691,6 +691,7 @@ export default function AdminPage() {
             <span className="text-xs text-muted bg-gray-100 px-2.5 py-1 rounded-lg font-semibold">ADMIN</span>
           </div>
           <div className="flex items-center gap-4">
+            <Link href="/admin/pointshop" className="text-muted hover:text-accent text-sm font-semibold transition-colors">포인트샵 관리</Link>
             <Link href="/admin/blog" className="text-muted hover:text-accent text-sm font-semibold transition-colors">블로그 관리</Link>
             <Link href="/" className="text-muted hover:text-accent text-sm transition-colors">사이트 보기</Link>
             <button onClick={() => { try { sessionStorage.removeItem("hm_admin"); } catch {} ; setAuthed(false); }} className="text-muted hover:text-red text-sm transition-colors">로그아웃</button>

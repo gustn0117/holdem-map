@@ -13,6 +13,8 @@ import RichEditor from "@/components/RichEditor";
 import { useAuth } from "@/contexts/AuthContext";
 import { classifyContent, formatFilterMessage } from "@/lib/contentFilter";
 import { sanitizeHtml } from "@/lib/sanitize";
+import { addPoints } from "@/lib/rank";
+import { supabase } from "@/lib/supabase";
 
 export default function JobWritePage() {
   return (
@@ -30,7 +32,7 @@ export default function JobWritePage() {
 function JobWritePageInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { user, profile } = useAuth();
+  const { user, profile, refreshProfile } = useAuth();
   const [saving, setSaving] = useState(false);
   const [areaSearch, setAreaSearch] = useState("");
   const [expandedRegion, setExpandedRegion] = useState<string | null>(null);
@@ -132,6 +134,11 @@ function JobWritePageInner() {
         store_name: form.store_name,
         user_id: user.id,
       });
+      const pt = await addPoints(supabase, user.id, "job");
+      if (pt.success && pt.added) {
+        if (refreshProfile) await refreshProfile();
+        alert(`등록 완료! +${pt.added.toLocaleString()} 포인트 적립되었습니다.`);
+      }
       router.push("/jobs");
     } catch {
       alert("등록에 실패했습니다.");

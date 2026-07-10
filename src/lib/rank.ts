@@ -45,13 +45,16 @@ export const POINT_RULES = {
   post: { points: 10, dailyLimit: 100, countLimit: 10 },
   comment: { points: 3, dailyLimit: 30, countLimit: 100 },
   reaction: { points: 1, dailyLimit: 30, countLimit: 30 },
+  job: { points: 5000, dailyLimit: 5000, countLimit: 1 }, // 딜러 구인구직 등록: 하루 1회 5000pt
 };
 
 // Server-side function to add points (client should call this)
+export type PointType = "post" | "comment" | "reaction" | "job";
+
 export async function addPoints(
   supabase: any,
   userId: string,
-  type: "post" | "comment" | "reaction"
+  type: PointType
 ): Promise<{ success: boolean; message?: string; added?: number }> {
   if (!userId) return { success: false, message: "로그인이 필요합니다." };
   const rule = POINT_RULES[type];
@@ -59,7 +62,7 @@ export async function addPoints(
 
   const { data: profile, error: fetchErr } = await supabase
     .from("profiles")
-    .select("points, daily_post_points, daily_comment_points, daily_reaction_points, daily_post_count, daily_comment_count, daily_reaction_count, last_points_reset")
+    .select("points, daily_post_points, daily_comment_points, daily_reaction_points, daily_job_points, daily_post_count, daily_comment_count, daily_reaction_count, daily_job_count, last_points_reset")
     .eq("id", userId)
     .maybeSingle();
 
@@ -70,8 +73,9 @@ export async function addPoints(
   const dailyPoints = isNewDay ? 0 : (profile[`daily_${type}_points`] || 0);
   const dailyCount = isNewDay ? 0 : (profile[`daily_${type}_count`] || 0);
 
+  const typeLabel = type === "post" ? "게시글" : type === "comment" ? "댓글" : type === "reaction" ? "추천/비추천" : "구인구직 등록";
   if (dailyCount >= rule.countLimit) {
-    return { success: false, message: `1일 ${type === "post" ? "게시글" : type === "comment" ? "댓글" : "추천/비추천"} 한도 초과` };
+    return { success: false, message: `1일 ${typeLabel} 포인트 한도 초과` };
   }
 
   const addedPoints = Math.max(0, Math.min(rule.points, rule.dailyLimit - dailyPoints));
@@ -88,9 +92,11 @@ export async function addPoints(
     updatePayload.daily_post_points = type === "post" ? addedPoints : 0;
     updatePayload.daily_comment_points = type === "comment" ? addedPoints : 0;
     updatePayload.daily_reaction_points = type === "reaction" ? addedPoints : 0;
+    updatePayload.daily_job_points = type === "job" ? addedPoints : 0;
     updatePayload.daily_post_count = type === "post" ? 1 : 0;
     updatePayload.daily_comment_count = type === "comment" ? 1 : 0;
     updatePayload.daily_reaction_count = type === "reaction" ? 1 : 0;
+    updatePayload.daily_job_count = type === "job" ? 1 : 0;
   } else {
     updatePayload[`daily_${type}_points`] = dailyPoints + addedPoints;
     updatePayload[`daily_${type}_count`] = dailyCount + 1;
