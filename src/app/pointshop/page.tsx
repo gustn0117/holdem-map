@@ -67,9 +67,10 @@ export default function PointshopPage() {
           fill
           priority
           sizes="100vw"
-          className="object-cover object-[64%_center] md:object-center"
+          className="object-cover object-right md:object-[75%_center]"
         />
-        <div className="absolute inset-0 bg-linear-to-r from-[#080b16]/95 via-[#080b16]/55 to-transparent md:via-[#080b16]/15" />
+        {/* 왼쪽 텍스트가 이미지와 안 겹치도록 좌측을 진하게 → 우측은 이미지가 살아있게 투명 */}
+        <div className="absolute inset-0 bg-linear-to-r from-[#080b16]/95 via-[#080b16]/70 to-transparent md:via-[#080b16]/40" />
         <div className="absolute inset-0 flex items-center">
           <div className="max-w-350 mx-auto px-5 md:px-10 w-full text-white">
             <p className="text-yellow-300 text-[11px] font-black uppercase tracking-widest mb-2">POINT SHOP</p>
