@@ -74,6 +74,7 @@ export default function Header() {
     { href: "/board", label: "게시판" },
     { href: "/shorts", label: "숏츠" },
     { href: "/pointshop", label: "포인트샵" },
+    { href: "/blog", label: "블로그" },
   ];
 
   return (
