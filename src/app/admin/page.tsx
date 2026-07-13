@@ -1177,6 +1177,26 @@ export default function AdminPage() {
                     }} className="text-[12px] font-semibold px-3 py-1.5 rounded-lg bg-bg text-sub hover:bg-accent-light hover:text-accent transition-all">
                       닉네임
                     </button>
+                    <button onClick={async () => {
+                      const nickname = u.nickname || u.email || u.id.slice(0, 8);
+                      const newPw = prompt(`[${nickname}]의 새 비밀번호를 입력하세요 (6자 이상)\n\n초기화 후 회원에게 이 비밀번호를 안내해주세요.`, "reset1234");
+                      if (newPw === null) return;
+                      if (newPw.length < 6) { alert("비밀번호는 6자 이상이어야 합니다."); return; }
+                      try {
+                        const res = await fetch("/api/admin/reset-user-password", {
+                          method: "POST",
+                          headers: { "Content-Type": "application/json" },
+                          body: JSON.stringify({ userId: u.id, newPassword: newPw, adminPassword: ADMIN_PASSWORD }),
+                        });
+                        const data = await res.json();
+                        if (!res.ok) throw new Error(data.error || "요청 실패");
+                        alert(`비밀번호가 초기화되었습니다.\n\n새 비밀번호: ${newPw}\n\n회원에게 이 값을 안내해주세요.`);
+                      } catch (e) {
+                        alert("초기화 실패: " + (e instanceof Error ? e.message : String(e)));
+                      }
+                    }} className="text-[12px] font-semibold px-3 py-1.5 rounded-lg bg-amber-50 text-amber-700 hover:bg-amber-100 transition-all">
+                      비번 초기화
+                    </button>
                     <button onClick={() => handleBlockUser(u.id, !u.is_blocked)}
                       className={`text-[12px] font-semibold px-3 py-1.5 rounded-lg transition-all ${u.is_blocked ? "bg-accent-light text-accent hover:bg-accent/20" : "bg-red-50 text-red-500 hover:bg-red-100"}`}>
                       {u.is_blocked ? "차단 해제" : "차단"}

@@ -31,7 +31,6 @@ function RegisterPageInner() {
   const initialReferral = searchParams.get("ref") || "";
   const [step, setStep] = useState(1);
   const [userType, setUserType] = useState("");
-  const [method, setMethod] = useState<"email" | "phone">("email");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
@@ -52,10 +51,12 @@ function RegisterPageInner() {
     if (trimmedNickname.length < 2) { setError("닉네임은 2자 이상이어야 합니다."); return; }
     if (/^\d{10,11}$/.test(trimmedNickname)) { setError("닉네임에 전화번호를 입력할 수 없습니다."); return; }
 
-    const loginEmail = method === "phone" ? `${phone.replace(/-/g, "")}@phone.holdemmap.kr` : email;
-    if (method === "phone" && !/^01[0-9]{8,9}$/.test(phone.replace(/-/g, ""))) { setError("올바른 전화번호를 입력하세요."); return; }
-    if (method === "phone" && trimmedNickname === phone.replace(/-/g, "")) { setError("닉네임은 전화번호와 다르게 설정해주세요."); return; }
-    if (method === "email" && !email) { setError("이메일을 입력하세요."); return; }
+    const cleanPhoneEarly = phone.replace(/-/g, "").trim();
+    if (!cleanPhoneEarly) { setError("전화번호는 필수입니다."); return; }
+    if (!/^01[0-9]{8,9}$/.test(cleanPhoneEarly)) { setError("올바른 전화번호를 입력하세요."); return; }
+    if (trimmedNickname === cleanPhoneEarly) { setError("닉네임은 전화번호와 다르게 설정해주세요."); return; }
+    // 이메일이 있으면 로그인 계정으로 사용, 없으면 전화번호 기반 자동 이메일 생성
+    const loginEmail = email.trim() ? email.trim() : `${cleanPhoneEarly}@phone.holdemmap.kr`;
 
     setLoading(true);
     const { error } = await signUp(loginEmail, password, trimmedNickname, userType, referralCode);
@@ -63,19 +64,9 @@ function RegisterPageInner() {
       setError(error.includes("already registered") ? "이미 등록된 계정입니다." : error);
       setLoading(false);
     } else {
-      const cleanPhone = phone.replace(/-/g, "").trim();
-      if (cleanPhone) {
-        if (!/^01[0-9]{8,9}$/.test(cleanPhone)) {
-          if (method === "email") {
-            // 이메일 가입에서 전화번호가 형식에 안 맞으면 저장만 스킵 (가입은 계속 진행)
-          } else {
-            setError("올바른 전화번호를 입력하세요."); setLoading(false); return;
-          }
-        } else {
-          const { data: { user } } = await supabase.auth.getUser();
-          if (user) await supabase.from("profiles").update({ phone: cleanPhone }).eq("id", user.id);
-        }
-      }
+      // 전화번호는 항상 저장 (필수)
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) await supabase.from("profiles").update({ phone: cleanPhoneEarly }).eq("id", user.id);
       router.push("/mypage");
     }
   };
@@ -145,18 +136,6 @@ function RegisterPageInner() {
                 <span className="text-sub text-[14px]">으로 가입합니다</span>
               </div>
 
-              {/* Method toggle */}
-              <div className="flex bg-[#f5f6f8] rounded-xl p-1 mb-5">
-                <button type="button" onClick={() => setMethod("email")}
-                  className={`flex-1 py-2.5 rounded-lg text-[13px] font-semibold transition-all ${method === "email" ? "bg-white text-surface shadow-sm" : "text-muted"}`}>
-                  이메일
-                </button>
-                <button type="button" onClick={() => setMethod("phone")}
-                  className={`flex-1 py-2.5 rounded-lg text-[13px] font-semibold transition-all ${method === "phone" ? "bg-white text-surface shadow-sm" : "text-muted"}`}>
-                  전화번호
-                </button>
-              </div>
-
               <form onSubmit={handleSubmit} className="space-y-4">
                 {error && (
                   <div className="bg-red-50 border border-red-200 text-red-600 text-sm px-4 py-3 rounded-xl">{error}</div>
@@ -169,31 +148,21 @@ function RegisterPageInner() {
                     className={inputClass} placeholder={userType === "업주" ? "업체명 또는 닉네임" : "사용할 닉네임 (2자 이상)"} />
                 </div>
 
-                {method === "email" ? (
-                  <>
-                    <div>
-                      <label className="text-surface text-sm font-semibold mb-1.5 block">이메일</label>
-                      <input type="email" name="email" autoComplete="email" value={email}
-                        onChange={e => setEmail(e.target.value)} required
-                        className={inputClass} placeholder="example@email.com" />
-                    </div>
-                    <div>
-                      <label className="text-surface text-sm font-semibold mb-1.5 block">전화번호 <span className="text-muted font-normal">(선택)</span></label>
-                      <input type="tel" name="phone" autoComplete="tel" value={phone}
-                        onChange={e => setPhone(e.target.value)}
-                        className={inputClass} placeholder="01012345678" />
-                      <p className="text-muted text-[11px] mt-1">비밀번호를 잊었을 때 계정 찾기에 사용됩니다</p>
-                    </div>
-                  </>
-                ) : (
-                  <div>
-                    <label className="text-surface text-sm font-semibold mb-1.5 block">전화번호</label>
-                    <input type="tel" name="phone" autoComplete="tel" value={phone}
-                      onChange={e => setPhone(e.target.value)} required
-                      className={inputClass} placeholder="01012345678" />
-                    <p className="text-muted text-[11px] mt-1">별도 인증 없이 번호만 입력하시면 됩니다</p>
-                  </div>
-                )}
+                <div>
+                  <label className="text-surface text-sm font-semibold mb-1.5 block">전화번호 <span className="text-red-500">*</span></label>
+                  <input type="tel" name="phone" autoComplete="tel" value={phone}
+                    onChange={e => setPhone(e.target.value)} required
+                    className={inputClass} placeholder="01012345678" />
+                  <p className="text-muted text-[11px] mt-1">인증 없이 번호만 입력하시면 됩니다. 계정 찾기에도 사용됩니다.</p>
+                </div>
+
+                <div>
+                  <label className="text-surface text-sm font-semibold mb-1.5 block">이메일 <span className="text-muted font-normal">(선택)</span></label>
+                  <input type="email" name="email" autoComplete="email" value={email}
+                    onChange={e => setEmail(e.target.value)}
+                    className={inputClass} placeholder="example@email.com" />
+                  <p className="text-muted text-[11px] mt-1">이메일로도 로그인 및 비밀번호 재설정 링크를 받고 싶다면 입력해주세요.</p>
+                </div>
 
                 <div>
                   <label className="text-surface text-sm font-semibold mb-1.5 block">비밀번호</label>

@@ -260,6 +260,9 @@ export default function MyPage() {
                       {!profile.contact_kakao && !profile.contact_telegram && !profile.contact_phone && <p className="text-muted text-[14px]">미등록</p>}
                     </div>
                   </div>
+                  <div className="pt-5 border-t border-border-custom mt-5">
+                    <PasswordChanger />
+                  </div>
                   <div className="flex gap-3 pt-5 border-t border-border-custom mt-5">
                     <button onClick={() => { signOut(); router.push("/"); }} className="text-red-400 text-[13px] font-semibold">로그아웃</button>
                   </div>
@@ -440,6 +443,68 @@ function InfoRow({ label, value }: { label: string; value: string }) {
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return <div><label className="text-sub text-sm font-semibold mb-1.5 block">{label}</label>{children}</div>;
+}
+
+function PasswordChanger() {
+  const [open, setOpen] = useState(false);
+  const [current, setCurrent] = useState("");
+  const [next, setNext] = useState("");
+  const [confirm, setConfirm] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const submit = async () => {
+    if (next.length < 6) { alert("새 비밀번호는 6자 이상이어야 합니다."); return; }
+    if (next !== confirm) { alert("새 비밀번호가 일치하지 않습니다."); return; }
+    setLoading(true);
+    try {
+      // 현재 비번 확인 - 세션 이메일로 재로그인 시도
+      const { data: sess } = await supabase.auth.getSession();
+      const email = sess.session?.user.email;
+      if (!email) { alert("로그인 세션을 확인할 수 없습니다."); setLoading(false); return; }
+      const { error: signinErr } = await supabase.auth.signInWithPassword({ email, password: current });
+      if (signinErr) { alert("현재 비밀번호가 일치하지 않습니다."); setLoading(false); return; }
+      const { error } = await supabase.auth.updateUser({ password: next });
+      if (error) { alert("변경 실패: " + error.message); setLoading(false); return; }
+      alert("비밀번호가 변경되었습니다.");
+      setOpen(false); setCurrent(""); setNext(""); setConfirm("");
+    } finally { setLoading(false); }
+  };
+
+  const inputClass = "w-full bg-white border border-border-custom rounded-xl px-4 py-3 text-[15px] focus:outline-none focus:border-accent";
+
+  return (
+    <div>
+      <div className="flex items-center justify-between">
+        <div>
+          <h3 className="text-surface font-bold text-[14px]">비밀번호 변경</h3>
+          <p className="text-muted text-[12px] mt-0.5">주기적으로 비밀번호를 변경해 계정을 안전하게 지키세요.</p>
+        </div>
+        <button onClick={() => setOpen(v => !v)} className="text-accent text-[13px] font-semibold border border-accent px-3 py-1.5 rounded-lg hover:bg-accent-light">
+          {open ? "닫기" : "변경하기"}
+        </button>
+      </div>
+      {open && (
+        <div className="mt-4 space-y-3 bg-[#f9f9f9] rounded-xl p-4">
+          <div>
+            <label className="text-sub text-[12px] font-semibold block mb-1">현재 비밀번호</label>
+            <input type="password" className={inputClass} value={current} onChange={e => setCurrent(e.target.value)} autoComplete="current-password" />
+          </div>
+          <div>
+            <label className="text-sub text-[12px] font-semibold block mb-1">새 비밀번호 (6자 이상)</label>
+            <input type="password" className={inputClass} value={next} onChange={e => setNext(e.target.value)} autoComplete="new-password" />
+          </div>
+          <div>
+            <label className="text-sub text-[12px] font-semibold block mb-1">새 비밀번호 확인</label>
+            <input type="password" className={inputClass} value={confirm} onChange={e => setConfirm(e.target.value)} autoComplete="new-password" />
+          </div>
+          <button onClick={submit} disabled={loading}
+            className="w-full bg-accent hover:bg-accent-hover text-white font-bold py-3 rounded-xl disabled:opacity-50">
+            {loading ? "변경 중..." : "비밀번호 변경"}
+          </button>
+        </div>
+      )}
+    </div>
+  );
 }
 
 function ListCard({ title, count, emptyText, action, children }: {
