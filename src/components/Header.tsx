@@ -73,6 +73,7 @@ export default function Header() {
     { href: "/trade", label: "중고거래" },
     { href: "/board", label: "게시판" },
     { href: "/shorts", label: "숏츠" },
+    { href: "/pointshop", label: "포인트샵" },
   ];
 
   return (
@@ -201,7 +202,7 @@ export default function Header() {
               className="hidden md:block" width={230} height={36} style={{ width: 230, height: 36 }} />
           </Link>
           </div>
-          <div className="md:hidden grid grid-cols-4 gap-1.5 mt-2">
+          <div className="md:hidden grid grid-cols-3 gap-1.5 mt-2">
             {[
               { href: "/live", label: "실시간", icon: "M13 10V3L4 14h7v7l9-11h-7z", bg: "bg-[#dc2626] hover:bg-[#b91c1c]" },
               { href: "/jobs", label: "구인구직", icon: "M21 13.255A23.193 23.193 0 0112 15c-3.183 0-6.22-.64-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m8 0H8m8 0h2a2 2 0 012 2v6M8 6H6a2 2 0 00-2 2v6", bg: "bg-[#ef6b6b] hover:bg-[#e05252]" },
@@ -211,6 +212,7 @@ export default function Header() {
               { href: "/trade", label: "중고거래", icon: "M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z", bg: "bg-[#10b981] hover:bg-[#0e9c70]" },
               { href: "/board", label: "게시판", icon: "M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z", bg: "bg-[#06b6d4] hover:bg-[#0598b8]" },
               { href: "/shorts", label: "숏츠", icon: "M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664zM21 12a9 9 0 11-18 0 9 9 0 0118 0z", bg: "bg-[#fbbf24] hover:bg-[#e5ac1e]" },
+              { href: "/pointshop", label: "포인트샵", icon: "M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z", bg: "bg-[#0d0d0d] hover:bg-black" },
             ].map((item) => (
               <Link key={item.href} href={item.href}
                 className={`flex items-center justify-center gap-0.5 text-white rounded-lg py-2 transition-all whitespace-nowrap ${item.bg}`}>
