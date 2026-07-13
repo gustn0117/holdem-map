@@ -17,9 +17,14 @@ export default function Footer() {
           <div className="md:col-span-2">
             <h4 className="text-surface font-bold text-[13px] mb-3">서비스</h4>
             <nav className="flex flex-col gap-2">
-              <Link href="/map" className="text-muted hover:text-accent text-[13px] transition-colors">지도 검색</Link>
+              <Link href="/map" className="text-muted hover:text-accent text-[13px] transition-colors">매장 지도</Link>
               <Link href="/events" className="text-muted hover:text-accent text-[13px] transition-colors">대회 일정</Link>
+              <Link href="/tournament" className="text-muted hover:text-accent text-[13px] transition-colors">무료 토너먼트</Link>
+              <Link href="/live" className="text-muted hover:text-accent text-[13px] transition-colors">실시간 게임</Link>
+              <Link href="/region" className="text-muted hover:text-accent text-[13px] transition-colors">지역별 홀덤펍</Link>
               <Link href="/shorts" className="text-muted hover:text-accent text-[13px] transition-colors">숏츠</Link>
+              <Link href="/pointshop" className="text-muted hover:text-accent text-[13px] transition-colors">포인트샵</Link>
+              <Link href="/blog" className="text-muted hover:text-accent text-[13px] transition-colors">블로그</Link>
             </nav>
           </div>
 
@@ -27,7 +32,11 @@ export default function Footer() {
           <div className="md:col-span-2">
             <h4 className="text-surface font-bold text-[13px] mb-3">커뮤니티</h4>
             <nav className="flex flex-col gap-2">
+              <Link href="/board" className="text-muted hover:text-accent text-[13px] transition-colors">자유게시판</Link>
+              <Link href="/board/strategy" className="text-muted hover:text-accent text-[13px] transition-colors">전략게시판</Link>
               <Link href="/jobs" className="text-muted hover:text-accent text-[13px] transition-colors">구인구직</Link>
+              <Link href="/market" className="text-muted hover:text-accent text-[13px] transition-colors">대관/매매</Link>
+              <Link href="/trade" className="text-muted hover:text-accent text-[13px] transition-colors">중고거래</Link>
               <Link href="/notices" className="text-muted hover:text-accent text-[13px] transition-colors">공지사항</Link>
             </nav>
           </div>
