@@ -81,9 +81,16 @@ export async function purchaseProduct(input: PurchaseInput): Promise<PointshopOr
 
   const totalPrice = product.price * input.quantity;
 
-  const { data: profile, error: pErr } = await supabase.from("profiles").select("points, nickname").eq("id", input.userId).maybeSingle();
+  const { data: profile, error: pErr } = await supabase.from("profiles").select("points, nickname, created_at").eq("id", input.userId).maybeSingle();
   if (pErr) throw pErr;
   if (!profile) throw new Error("프로필을 찾을 수 없습니다.");
+
+  // 이용 조건: 가입 후 N일 경과 + 보유 포인트 M점 이상 (UI 우회 방지 목적, 서버 사이드 재검증)
+  const eligibility = checkEligibility({ points: profile.points, created_at: profile.created_at });
+  if (!eligibility.eligible) {
+    throw new Error("포인트샵 이용 조건 미달: " + eligibility.reasons.join(" · "));
+  }
+
   const currentPoints = profile.points || 0;
   if (currentPoints < totalPrice) throw new Error(`포인트가 부족합니다. (필요: ${totalPrice.toLocaleString()}pt, 보유: ${currentPoints.toLocaleString()}pt)`);
 
