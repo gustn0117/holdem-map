@@ -95,7 +95,11 @@ export default function AdminBlogPage() {
       setEditing(null); setForm(empty()); setTagInput("");
       await refresh();
     } catch (e) {
-      alert("저장 실패: " + (e instanceof Error ? e.message : String(e)));
+      const msg = e instanceof Error ? e.message
+        : (e && typeof e === "object" && "message" in e) ? String((e as { message: unknown }).message)
+        : (() => { try { return JSON.stringify(e); } catch { return String(e); } })();
+      console.error("[blog save]", e);
+      alert("저장 실패: " + msg);
     } finally {
       setSaving(false);
     }

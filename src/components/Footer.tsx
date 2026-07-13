@@ -37,7 +37,7 @@ export default function Footer() {
             <h4 className="text-surface font-bold text-[13px] mb-3">문의</h4>
             <nav className="flex flex-col gap-2">
               <Link href="/contact" className="text-muted hover:text-accent text-[13px] transition-colors">매장 등록</Link>
-              <Link href="/contact" className="text-muted hover:text-accent text-[13px] transition-colors">광고 문의</Link>
+              <Link href="/contact/ad" className="text-muted hover:text-accent text-[13px] transition-colors">광고 문의</Link>
             </nav>
           </div>
 
