@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Header from "@/components/Header";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
@@ -12,7 +12,20 @@ import { addPoints, POINT_RULES } from "@/lib/rank";
 import { classifyContent, formatFilterMessage } from "@/lib/contentFilter";
 import { sanitizeHtml } from "@/lib/sanitize";
 
+const CATEGORIES = ["자유", "전략"] as const;
+
 export default function BoardWritePage() {
+  return (
+    <Suspense fallback={<div className="flex-1 flex items-center justify-center"><div className="w-8 h-8 border-2 border-accent/30 border-t-accent rounded-full animate-spin" /></div>}>
+      <BoardWriteInner />
+    </Suspense>
+  );
+}
+
+function BoardWriteInner() {
+  const searchParams = useSearchParams();
+  const initialCat = (searchParams.get("cat") === "전략" ? "전략" : "자유") as typeof CATEGORIES[number];
+  const [category, setCategory] = useState<typeof CATEGORIES[number]>(initialCat);
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [image, setImage] = useState("");
@@ -62,6 +75,7 @@ export default function BoardWritePage() {
       content: sanitizeHtml(content),
       image,
       status: "approved",
+      category,
     });
     if (error) { alert("작성에 실패했습니다."); setLoading(false); return; }
     const pt = await addPoints(supabase, user.id, "post");
@@ -71,7 +85,7 @@ export default function BoardWritePage() {
     } else if (pt.message) {
       alert(`게시글은 등록되었습니다. (포인트 미적립: ${pt.message})`);
     }
-    router.push("/board");
+    router.push(category === "전략" ? "/board/strategy" : "/board");
   };
 
   return (
@@ -81,6 +95,17 @@ export default function BoardWritePage() {
         <div className="max-w-2xl mx-auto">
           <h1 className="text-2xl font-black text-surface mb-6">글 작성</h1>
           <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <label className="text-surface text-sm font-semibold mb-1.5 block">게시판</label>
+              <div className="flex gap-2">
+                {CATEGORIES.map(c => (
+                  <button key={c} type="button" onClick={() => setCategory(c)}
+                    className={`flex-1 py-2.5 rounded-xl text-[13px] font-bold transition-all border ${category === c ? "bg-accent text-white border-accent" : "border-border-custom text-sub hover:border-accent"}`}>
+                    {c === "전략" ? "전략게시판" : "자유게시판"}
+                  </button>
+                ))}
+              </div>
+            </div>
             <div>
               <label className="text-surface text-sm font-semibold mb-1.5 block">제목</label>
               <input type="text" value={title} onChange={e => setTitle(e.target.value)} required
