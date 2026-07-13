@@ -18,17 +18,41 @@ export default function ForgotPasswordPage() {
     e.preventDefault();
     setLoading(true);
     setResult(null);
-    if (!email.includes("@")) {
+    const trimmed = email.trim().toLowerCase();
+    if (!trimmed.includes("@")) {
       setResult({ kind: "err", msg: "이메일 주소를 입력해주세요. 전화번호로 가입하신 경우 아래 안내를 확인하세요." });
       setLoading(false);
       return;
     }
-    const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), {
-      redirectTo: typeof window !== "undefined" ? `${window.location.origin}/login` : undefined,
+    // 1) 프로필에서 이메일 존재 여부 확인
+    const { data: profile, error: pErr } = await supabase
+      .from("profiles")
+      .select("id, email")
+      .ilike("email", trimmed)
+      .maybeSingle();
+    if (pErr) {
+      setResult({ kind: "err", msg: "일시적 오류가 발생했습니다. 잠시 후 다시 시도해주세요." });
+      setLoading(false);
+      return;
+    }
+    if (!profile) {
+      setResult({ kind: "err", msg: "등록되지 않은 이메일입니다. 가입 시 사용한 이메일을 확인해주세요." });
+      setLoading(false);
+      return;
+    }
+    // 전화번호로 가입한 계정(내부 이메일)은 재설정 불가
+    if (profile.email && profile.email.includes("@phone.holdemmap")) {
+      setResult({ kind: "err", msg: "이 계정은 전화번호로 가입되어 이메일 재설정이 불가합니다. 문의하기를 통해 관리자에게 요청해주세요." });
+      setLoading(false);
+      return;
+    }
+    // 2) 재설정 메일 발송
+    const { error } = await supabase.auth.resetPasswordForEmail(trimmed, {
+      redirectTo: typeof window !== "undefined" ? `${window.location.origin}/reset-password` : undefined,
     });
     setLoading(false);
     if (error) setResult({ kind: "err", msg: error.message });
-    else setResult({ kind: "ok", msg: "이메일로 재설정 링크를 보냈습니다. 메일함을 확인해주세요." });
+    else setResult({ kind: "ok", msg: "이메일로 재설정 링크를 보냈습니다. 메일함(스팸함 포함)을 확인해주세요." });
   };
 
   const handleFindId = async (e: React.FormEvent) => {
