@@ -6,8 +6,9 @@ import Footer from "@/components/Footer";
 import JsonLdScript from "@/components/JsonLd";
 import { breadcrumbSchema, localBusinessSchema, jobPostingSchema } from "@/lib/schema";
 import { supabase } from "@/lib/supabase";
+import { getStores } from "@/lib/api";
 import { isValidDistrict, detectStoreCity, detectStoreDistrict } from "@/lib/regionLookup";
-import type { Store, Job } from "@/types";
+import type { Job } from "@/types";
 
 export const revalidate = 1800;
 
@@ -26,11 +27,10 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
 }
 
 async function fetchDistrictData(city: string, district: string) {
-  const [storesRes, jobsRes] = await Promise.all([
-    supabase.from("stores").select("*").limit(500),
-    supabase.from("jobs").select("*").eq("type", "구인").limit(200),
+  const [allStores, jobsRes] = await Promise.all([
+    getStores(),
+    supabase.from("jobs").select("*").eq("type", "구인").limit(1000),
   ]);
-  const allStores = (storesRes.data || []) as Store[];
   const allJobs = (jobsRes.data || []) as Job[];
   const stores = allStores.filter(s => detectStoreCity(s) === city && detectStoreDistrict(s, city) === district);
   const jobs = allJobs.filter(j => (j.areas || []).some(a => a.includes(district)));

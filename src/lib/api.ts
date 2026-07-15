@@ -2,13 +2,23 @@ import { supabase } from "./supabase";
 import { Store, Event, Notice, Job, Banner, Short } from "@/types";
 
 export async function getStores(): Promise<Store[]> {
-  const { data, error } = await supabase
-    .from("stores")
-    .select("*")
-    .order("pinned_rank", { ascending: false })
-    .order("created_at", { ascending: true });
-  if (error) throw error;
-  return data || [];
+  // PostgREST caps a single response at its `max-rows` limit (1000 by default),
+  // so we page through with .range() to fetch every store regardless of count.
+  const PAGE_SIZE = 1000;
+  const all: Store[] = [];
+  for (let from = 0; ; from += PAGE_SIZE) {
+    const { data, error } = await supabase
+      .from("stores")
+      .select("*")
+      .order("pinned_rank", { ascending: false })
+      .order("created_at", { ascending: true })
+      .range(from, from + PAGE_SIZE - 1);
+    if (error) throw error;
+    if (!data || data.length === 0) break;
+    all.push(...data);
+    if (data.length < PAGE_SIZE) break;
+  }
+  return all;
 }
 
 export async function getStore(id: string): Promise<Store | null> {

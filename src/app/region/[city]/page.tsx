@@ -6,8 +6,9 @@ import Footer from "@/components/Footer";
 import JsonLdScript from "@/components/JsonLd";
 import { breadcrumbSchema, localBusinessSchema, eventSchema, jobPostingSchema } from "@/lib/schema";
 import { supabase } from "@/lib/supabase";
+import { getStores } from "@/lib/api";
 import { isValidCity, getDistrictList, detectStoreCity } from "@/lib/regionLookup";
-import type { Store, Event, Job } from "@/types";
+import type { Event, Job } from "@/types";
 
 export const revalidate = 1800;
 
@@ -35,12 +36,11 @@ export async function generateStaticParams() {
 }
 
 async function fetchCityData(city: string) {
-  const [storesRes, eventsRes, jobsRes] = await Promise.all([
-    supabase.from("stores").select("*").limit(500),
-    supabase.from("events").select("*").limit(200),
-    supabase.from("jobs").select("*").eq("type", "구인").limit(200),
+  const [allStores, eventsRes, jobsRes] = await Promise.all([
+    getStores(),
+    supabase.from("events").select("*").limit(1000),
+    supabase.from("jobs").select("*").eq("type", "구인").limit(1000),
   ]);
-  const allStores = (storesRes.data || []) as Store[];
   const allEvents = (eventsRes.data || []) as Event[];
   const allJobs = (jobsRes.data || []) as Job[];
 

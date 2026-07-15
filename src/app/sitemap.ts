@@ -6,6 +6,23 @@ const SITE_URL = "https://holdemmapkorea.com";
 
 export const revalidate = 3600;
 
+// PostgREST caps each response at its `max-rows` limit (1000 by default), so we
+// page through with .range() to include every store in the sitemap.
+async function fetchAllStoreRows() {
+  const PAGE_SIZE = 1000;
+  const rows: { id: string; updated_at?: string }[] = [];
+  for (let from = 0; ; from += PAGE_SIZE) {
+    const { data } = await supabase
+      .from("stores")
+      .select("id, updated_at")
+      .range(from, from + PAGE_SIZE - 1);
+    if (!data || data.length === 0) break;
+    rows.push(...(data as { id: string; updated_at?: string }[]));
+    if (data.length < PAGE_SIZE) break;
+  }
+  return rows;
+}
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticRoutes: MetadataRoute.Sitemap = [
     { url: `${SITE_URL}/`, changeFrequency: "daily", priority: 1.0 },
@@ -39,15 +56,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ]);
 
   try {
-    const [storesRes, eventsRes, postsRes, jobsRes, blogRes] = await Promise.all([
-      supabase.from("stores").select("id, updated_at").limit(5000),
+    const [storeRows, eventsRes, postsRes, jobsRes, blogRes] = await Promise.all([
+      fetchAllStoreRows(),
       supabase.from("events").select("id, updated_at, date").limit(5000),
       supabase.from("posts").select("id, updated_at, created_at").eq("status", "approved").limit(5000),
       supabase.from("jobs").select("id, updated_at, created_at").limit(5000),
       supabase.from("blog_posts").select("slug, updated_at, created_at").eq("published", true).limit(5000),
     ]);
 
-    const stores = (storesRes.data || []).map((s: { id: string; updated_at?: string }) => ({
+    const stores = storeRows.map((s: { id: string; updated_at?: string }) => ({
       url: `${SITE_URL}/store/${s.id}`,
       lastModified: s.updated_at ? new Date(s.updated_at) : undefined,
       changeFrequency: "weekly" as const,
