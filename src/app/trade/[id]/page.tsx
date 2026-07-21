@@ -6,13 +6,21 @@ import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import LinkifyText from "@/components/LinkifyText";
+import RankInsignia from "@/components/RankInsignia";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
+import { addPoints } from "@/lib/rank";
+import { classifyContent, formatFilterMessage } from "@/lib/contentFilter";
+import { useUserProfiles } from "@/hooks/useUserRanks";
 
 interface TradeItem {
   id: string; user_id: string | null; nickname: string; title: string; category: string;
   price: string; condition: string; description: string; images: string[];
   region: string; status: string; views: number; contact: string; created_at: string;
+}
+
+interface TradeComment {
+  id: string; user_id: string | null; nickname: string; content: string; created_at: string;
 }
 
 const STATUS_COLORS: Record<string, string> = {
@@ -23,11 +31,14 @@ const STATUS_COLORS: Record<string, string> = {
 
 export default function TradeDetailPage() {
   const { id } = useParams();
-  const { user } = useAuth();
+  const { user, profile, refreshProfile } = useAuth();
   const [item, setItem] = useState<TradeItem | null>(null);
   const [loading, setLoading] = useState(true);
   const [lightbox, setLightbox] = useState<string | null>(null);
   const [contactOpen, setContactOpen] = useState(false);
+  const [comments, setComments] = useState<TradeComment[]>([]);
+  const [commentText, setCommentText] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -37,8 +48,33 @@ export default function TradeDetailPage() {
         // 조회수 +1
         await supabase.from("trade_items").update({ views: (data.views || 0) + 1 }).eq("id", id);
       }
+      const { data: cmts } = await supabase.from("trade_comments").select("*").eq("item_id", id).order("created_at", { ascending: true });
+      setComments(cmts || []);
     })();
   }, [id]);
+
+  const handleComment = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!commentText.trim() || !user || submitting) return;
+    const filter = classifyContent(commentText, { blockUrls: false });
+    if (filter.action === "block") {
+      alert(formatFilterMessage(filter));
+      return;
+    }
+    setSubmitting(true);
+    const { data, error } = await supabase.from("trade_comments").insert({
+      item_id: id, user_id: user.id, nickname: profile?.nickname || "익명", content: commentText.trim(),
+    }).select().single();
+    setSubmitting(false);
+    if (error) { alert("댓글 등록에 실패했습니다."); return; }
+    if (data) setComments([...comments, data]);
+    setCommentText("");
+    const pt = await addPoints(supabase, user.id, "comment");
+    if (pt.success) await refreshProfile();
+    else if (pt.message) console.warn("포인트 미적립:", pt.message);
+  };
+
+  const profileMap = useUserProfiles(comments.map(c => c.user_id));
 
   useEffect(() => {
     if (!lightbox) return;
@@ -137,6 +173,46 @@ export default function TradeDetailPage() {
                 </button>
               )}
             </div>
+          </div>
+
+          {/* Comments */}
+          <div className="bg-white rounded-2xl card-shadow p-6 md:p-8 mb-6">
+            <h3 className="text-surface font-bold text-[15px] mb-4">댓글 {comments.length}</h3>
+            <div className="space-y-3 mb-4">
+              {comments.map(c => {
+                const cProfile = c.user_id ? profileMap[c.user_id] : undefined;
+                const cRank = cProfile?.rank;
+                const cDisplayName = cProfile?.nickname || c.nickname;
+                return (
+                  <div key={c.id} className="bg-[#f9f9f9] rounded-xl px-4 py-3">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-surface text-[13px] font-bold inline-flex items-center gap-1.5">
+                        {cRank && <span className={`inline-flex items-center rounded px-1 py-0.5 ${cRank.color}`}><RankInsignia rank={cRank} size="xs" /></span>}
+                        {cDisplayName}
+                      </span>
+                      <span className="text-[#ccc] text-[11px]">{c.created_at?.slice(0, 10)}</span>
+                    </div>
+                    <p className="text-sub text-[14px] whitespace-pre-wrap wrap-break-word">{c.content}</p>
+                  </div>
+                );
+              })}
+              {comments.length === 0 && <p className="text-muted text-[13px]">아직 댓글이 없습니다</p>}
+            </div>
+
+            {user ? (
+              <form onSubmit={handleComment} className="flex gap-2">
+                <input type="text" value={commentText} onChange={e => setCommentText(e.target.value)}
+                  maxLength={500}
+                  className="flex-1 border border-border-custom rounded-xl px-4 py-2.5 text-[14px] focus:outline-none focus:border-accent bg-white"
+                  placeholder="댓글을 입력하세요" />
+                <button type="submit" disabled={submitting || !commentText.trim()}
+                  className="bg-accent hover:bg-accent-hover text-white text-sm font-bold px-5 rounded-xl transition-all shrink-0 disabled:opacity-50 disabled:cursor-not-allowed">
+                  {submitting ? "등록 중" : "등록"}
+                </button>
+              </form>
+            ) : (
+              <Link href="/register" className="block text-center text-accent text-sm font-semibold hover:underline">회원가입 후 댓글을 작성할 수 있습니다</Link>
+            )}
           </div>
 
           <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4 text-[13px] text-yellow-800 flex gap-2">
