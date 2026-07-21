@@ -648,6 +648,7 @@ export default function AdminPage() {
           buy_in: (formData.buy_in as string) || "",
           location: (formData.location as string) || "",
           is_international: Boolean(formData.is_international),
+          is_free_tournament: Boolean(formData.is_free_tournament),
           status: (formData.status as string) || "approved",
           pinned_rank: Number(formData.pinned_rank) || 0,
         };
@@ -1096,6 +1097,7 @@ export default function AdminPage() {
                       <td className="px-5 py-3">
                         <p className="text-surface text-base font-semibold">
                           {(event.pinned_rank || 0) > 0 && <span className="bg-accent text-white text-[10px] font-bold px-1.5 py-0.5 rounded mr-1.5 inline-flex items-center gap-0.5"><svg className="w-2.5 h-2.5" fill="currentColor" viewBox="0 0 24 24"><path d="M16 12V4h1V2H7v2h1v8l-2 2v2h5.2v6h1.6v-6H18v-2z"/></svg>{event.pinned_rank}</span>}
+                          {event.is_free_tournament && <span className="bg-[#00874a] text-white text-[10px] font-bold px-1.5 py-0.5 rounded mr-1.5" title="무료토너먼트 신청 페이지에 노출 중">무료토너</span>}
                           {event.title}
                         </p>
                       </td>
@@ -1988,6 +1990,20 @@ function AdminModal({ modal, stores, saving, onClose, onSave }: {
                   해외
                 </button>
               </div>
+            </div>
+            <div>
+              <label className="flex items-start gap-3 cursor-pointer bg-accent-light/60 border border-accent/30 rounded-xl p-4">
+                <input type="checkbox" className="mt-0.5 w-4 h-4 accent-[#00874a] shrink-0"
+                  checked={Boolean(form.is_free_tournament)}
+                  onChange={e => set("is_free_tournament", e.target.checked)} />
+                <span className="min-w-0">
+                  <span className="text-surface text-[14px] font-bold block">무료토너먼트 신청 페이지에 노출</span>
+                  <span className="text-muted text-xs block mt-0.5">
+                    체크하면 <strong className="text-sub">무료 토너먼트 신청</strong> 페이지의 &quot;참가 가능한 토너먼트&quot; 목록에 표시되어
+                    회원이 토너권으로 신청할 수 있습니다. (종료일이 지나면 자동으로 목록에서 빠집니다)
+                  </span>
+                </span>
+              </label>
             </div>
             <div>
               <label className="text-sub text-sm font-medium block mb-2">장소 *</label>

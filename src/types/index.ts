@@ -36,6 +36,8 @@ export interface Event {
   submitted_by?: string | null;
   submitter_nickname?: string;
   is_international?: boolean;
+  /** 무료토너먼트 신청 페이지(/tournament)에 노출할지 여부 */
+  is_free_tournament?: boolean;
   pinned_rank?: number;
   created_at?: string;
 }
