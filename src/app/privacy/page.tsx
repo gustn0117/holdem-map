@@ -10,6 +10,12 @@ export const metadata: Metadata = {
 };
 
 const EFFECTIVE_DATE = "2026년 7월 1일";
+const PRIVACY_OFFICER_EMAIL = "kimdw6621a@gmail.com";
+
+// Cloudflare Scrape Shield는 메일 주소를 "[email protected]"으로 치환한다.
+// 개인정보 보호책임자 연락처는 법정 고지 항목이라 <!--email_off--> 로 난독화를 비활성화한다.
+const PRIVACY_OFFICER_EMAIL_HTML =
+  `<!--email_off--><a href="mailto:${PRIVACY_OFFICER_EMAIL}" class="text-accent font-semibold hover:underline wrap-break-word">${PRIVACY_OFFICER_EMAIL}</a><!--/email_off-->`;
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
@@ -189,7 +195,8 @@ export default function PrivacyPage() {
                 <div className="flex gap-3"><dt className="text-muted w-16 shrink-0">성명</dt><dd className="text-surface font-semibold">김동욱</dd></div>
                 <div className="flex gap-3"><dt className="text-muted w-16 shrink-0">직책</dt><dd className="text-surface font-semibold">전무</dd></div>
                 <div className="flex gap-3"><dt className="text-muted w-16 shrink-0">이메일</dt>
-                  <dd><a href="mailto:kimdw6621a@gmail.com" className="text-accent font-semibold hover:underline wrap-break-word">kimdw6621a@gmail.com</a></dd>
+                  {/* 법정 고지 항목이므로 Cloudflare 이메일 난독화([email protected] 치환)를 email_off로 예외 처리 */}
+                  <dd dangerouslySetInnerHTML={{ __html: PRIVACY_OFFICER_EMAIL_HTML }} />
                 </div>
                 <div className="flex gap-3"><dt className="text-muted w-16 shrink-0">연락처</dt>
                   <dd><a href="tel:0322906423" className="text-accent font-semibold hover:underline">032-290-6423</a></dd>
