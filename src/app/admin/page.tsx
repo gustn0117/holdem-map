@@ -153,6 +153,26 @@ interface Profile {
   created_at: string;
 }
 
+// ─── 회원 작성글 조회 ───
+interface UserContentItem {
+  id: string;
+  label: string;
+  meta?: string;
+  date?: string;
+  href?: string;
+}
+
+interface UserContentGroup {
+  key: string;
+  label: string;
+  items: UserContentItem[];
+}
+
+function textPreview(v: unknown, max = 80): string {
+  const s = String(v ?? "").replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
+  return s.length > max ? s.slice(0, max) + "…" : s || "(내용 없음)";
+}
+
 export default function AdminPage() {
   const [authed, setAuthed] = useState(false);
   const [pw, setPw] = useState("");
@@ -167,6 +187,7 @@ export default function AdminPage() {
   const [activeTab, setActiveTab] = useState<Tab>("dashboard");
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [modal, setModal] = useState<{ type: "create" | "edit"; tab: Tab; data?: Record<string, unknown> } | null>(null);
+  const [userContent, setUserContent] = useState<{ user: Profile; loading: boolean; groups: UserContentGroup[] } | null>(null);
   const [saving, setSaving] = useState(false);
   const { stores, refresh: refreshStores } = useStores();
   const { notices, refresh: refreshNotices } = useNotices();
@@ -406,6 +427,70 @@ export default function AdminPage() {
   const refreshUsers = async () => {
     const { data } = await supabase.from("profiles").select("*").order("created_at", { ascending: false });
     setUsers(data || []);
+  };
+
+  // 회원이 작성한 글(게시글·댓글·중고거래·구인구직·매물)을 한 번에 조회
+  const openUserContent = async (u: Profile) => {
+    setUserContent({ user: u, loading: true, groups: [] });
+    const byNewest = { ascending: false } as const;
+    const [postsRes, commentsRes, tradesRes, tradeCmtRes, jobsRes, marketRes] = await Promise.all([
+      supabase.from("posts").select("id, title, category, views, created_at").eq("user_id", u.id).order("created_at", byNewest),
+      supabase.from("comments").select("id, post_id, content, created_at").eq("user_id", u.id).order("created_at", byNewest),
+      supabase.from("trade_items").select("id, title, price, status, created_at").eq("user_id", u.id).order("created_at", byNewest),
+      supabase.from("trade_comments").select("id, item_id, content, created_at").eq("user_id", u.id).order("created_at", byNewest),
+      supabase.from("jobs").select("id, type, role, store_name, created_at").eq("user_id", u.id).order("created_at", byNewest),
+      supabase.from("market_listings").select("id, title, type, price, created_at").eq("user_id", u.id).order("created_at", byNewest),
+    ]);
+
+    const day = (v: unknown) => String(v ?? "").slice(0, 10);
+    const groups: UserContentGroup[] = [
+      {
+        key: "posts", label: "게시글",
+        items: (postsRes.data || []).map(p => ({
+          id: p.id, label: textPreview(p.title), date: day(p.created_at),
+          meta: [p.category, `조회 ${p.views ?? 0}`].filter(Boolean).join(" · "),
+          href: `/board/${p.id}`,
+        })),
+      },
+      {
+        key: "comments", label: "댓글",
+        items: (commentsRes.data || []).map(c => ({
+          id: c.id, label: textPreview(c.content), date: day(c.created_at),
+          href: c.post_id ? `/board/${c.post_id}` : undefined,
+        })),
+      },
+      {
+        key: "trade", label: "중고거래",
+        items: (tradesRes.data || []).map(t => ({
+          id: t.id, label: textPreview(t.title), date: day(t.created_at),
+          meta: [t.price, t.status].filter(Boolean).join(" · "),
+          href: `/trade/${t.id}`,
+        })),
+      },
+      {
+        key: "trade_comments", label: "중고거래 댓글",
+        items: (tradeCmtRes.data || []).map(c => ({
+          id: c.id, label: textPreview(c.content), date: day(c.created_at),
+          href: c.item_id ? `/trade/${c.item_id}` : undefined,
+        })),
+      },
+      {
+        key: "jobs", label: "구인구직",
+        items: (jobsRes.data || []).map(j => ({
+          id: j.id, label: textPreview([j.type, j.role, j.store_name].filter(Boolean).join(" · ")),
+          date: day(j.created_at), href: `/jobs/${j.id}`,
+        })),
+      },
+      {
+        key: "market", label: "매물",
+        items: (marketRes.data || []).map(m => ({
+          id: m.id, label: textPreview(m.title), date: day(m.created_at),
+          meta: [m.type, m.price].filter(Boolean).join(" · "),
+          href: `/market/${m.id}`,
+        })),
+      },
+    ];
+    setUserContent({ user: u, loading: false, groups });
   };
 
   const handleBlockUser = async (userId: string, blocked: boolean) => {
@@ -1165,7 +1250,11 @@ export default function AdminPage() {
                       {u.is_blocked ? "차단" : "정상"}
                     </span>
                   </div>
-                  <div className="md:col-span-2 flex gap-2 justify-end">
+                  <div className="md:col-span-2 flex flex-wrap gap-2 justify-end">
+                    <button onClick={() => openUserContent(u)}
+                      className="text-[12px] font-semibold px-3 py-1.5 rounded-lg bg-accent-light text-accent hover:bg-accent/20 transition-all">
+                      작성글
+                    </button>
                     <button onClick={async () => {
                       const next = prompt("새 닉네임을 입력하세요", u.nickname || "");
                       if (next === null) return;
@@ -1696,7 +1785,84 @@ export default function AdminPage() {
         {modal && (
           <AdminModal modal={modal} stores={stores} saving={saving} onClose={() => setModal(null)} onSave={handleSave} />
         )}
+        {userContent && (
+          <UserContentModal state={userContent} onClose={() => setUserContent(null)} />
+        )}
       </main>
+      </div>
+    </div>
+  );
+}
+
+// ─── 회원 작성글 모달 ───
+function UserContentModal({ state, onClose }: {
+  state: { user: Profile; loading: boolean; groups: UserContentGroup[] };
+  onClose: () => void;
+}) {
+  const { user, loading, groups } = state;
+  const total = groups.reduce((sum, g) => sum + g.items.length, 0);
+  const filled = groups.filter(g => g.items.length > 0);
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
+    window.addEventListener("keydown", onKey);
+    document.body.style.overflow = "hidden";
+    return () => { window.removeEventListener("keydown", onKey); document.body.style.overflow = ""; };
+  }, [onClose]);
+
+  return (
+    <div className="fixed inset-0 z-100 flex items-end md:items-center justify-center p-0 md:p-6" onClick={onClose}>
+      <div className="absolute inset-0 bg-black/50" />
+      <div className="relative bg-white w-full md:max-w-2xl rounded-t-3xl md:rounded-2xl shadow-2xl max-h-[88vh] flex flex-col"
+        onClick={e => e.stopPropagation()} role="dialog" aria-modal="true" aria-label="회원 작성글">
+        <div className="flex items-start justify-between gap-4 px-6 py-5 border-b border-border-custom">
+          <div className="min-w-0">
+            <h3 className="text-surface text-lg font-black truncate">{user.nickname || "(닉네임 없음)"} 님의 작성글</h3>
+            <p className="text-muted text-[13px] truncate">{user.email}{!loading && ` · 총 ${total}건`}</p>
+          </div>
+          <button onClick={onClose} aria-label="닫기"
+            className="shrink-0 w-9 h-9 rounded-full bg-bg text-muted hover:text-surface flex items-center justify-center transition-colors">
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+          </button>
+        </div>
+
+        <div className="overflow-y-auto px-6 py-5 flex-1">
+          {loading ? (
+            <div className="py-16 flex justify-center">
+              <div className="w-8 h-8 border-2 border-accent/30 border-t-accent rounded-full animate-spin" />
+            </div>
+          ) : total === 0 ? (
+            <p className="py-16 text-center text-muted text-sm">작성한 글이 없습니다</p>
+          ) : (
+            <div className="space-y-6">
+              {filled.map(g => (
+                <section key={g.key}>
+                  <h4 className="text-surface font-bold text-[14px] mb-2.5">
+                    {g.label} <span className="text-accent">{g.items.length}</span>
+                  </h4>
+                  <ul className="space-y-1.5">
+                    {g.items.map(it => (
+                      <li key={it.id} className="bg-[#f9f9f9] rounded-xl px-4 py-2.5 flex items-center gap-3">
+                        <div className="min-w-0 flex-1">
+                          <p className="text-sub text-[14px] truncate">{it.label}</p>
+                          <p className="text-muted text-[11px] truncate">
+                            {[it.meta, it.date].filter(Boolean).join(" · ")}
+                          </p>
+                        </div>
+                        {it.href && (
+                          <a href={it.href} target="_blank" rel="noopener noreferrer"
+                            className="shrink-0 text-[12px] font-semibold text-accent hover:underline px-2 py-1">
+                            보기
+                          </a>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
