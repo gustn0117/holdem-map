@@ -5,6 +5,7 @@ import Link from "next/link";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { supabase } from "@/lib/supabase";
+import { normalizeExternalUrl } from "@/lib/url";
 
 interface Banner {
   id: string; position: string; image: string; image_mobile?: string; link: string;
@@ -37,23 +38,41 @@ export default function BannersPage() {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-            {banners.map(b => (
-              <Link key={b.id} href={`/banners/${b.id}`} className="bg-white rounded-2xl card-shadow overflow-hidden hover:card-shadow-hover transition-all group">
-                {/* Mobile: 300x96 비율, Mobile 전용 이미지 우선 사용 */}
-                <div className="md:hidden bg-bg overflow-hidden">
-                  <img src={b.image_mobile || b.image} alt={b.title || ""} className="w-full aspect-300/96 object-contain group-hover:scale-105 transition-transform" />
-                </div>
-                {/* PC: 2800x260 비율, PC 이미지 사용 */}
-                <div className="hidden md:block bg-bg overflow-hidden">
-                  <img src={b.image} alt={b.title || ""} className="w-full aspect-2800/260 object-contain group-hover:scale-105 transition-transform" />
-                </div>
-                <div className="p-5">
-                  <h2 className="text-surface text-[17px] font-bold mb-1">{b.title || "제목 없음"}</h2>
-                  {b.description && <p className="text-muted text-[13px] line-clamp-2">{b.description}</p>}
-                  <span className="text-accent text-[12px] font-semibold mt-3 inline-block">자세히 보기 →</span>
-                </div>
-              </Link>
-            ))}
+            {banners.map(b => {
+              // 외부 링크가 등록된 배너는 상세페이지를 거치지 않고 광고주 사이트로 바로 이동
+              const external = normalizeExternalUrl(b.link);
+              const cardClass = "block bg-white rounded-2xl card-shadow overflow-hidden hover:card-shadow-hover transition-all group";
+              const inner = (
+                <>
+                  {/* Mobile: 300x96 비율, Mobile 전용 이미지 우선 사용 */}
+                  <div className="md:hidden bg-bg overflow-hidden">
+                    <img src={b.image_mobile || b.image} alt={b.title || ""} className="w-full aspect-300/96 object-contain group-hover:scale-105 transition-transform" />
+                  </div>
+                  {/* PC: 2800x260 비율, PC 이미지 사용 */}
+                  <div className="hidden md:block bg-bg overflow-hidden">
+                    <img src={b.image} alt={b.title || ""} className="w-full aspect-2800/260 object-contain group-hover:scale-105 transition-transform" />
+                  </div>
+                  <div className="p-5">
+                    <h2 className="text-surface text-[17px] font-bold mb-1">{b.title || "제목 없음"}</h2>
+                    {b.description && <p className="text-muted text-[13px] line-clamp-2">{b.description}</p>}
+                    <span className="text-accent text-[12px] font-semibold mt-3 inline-flex items-center gap-1">
+                      {external ? "바로가기" : "자세히 보기"} →
+                    </span>
+                  </div>
+                </>
+              );
+
+              return external ? (
+                <a key={b.id} href={external} target="_blank" rel="noopener noreferrer sponsored"
+                  className={cardClass} aria-label={`${b.title || "배너"} 바로가기 (새 창)`}>
+                  {inner}
+                </a>
+              ) : (
+                <Link key={b.id} href={`/banners/${b.id}`} className={cardClass}>
+                  {inner}
+                </Link>
+              );
+            })}
           </div>
         )}
       </main>
