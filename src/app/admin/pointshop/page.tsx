@@ -8,7 +8,7 @@ import { sanitizeHtml } from "@/lib/sanitize";
 import { listProducts, createProduct, updateProduct, deleteProduct, listOrders, updateOrderStatus, refundOrder } from "@/lib/pointshop";
 import type { PointshopProduct, PointshopOrder, PointshopOrderStatus } from "@/types";
 
-const ADMIN_PASSWORD = "1234Qwer!!";
+import { ADMIN_PASSWORD } from "@/lib/admin";
 const CATEGORIES = ["굿즈", "기프티콘", "제휴", "이벤트", "기타"];
 const STATUS_OPTIONS: { value: PointshopOrderStatus; label: string; color: string }[] = [
   { value: "pending", label: "신청 대기", color: "bg-amber-100 text-amber-700" },

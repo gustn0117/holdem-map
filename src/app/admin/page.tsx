@@ -141,7 +141,7 @@ interface Inquiry {
   store_images: string[] | null;
   created_at: string;
 }
-const ADMIN_PASSWORD = "1234Qwer!!";
+import { ADMIN_PASSWORD } from "@/lib/admin";
 const inputClass = "w-full bg-white border border-border-custom rounded-xl px-4 py-3 text-base text-surface focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/10 transition-all placeholder:text-muted";
 
 interface Profile {

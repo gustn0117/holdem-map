@@ -9,6 +9,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
 import { addPoints } from "@/lib/rank";
 import { classifyContent, formatFilterMessage } from "@/lib/contentFilter";
+import { useIsAdmin } from "@/lib/admin";
 import RankInsignia from "@/components/RankInsignia";
 import { useUserProfiles } from "@/hooks/useUserRanks";
 import { sanitizeHtml, isHtml, plainTextToHtml } from "@/lib/sanitize";
@@ -34,6 +35,7 @@ export default function BoardDetailPage() {
   const [commentText, setCommentText] = useState("");
   const [loading, setLoading] = useState(true);
   const [userReaction, setUserReaction] = useState<"like" | "dislike" | null>(null);
+  const isAdmin = useIsAdmin();
 
   useEffect(() => {
     (async () => {
@@ -99,6 +101,13 @@ export default function BoardDetailPage() {
     const pt = await addPoints(supabase, user.id, "comment");
     if (pt.success) await refreshProfile();
     else if (pt.message) console.warn("포인트 미적립:", pt.message);
+  };
+
+  const handleDeleteComment = async (commentId: string) => {
+    if (!confirm("댓글을 삭제하시겠습니까?")) return;
+    const { error } = await supabase.from("comments").delete().eq("id", commentId);
+    if (error) { alert("댓글 삭제에 실패했습니다."); return; }
+    setComments(prev => prev.filter(c => c.id !== commentId));
   };
 
   const handleDelete = async () => {
@@ -227,6 +236,12 @@ export default function BoardDetailPage() {
                           {cDisplayName}
                         </span>
                         <span className="text-[#ccc] text-[11px]">{c.created_at?.slice(0, 10)}</span>
+                        {((user && c.user_id === user.id) || isAdmin) && (
+                          <button onClick={() => handleDeleteComment(c.id)} aria-label="댓글 삭제"
+                            className="ml-auto text-muted hover:text-red-500 text-[12px] font-semibold px-2 py-1 -mr-1 rounded transition-colors">
+                            삭제
+                          </button>
+                        )}
                       </div>
                       <p className="text-sub text-[14px]">{c.content}</p>
                     </div>

@@ -8,7 +8,7 @@ import ImageUpload from "@/components/ImageUpload";
 import { sanitizeHtml } from "@/lib/sanitize";
 import type { BlogPost } from "@/types";
 
-const ADMIN_PASSWORD = "1234Qwer!!";
+import { ADMIN_PASSWORD } from "@/lib/admin";
 const CATEGORIES = ["홀덤 입문", "전략", "토너먼트", "딜러 가이드", "지역 가이드", "용어 사전", "기타"];
 const inputClass = "w-full bg-white border border-border-custom rounded-xl px-4 py-3 text-base text-surface focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/10 transition-all placeholder:text-muted";
 

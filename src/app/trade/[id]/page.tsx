@@ -12,6 +12,7 @@ import { supabase } from "@/lib/supabase";
 import { addPoints } from "@/lib/rank";
 import { classifyContent, formatFilterMessage } from "@/lib/contentFilter";
 import { useUserProfiles } from "@/hooks/useUserRanks";
+import { useIsAdmin } from "@/lib/admin";
 
 interface TradeItem {
   id: string; user_id: string | null; nickname: string; title: string; category: string;
@@ -39,6 +40,7 @@ export default function TradeDetailPage() {
   const [comments, setComments] = useState<TradeComment[]>([]);
   const [commentText, setCommentText] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const isAdmin = useIsAdmin();
 
   useEffect(() => {
     (async () => {
@@ -72,6 +74,13 @@ export default function TradeDetailPage() {
     const pt = await addPoints(supabase, user.id, "comment");
     if (pt.success) await refreshProfile();
     else if (pt.message) console.warn("포인트 미적립:", pt.message);
+  };
+
+  const handleDeleteComment = async (commentId: string) => {
+    if (!confirm("댓글을 삭제하시겠습니까?")) return;
+    const { error } = await supabase.from("trade_comments").delete().eq("id", commentId);
+    if (error) { alert("댓글 삭제에 실패했습니다."); return; }
+    setComments(prev => prev.filter(c => c.id !== commentId));
   };
 
   const profileMap = useUserProfiles(comments.map(c => c.user_id));
@@ -191,6 +200,12 @@ export default function TradeDetailPage() {
                         {cDisplayName}
                       </span>
                       <span className="text-[#ccc] text-[11px]">{c.created_at?.slice(0, 10)}</span>
+                      {((user && c.user_id === user.id) || isAdmin) && (
+                        <button onClick={() => handleDeleteComment(c.id)} aria-label="댓글 삭제"
+                          className="ml-auto text-muted hover:text-red-500 text-[12px] font-semibold px-2 py-1 -mr-1 rounded transition-colors">
+                          삭제
+                        </button>
+                      )}
                     </div>
                     <p className="text-sub text-[14px] whitespace-pre-wrap wrap-break-word">{c.content}</p>
                   </div>
