@@ -3,6 +3,7 @@ import "./globals.css";
 import TopBanner from "@/components/TopBanner";
 import Providers from "@/components/Providers";
 import AgeGate from "@/components/AgeGate";
+import VisitorTracker from "@/components/VisitorTracker";
 
 const SITE_URL = "https://holdemmapkorea.com";
 const SITE_NAME = "홀덤맵코리아";
@@ -102,6 +103,7 @@ export default function RootLayout({
       </head>
       <body className="min-h-full">
         <Providers>
+          <VisitorTracker />
           <AgeGate />
           <TopBanner />
           {children}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { useStores, useNotices } from "@/hooks/useData";
 import { Store } from "@/types";
@@ -13,10 +13,11 @@ import { allRegions } from "@/data/areas";
 
 import { supabase } from "@/lib/supabase";
 
-type Tab = "dashboard" | "stores" | "events" | "notices" | "banners" | "shorts" | "users" | "live" | "promotions" | "inquiries" | "board" | "market" | "trade" | "jobs";
+type Tab = "dashboard" | "visitors" | "stores" | "events" | "notices" | "banners" | "shorts" | "users" | "live" | "promotions" | "inquiries" | "board" | "market" | "trade" | "jobs";
 
 const TAB_ICON: Record<Tab, React.ReactNode> = {
   dashboard: <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>,
+  visitors: <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M3 3v18h18M7 15l3-3 3 3 5-6"/></svg>,
   stores: <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0zM15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>,
   events: <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>,
   promotions: <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A2 2 0 013 12V7a4 4 0 014-4z"/></svg>,
@@ -38,7 +39,7 @@ interface NavGroup {
 }
 
 const NAV_GROUPS: NavGroup[] = [
-  { label: "홈", items: ["dashboard"] },
+  { label: "홈", items: ["dashboard", "visitors"] },
   { label: "콘텐츠", items: ["stores", "events", "promotions", "notices", "banners", "shorts"] },
   { label: "커뮤니티", items: ["board", "inquiries", "jobs", "market", "trade", "live"] },
   { label: "회원", items: ["users"] },
@@ -46,6 +47,7 @@ const NAV_GROUPS: NavGroup[] = [
 
 const TAB_LABEL: Record<Tab, string> = {
   dashboard: "대시보드",
+  visitors: "방문자 통계",
   stores: "매장",
   events: "대회/이벤트",
   promotions: "프로모션",
@@ -153,6 +155,17 @@ interface Profile {
   created_at: string;
 }
 
+// ─── 방문자 통계 ───
+interface VisitorStats {
+  today_uv: number; today_pv: number;
+  yesterday_uv: number; yesterday_pv: number;
+  week_uv: number; week_pv: number;
+  range_uv: number; range_pv: number;
+  total_pv: number;
+  daily: { d: string; uv: number; pv: number }[];
+  top_paths: { path: string; uv: number; pv: number }[];
+}
+
 // ─── 회원 작성글 조회 ───
 interface UserContentItem {
   id: string;
@@ -188,6 +201,9 @@ export default function AdminPage() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [modal, setModal] = useState<{ type: "create" | "edit"; tab: Tab; data?: Record<string, unknown> } | null>(null);
   const [userContent, setUserContent] = useState<{ user: Profile; loading: boolean; groups: UserContentGroup[] } | null>(null);
+  const [visitorStats, setVisitorStats] = useState<VisitorStats | null>(null);
+  const [visitorDays, setVisitorDays] = useState(30);
+  const [visitorLoading, setVisitorLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const { stores, refresh: refreshStores } = useStores();
   const { notices, refresh: refreshNotices } = useNotices();
@@ -428,6 +444,18 @@ export default function AdminPage() {
     const { data } = await supabase.from("profiles").select("*").order("created_at", { ascending: false });
     setUsers(data || []);
   };
+
+  // 방문자 통계는 집계를 DB(RPC)에서 처리해 원시 로그를 클라이언트로 내려받지 않는다
+  const refreshVisitorStats = useCallback(async (days: number) => {
+    setVisitorLoading(true);
+    const { data, error } = await supabase.rpc("visitor_stats", { p_days: days });
+    if (!error && data) setVisitorStats(data as VisitorStats);
+    setVisitorLoading(false);
+  }, []);
+
+  useEffect(() => {
+    if (authed && activeTab === "visitors") refreshVisitorStats(visitorDays);
+  }, [authed, activeTab, visitorDays, refreshVisitorStats]);
 
   // 회원이 작성한 글(게시글·댓글·중고거래·구인구직·매물)을 한 번에 조회
   const openUserContent = async (u: Profile) => {
@@ -1007,7 +1035,7 @@ export default function AdminPage() {
             <h1 className="text-xl md:text-2xl font-black text-surface">{activeTabLabel}</h1>
             <p className="text-muted text-[12px] mt-0.5">총 {countByKey[activeTab]?.toLocaleString() ?? 0}건</p>
           </div>
-          {!["inquiries", "board", "banners", "shorts", "promotions", "users"].includes(activeTab) && (
+          {!["inquiries", "board", "banners", "shorts", "promotions", "users", "visitors"].includes(activeTab) && (
             <button
               onClick={() => setModal({ type: "create", tab: activeTab })}
               className="bg-accent hover:bg-accent-hover text-white px-5 py-2.5 rounded-full text-sm font-semibold shadow-lg shadow-accent/20 flex items-center gap-2"
@@ -1227,6 +1255,103 @@ export default function AdminPage() {
         )}
 
         {/* Users management */}
+        {activeTab === "visitors" && (
+          <div className="space-y-5">
+            {/* 기간 선택 */}
+            <div className="flex items-center gap-2 flex-wrap">
+              {[7, 30, 90].map(d => (
+                <button key={d} onClick={() => setVisitorDays(d)}
+                  className={`text-[13px] font-semibold px-4 py-2 rounded-xl border transition-all ${
+                    visitorDays === d ? "bg-accent text-white border-accent" : "bg-white border-border-custom text-sub hover:border-accent/40"
+                  }`}>
+                  최근 {d}일
+                </button>
+              ))}
+              <button onClick={() => refreshVisitorStats(visitorDays)}
+                className="ml-auto text-[13px] font-semibold px-4 py-2 rounded-xl bg-bg text-sub hover:bg-accent-light hover:text-accent transition-all">
+                새로고침
+              </button>
+            </div>
+
+            {visitorLoading && !visitorStats ? (
+              <div className="bg-white rounded-2xl border border-border-custom py-20 flex justify-center">
+                <div className="w-8 h-8 border-2 border-accent/30 border-t-accent rounded-full animate-spin" />
+              </div>
+            ) : !visitorStats ? (
+              <div className="bg-white rounded-2xl border border-border-custom py-20 text-center text-muted text-sm">
+                통계를 불러오지 못했습니다
+              </div>
+            ) : (
+              <>
+                {/* 요약 카드 */}
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                  {[
+                    { label: "오늘 방문자", uv: visitorStats.today_uv, pv: visitorStats.today_pv, accent: true },
+                    { label: "어제 방문자", uv: visitorStats.yesterday_uv, pv: visitorStats.yesterday_pv },
+                    { label: "최근 7일 방문자", uv: visitorStats.week_uv, pv: visitorStats.week_pv },
+                    { label: `최근 ${visitorDays}일 방문자`, uv: visitorStats.range_uv, pv: visitorStats.range_pv },
+                  ].map(c => (
+                    <div key={c.label} className={`rounded-2xl border p-5 ${c.accent ? "bg-accent-light border-accent/30" : "bg-white border-border-custom"}`}>
+                      <p className="text-muted text-[12px] font-semibold">{c.label}</p>
+                      <p className="text-surface text-3xl font-black mt-1.5 tabular-nums">{c.uv.toLocaleString()}</p>
+                      <p className="text-muted text-[12px] mt-1">페이지뷰 {c.pv.toLocaleString()}</p>
+                    </div>
+                  ))}
+                </div>
+                <p className="text-muted text-[12px]">
+                  방문자 수는 브라우저 기준 순 방문자(UV), 페이지뷰(PV)는 열람한 페이지 총합입니다. 관리자 페이지는 집계에서 제외됩니다.
+                  {" "}누적 페이지뷰 <strong className="text-sub">{visitorStats.total_pv.toLocaleString()}</strong>
+                </p>
+
+                {/* 일별 추이 */}
+                <div className="bg-white rounded-2xl border border-border-custom p-5">
+                  <h3 className="text-surface font-bold text-[15px] mb-4">일별 방문자 추이</h3>
+                  {visitorStats.daily.length === 0 ? (
+                    <p className="text-muted text-[13px] py-10 text-center">아직 방문 기록이 없습니다</p>
+                  ) : (() => {
+                    const max = Math.max(...visitorStats.daily.map(x => x.uv), 1);
+                    return (
+                      <div className="overflow-x-auto">
+                        <div className="flex items-end gap-1.5 min-w-fit h-44">
+                          {visitorStats.daily.map(x => (
+                            <div key={x.d} className="flex flex-col items-center justify-end gap-1.5 w-8 shrink-0 group">
+                              <span className="text-[10px] text-muted opacity-0 group-hover:opacity-100 transition-opacity tabular-nums">{x.uv}</span>
+                              <div className="w-full bg-accent/80 hover:bg-accent rounded-t transition-colors"
+                                style={{ height: `${Math.max(4, (x.uv / max) * 130)}px` }}
+                                title={`${x.d} · 방문자 ${x.uv} · 페이지뷰 ${x.pv}`} />
+                              <span className="text-[9px] text-muted whitespace-nowrap">{x.d.slice(5)}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    );
+                  })()}
+                </div>
+
+                {/* 인기 페이지 */}
+                <div className="bg-white rounded-2xl border border-border-custom overflow-hidden">
+                  <h3 className="text-surface font-bold text-[15px] px-5 pt-5 pb-3">인기 페이지 TOP 20</h3>
+                  {visitorStats.top_paths.length === 0 ? (
+                    <p className="text-muted text-[13px] py-10 text-center">아직 방문 기록이 없습니다</p>
+                  ) : (
+                    <div className="divide-y divide-border-custom">
+                      {visitorStats.top_paths.map((p, i) => (
+                        <div key={p.path} className="flex items-center gap-3 px-5 py-3">
+                          <span className="text-muted text-[12px] font-bold w-6 shrink-0 tabular-nums">{i + 1}</span>
+                          <a href={p.path} target="_blank" rel="noopener noreferrer"
+                            className="text-sub text-[13px] hover:text-accent truncate flex-1 min-w-0">{p.path}</a>
+                          <span className="text-muted text-[12px] shrink-0 tabular-nums">방문 {p.uv.toLocaleString()}</span>
+                          <span className="text-surface text-[13px] font-bold shrink-0 tabular-nums w-16 text-right">{p.pv.toLocaleString()}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </>
+            )}
+          </div>
+        )}
+
         {activeTab === "users" && (
           <div className="bg-white rounded-2xl border border-border-custom overflow-hidden">
             <div className="hidden md:grid grid-cols-12 gap-4 px-5 py-3 bg-[#f9f9f9] border-b border-border-custom text-[12px] text-muted font-semibold">
