@@ -48,8 +48,20 @@ export default function AdminBlogPage() {
   }, []);
 
   const refresh = useCallback(async () => {
-    const { data } = await supabase.from("blog_posts").select("*").order("created_at", { ascending: false }).limit(200);
-    setPosts((data || []) as BlogPost[]);
+    // PostgREST 응답은 기본 max-rows(1000)로 제한되므로 .range()로 페이지네이션하여 전체 글을 가져온다
+    const PAGE_SIZE = 1000;
+    const all: BlogPost[] = [];
+    for (let from = 0; ; from += PAGE_SIZE) {
+      const { data, error } = await supabase
+        .from("blog_posts")
+        .select("*")
+        .order("created_at", { ascending: false })
+        .range(from, from + PAGE_SIZE - 1);
+      if (error || !data || data.length === 0) break;
+      all.push(...(data as BlogPost[]));
+      if (data.length < PAGE_SIZE) break;
+    }
+    setPosts(all);
   }, []);
 
   useEffect(() => { if (authed) refresh(); }, [authed, refresh]);
