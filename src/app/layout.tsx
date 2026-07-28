@@ -19,6 +19,9 @@ export const metadata: Metadata = {
   keywords: ["홀덤", "홀덤맵", "홀덤맵코리아", "홀덤펍", "홀덤매장", "홀덤 토너먼트", "홀덤 딜러", "딜러 구인구직", "텍사스 홀덤", "포커", "서울 홀덤", "인천 홀덤", "부산 홀덤", "대구 홀덤", "강남 홀덤"],
   alternates: {
     canonical: "/",
+    types: {
+      "application/rss+xml": [{ url: "/rss.xml", title: "홀덤맵코리아 블로그" }],
+    },
   },
   openGraph: {
     type: "website",
@@ -41,10 +44,10 @@ export const metadata: Metadata = {
     googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1 },
   },
   verification: {
-    // Search Console 등록 시 메타태그 값으로 채워주세요
+    // Google Search Console 등록 시 메타태그 값으로 채워주세요
     // google: "xxxxxxxxxxxxxxxxx",
     other: {
-      // "naver-site-verification": "xxxxxxxxxxxxxxxxx",
+      "naver-site-verification": "9ea339156765a2bfede94d256f2e51e63cf5cbc6",
     },
   },
   formatDetection: { email: false, address: false, telephone: false },
