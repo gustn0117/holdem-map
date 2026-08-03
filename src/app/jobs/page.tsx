@@ -9,6 +9,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/lib/supabase";
 import { Job } from "@/types";
 import { regionData, allRegions } from "@/data/areas";
+import { stripHtml } from "@/lib/sanitize";
 
 const REGIONS = ["전체", ...allRegions];
 const STATUSES = ["전체", "지금 가능", "예약 가능", "일하는 중"];
@@ -78,7 +79,7 @@ export default function JobsPage() {
           status_updated_at: job.created_at,
           experience: job.experience,
           areas: job.areas || [],
-          bio: job.message || "",
+          bio: stripHtml(job.message),
           avatar: job.photo || "",
           contact_kakao: "",
           contact_telegram: "",
@@ -398,7 +399,7 @@ export default function JobsPage() {
                   </div>
                   <h3 className="text-surface text-[16px] font-bold mb-1">{job.type === "구인" && job.store_name ? job.store_name : job.nickname}</h3>
                   <p className="text-sub text-[13px] mb-2">{job.experience} · {job.areas?.slice(0, 2).join(", ")}</p>
-                  {job.message && <p className="text-muted text-[13px] line-clamp-2">{job.message}</p>}
+                  {job.message && <p className="text-muted text-[13px] line-clamp-2">{stripHtml(job.message)}</p>}
                   <p className="text-muted text-[11px] mt-2">{job.created_at?.slice(0, 10)}</p>
                 </div>
               </Link>

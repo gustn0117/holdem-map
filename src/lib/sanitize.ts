@@ -16,6 +16,21 @@ export function isHtml(s: string | null | undefined): boolean {
   return /<\/?[a-z][\s\S]*?>/i.test(s);
 }
 
+/** HTML 태그·엔티티를 제거해 목록 미리보기용 순수 텍스트로 변환 */
+export function stripHtml(s: string | null | undefined): string {
+  if (!s) return "";
+  return s
+    .replace(/<[^>]*>/g, " ")
+    .replace(/&nbsp;/g, " ")
+    .replace(/&amp;/g, "&")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
 export function plainTextToHtml(s: string): string {
   return s.split("\n").map(line => `<p>${line.replace(/</g, "&lt;").replace(/>/g, "&gt;") || "<br>"}</p>`).join("");
 }

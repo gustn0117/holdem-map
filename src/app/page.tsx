@@ -13,6 +13,7 @@ import { useStores, useEvents, useNotices } from "@/hooks/useData";
 import { useUserProfiles } from "@/hooks/useUserRanks";
 import { getBanners, getShorts, getJobs } from "@/lib/api";
 import { Store, Banner, Short, Job } from "@/types";
+import { stripHtml } from "@/lib/sanitize";
 import { supabase } from "@/lib/supabase";
 
 const MapView = dynamic(() => import("@/components/MapView"), { ssr: false });
@@ -221,7 +222,7 @@ export default function Home() {
                         <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${job.role === "딜러" ? "bg-emerald-100 text-emerald-700" : "bg-blue-100 text-blue-600"}`}>{job.role}</span>
                         <span className="text-[10px] text-muted">{timeAgo(job.created_at || "")}</span>
                       </div>
-                      <p className="text-sub text-[12px] truncate">{job.message ? job.message : `${job.areas?.slice(0, 2).join(", ") || ""}${job.store_name ? ` · ${job.store_name}` : ""}`}</p>
+                      <p className="text-sub text-[12px] truncate">{job.message ? stripHtml(job.message) : `${job.areas?.slice(0, 2).join(", ") || ""}${job.store_name ? ` · ${job.store_name}` : ""}`}</p>
                     </div>
                     <svg className="w-4 h-4 text-[#ccc] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
