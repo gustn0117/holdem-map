@@ -8,6 +8,7 @@ import Footer from "@/components/Footer";
 import { supabase } from "@/lib/supabase";
 import { Job } from "@/types";
 import { sanitizeHtml, isHtml, plainTextToHtml } from "@/lib/sanitize";
+import { parseJobContact } from "@/lib/jobContact";
 import JsonLdScript from "@/components/JsonLd";
 import { jobPostingSchema, breadcrumbSchema } from "@/lib/schema";
 
@@ -202,12 +203,9 @@ export default function JobDetailPage() {
                 </div>
               )}
 
-              {/* Contact — 작성폼이 '카카오톡: ID / 텔레그램: ID / 전화: 010xxx' 형태로 저장하므로 파싱 */}
+              {/* Contact — 사용자 작성폼(접두사) + 어드민(원본+contact_type) 형식 모두 파싱 */}
               {(() => {
-                const contact = job.contact || "";
-                const kakao = contact.match(/카카오톡:\s*([^\/\n]+?)(?:\s*\/|$)/)?.[1]?.trim() || "";
-                const telegram = contact.match(/텔레그램:\s*([^\/\n]+?)(?:\s*\/|$)/)?.[1]?.trim() || "";
-                const phone = contact.match(/전화:\s*([^\/\n]+?)(?:\s*\/|$)/)?.[1]?.trim() || "";
+                const { phone, kakao, telegram } = parseJobContact(job.contact, job.contact_type);
                 if (!kakao && !telegram && !phone) return null;
                 return (
                   <div className="border-t border-border-custom pt-6">

@@ -10,6 +10,7 @@ import { supabase } from "@/lib/supabase";
 import { Job } from "@/types";
 import { regionData, allRegions } from "@/data/areas";
 import { stripHtml } from "@/lib/sanitize";
+import { parseJobContact } from "@/lib/jobContact";
 
 const REGIONS = ["전체", ...allRegions];
 const STATUSES = ["전체", "지금 가능", "예약 가능", "일하는 중"];
@@ -85,20 +86,17 @@ export default function JobsPage() {
           contact_telegram: "",
           contact_phone: "",
           contact: (job as any).contact || "",
+          contact_type: (job as any).contact_type || "",
           created_at: job.created_at,
           gender: (job as any).gender || "",
         }));
 
-      // Parse contact field for job dealers (각 카드의 contact 문자열에서 직접 파싱 — id별 매칭이라 정확)
+      // 연락처 파싱 (사용자 작성폼 접두사 형식 + 어드민 원본+contact_type 형식 모두 지원)
       jobDealers.forEach(d => {
-        if (d.contact) {
-          const parts = d.contact.split(" / ");
-          parts.forEach((p: string) => {
-            if (p.startsWith("카카오톡:")) d.contact_kakao = p.replace("카카오톡: ", "");
-            if (p.startsWith("텔레그램:")) d.contact_telegram = p.replace("텔레그램: ", "");
-            if (p.startsWith("전화:")) d.contact_phone = p.replace("전화: ", "");
-          });
-        }
+        const parsed = parseJobContact(d.contact, d.contact_type);
+        d.contact_kakao = parsed.kakao;
+        d.contact_telegram = parsed.telegram;
+        d.contact_phone = parsed.phone;
       });
 
       setDealers([...profileDealers, ...jobDealers]);
