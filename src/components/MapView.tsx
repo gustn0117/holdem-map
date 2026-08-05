@@ -9,10 +9,19 @@ interface MapViewProps {
   stores: Store[];
   onStoreClick?: (store: Store) => void;
   selectedStore?: Store | null;
+  /** 홈·상세 등 페이지에 끼워 넣는 지도. 휠 줌/한손가락 드래그를 꺼서 페이지 스크롤을 방해하지 않는다 */
+  embedded?: boolean;
 }
 
 const defaultCenter: [number, number] = [37.5, 126.95];
 const defaultZoom = 11;
+
+// 대한민국 영역(제주·울릉 포함)으로 지도 이동·축소 범위를 제한
+const KOREA_BOUNDS: L.LatLngBoundsExpression = [
+  [33.0, 124.5], // 남서
+  [38.7, 132.0], // 북동
+];
+const MIN_ZOOM = 6; // 이보다 더 축소(세계지도)되지 않도록
 
 function createPinIcon(color: string, size: number = 30) {
   return L.divIcon({
@@ -34,7 +43,7 @@ const accentIcon = createPinIcon("#03c75a");
 const recommendedIcon = createPinIcon("#02a94c");
 const selectedIcon = createPinIcon("#006b3a", 38);
 
-export default function MapView({ stores, onStoreClick, selectedStore }: MapViewProps) {
+export default function MapView({ stores, onStoreClick, selectedStore, embedded = false }: MapViewProps) {
   const mapRef = useRef<L.Map | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const markersRef = useRef<Map<string, L.Marker>>(new Map());
@@ -46,12 +55,19 @@ export default function MapView({ stores, onStoreClick, selectedStore }: MapView
     const map = L.map(containerRef.current, {
       center: defaultCenter,
       zoom: defaultZoom,
+      minZoom: MIN_ZOOM,
       zoomControl: false,
+      maxBounds: KOREA_BOUNDS,
+      maxBoundsViscosity: 1.0, // 경계 밖으로 밀리지 않게 단단히 고정
+      // 임베드 지도(홈·상세): 마우스 휠 줌·드래그를 꺼서 페이지 스크롤을 방해하지 않음
+      scrollWheelZoom: !embedded,
+      dragging: !embedded,
     });
 
     L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", {
       attribution: '&copy; OpenStreetMap &copy; CARTO',
       maxZoom: 19,
+      noWrap: true, // 세계지도가 좌우로 반복되지 않도록
     }).addTo(map);
 
     L.control.zoom({ position: "bottomright" }).addTo(map);
@@ -60,7 +76,7 @@ export default function MapView({ stores, onStoreClick, selectedStore }: MapView
     setReady(true);
 
     return () => { map.remove(); mapRef.current = null; };
-  }, []);
+  }, [embedded]);
 
   useEffect(() => {
     if (!mapRef.current || !ready) return;

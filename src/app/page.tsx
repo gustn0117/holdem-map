@@ -350,8 +350,9 @@ export default function Home() {
             <h2 className="text-[17px] font-bold text-surface">매장 지도</h2>
             <Link href="/map" className="text-accent text-[12px] font-semibold hover:underline">크게 보기 →</Link>
           </div>
-          <div className="h-72 rounded-2xl overflow-hidden card-shadow">
-            <MapView stores={filteredStores} onStoreClick={setSelectedStore} selectedStore={selectedStore} />
+          {/* 좌우 여백(mx)으로 페이지를 아래로 스크롤할 통로 확보 */}
+          <div className="h-60 mx-6 rounded-2xl overflow-hidden card-shadow">
+            <MapView stores={filteredStores} onStoreClick={setSelectedStore} selectedStore={selectedStore} embedded />
           </div>
         </section>
 
@@ -453,8 +454,9 @@ export default function Home() {
                 </Link>
               </div>
             </div>
-            <div className="h-80 lg:h-110 rounded-2xl overflow-hidden card-shadow">
-              <MapView stores={filteredStores} onStoreClick={setSelectedStore} selectedStore={selectedStore} />
+            {/* 크기를 줄이고 좌우 여백(max-w + mx-auto)을 둬서 화면을 꽉 채우지 않도록 */}
+            <div className="h-72 lg:h-96 max-w-4xl mx-auto rounded-2xl overflow-hidden card-shadow">
+              <MapView stores={filteredStores} onStoreClick={setSelectedStore} selectedStore={selectedStore} embedded />
             </div>
           </div>
         </section>
