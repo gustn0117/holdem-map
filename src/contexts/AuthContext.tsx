@@ -7,6 +7,7 @@ import { User, Session } from "@supabase/supabase-js";
 export interface Profile {
   id: string;
   email: string;
+  username: string;
   nickname: string;
   role: string;
   phone: string;
@@ -31,7 +32,7 @@ interface AuthContextType {
   user: User | null;
   profile: Profile | null;
   loading: boolean;
-  signUp: (email: string, password: string, nickname: string, userType?: string, referralCode?: string) => Promise<{ error: string | null }>;
+  signUp: (email: string, password: string, nickname: string, userType?: string, referralCode?: string, username?: string) => Promise<{ error: string | null }>;
   signIn: (email: string, password: string) => Promise<{ error: string | null }>;
   signOut: () => Promise<void>;
   refreshProfile: () => Promise<void>;
@@ -80,7 +81,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => subscription.unsubscribe();
   }, []);
 
-  const signUp = async (email: string, password: string, nickname: string, userType: string = "일반", referralCode?: string) => {
+  const signUp = async (email: string, password: string, nickname: string, userType: string = "일반", referralCode?: string, username?: string) => {
+    const uname = (username || "").trim();
+    // 아이디 중복 사전 확인 (대소문자 무시)
+    if (uname) {
+      const { data: dup } = await supabase.from("profiles").select("id").ilike("username", uname).maybeSingle();
+      if (dup) return { error: "이미 사용 중인 아이디입니다." };
+    }
     const { data, error } = await supabase.auth.signUp({ email, password });
     if (error) return { error: error.message };
     if (data.user) {
@@ -102,6 +109,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       await supabase.from("profiles").upsert({
         id: data.user.id,
         email,
+        username: uname || null,
         nickname,
         role: "user",
         user_type: userType,

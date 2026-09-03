@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Header from "@/components/Header";
 import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/lib/supabase";
 
 export default function LoginPage() {
   const [identifier, setIdentifier] = useState("");
@@ -21,10 +22,26 @@ export default function LoginPage() {
     const trimmed = identifier.trim();
     const phoneDigits = trimmed.replace(/-/g, "");
     const isPhone = /^01[0-9]{8,9}$/.test(phoneDigits);
-    const loginEmail = isPhone ? `${phoneDigits}@phone.holdemmap.kr` : trimmed;
+
+    let loginEmail: string;
+    if (trimmed.includes("@")) {
+      loginEmail = trimmed; // 이메일 직접 입력
+    } else if (isPhone) {
+      loginEmail = `${phoneDigits}@phone.holdemmap.kr`; // 전화번호 가입자
+    } else {
+      // 아이디 입력 → 해당 계정의 로그인 이메일 조회
+      const { data: prof } = await supabase.from("profiles").select("email").ilike("username", trimmed).maybeSingle();
+      if (!prof?.email) {
+        setError("아이디 또는 비밀번호가 올바르지 않습니다.");
+        setLoading(false);
+        return;
+      }
+      loginEmail = prof.email;
+    }
+
     const { error } = await signIn(loginEmail, password);
     if (error) {
-      setError(error === "Invalid login credentials" ? "이메일/전화번호 또는 비밀번호가 올바르지 않습니다." : error);
+      setError(error === "Invalid login credentials" ? "아이디 또는 비밀번호가 올바르지 않습니다." : error);
       setLoading(false);
     } else {
       router.push("/");
@@ -50,11 +67,11 @@ export default function LoginPage() {
             )}
 
             <div>
-              <label className="text-surface text-sm font-semibold mb-1.5 block">이메일 또는 전화번호</label>
+              <label className="text-surface text-sm font-semibold mb-1.5 block">아이디</label>
               <input type="text" name="username" autoComplete="username" value={identifier} onChange={e => setIdentifier(e.target.value)} required
                 className="w-full border border-border-custom rounded-xl px-4 py-3 text-[15px] focus:outline-none focus:border-accent transition-colors bg-white"
-                placeholder="example@email.com 또는 01012345678" />
-              <p className="text-muted text-[11px] mt-1">전화번호로 가입하신 분은 전화번호만 입력하시면 됩니다</p>
+                placeholder="아이디 입력" />
+              <p className="text-muted text-[11px] mt-1">기존에 이메일·전화번호로 가입하신 분은 그대로 입력하셔도 됩니다.</p>
             </div>
 
             <div>

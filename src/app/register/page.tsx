@@ -31,6 +31,7 @@ function RegisterPageInner() {
   const initialReferral = searchParams.get("ref") || "";
   const [step, setStep] = useState(1);
   const [userType, setUserType] = useState("");
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
@@ -45,6 +46,11 @@ function RegisterPageInner() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+    const trimmedUsername = username.trim();
+    if (!/^[a-zA-Z][a-zA-Z0-9_]{3,19}$/.test(trimmedUsername)) {
+      setError("아이디는 영문으로 시작하는 4~20자(영문·숫자·_)여야 합니다.");
+      return;
+    }
     if (password.length < 6) { setError("비밀번호는 6자 이상이어야 합니다."); return; }
     if (password !== passwordConfirm) { setError("비밀번호가 일치하지 않습니다."); return; }
     const trimmedNickname = nickname.trim();
@@ -59,7 +65,7 @@ function RegisterPageInner() {
     const loginEmail = email.trim() ? email.trim() : `${cleanPhoneEarly}@phone.holdemmap.kr`;
 
     setLoading(true);
-    const { error } = await signUp(loginEmail, password, trimmedNickname, userType, referralCode);
+    const { error } = await signUp(loginEmail, password, trimmedNickname, userType, referralCode, trimmedUsername);
     if (error) {
       setError(error.includes("already registered") ? "이미 등록된 계정입니다." : error);
       setLoading(false);
@@ -140,6 +146,14 @@ function RegisterPageInner() {
                 {error && (
                   <div className="bg-red-50 border border-red-200 text-red-600 text-sm px-4 py-3 rounded-xl">{error}</div>
                 )}
+
+                <div>
+                  <label className="text-surface text-sm font-semibold mb-1.5 block">아이디 <span className="text-red-500">*</span></label>
+                  <input type="text" name="username" autoComplete="username" inputMode="text" value={username}
+                    onChange={e => setUsername(e.target.value)} required
+                    className={inputClass} placeholder="로그인에 사용할 아이디 (영문 시작 4~20자)" />
+                  <p className="text-muted text-[11px] mt-1">로그인 시 이 아이디와 비밀번호를 사용합니다. (영문·숫자·_ 사용)</p>
+                </div>
 
                 <div>
                   <label className="text-surface text-sm font-semibold mb-1.5 block">닉네임</label>
