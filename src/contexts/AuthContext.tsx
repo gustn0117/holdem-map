@@ -32,7 +32,7 @@ interface AuthContextType {
   user: User | null;
   profile: Profile | null;
   loading: boolean;
-  signUp: (email: string, password: string, nickname: string, userType?: string, referralCode?: string, username?: string) => Promise<{ error: string | null }>;
+  signUp: (email: string, password: string, nickname: string, userType?: string, referralCode?: string, username?: string, phone?: string) => Promise<{ error: string | null }>;
   signIn: (email: string, password: string) => Promise<{ error: string | null }>;
   signOut: () => Promise<void>;
   refreshProfile: () => Promise<void>;
@@ -46,18 +46,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   const fetchProfile = async (userId: string) => {
-    const { data } = await supabase.from("profiles").select("*").eq("id", userId).single();
-    if (data) { setProfile(data); return; }
-
-    // Race condition with signUp(): 잠깐 기다린 후 재시도. signUp 안에서 정식 닉네임으로
-    // insert 중일 수 있으므로 fallback profile을 만들지 않는다 (이메일 prefix가 닉네임을
-    // 덮어쓰던 과거 버그 제거).
-    await new Promise(r => setTimeout(r, 1500));
-    const { data: retry } = await supabase.from("profiles").select("*").eq("id", userId).single();
-    if (retry) { setProfile(retry); return; }
-
-    // 그래도 없으면 (signUp을 안 거친 레거시 케이스) profile=null 상태 유지.
-    // 사용자가 마이페이지에서 직접 닉네임을 설정하도록 유도.
+    // signUp()과의 race: 프로필 insert 직후일 수 있으므로 짧게 여러 번 재시도(찾으면 즉시 종료).
+    // 기존 고정 1500ms 대기가 회원가입 렉의 원인이라 300ms×최대 4회로 교체.
+    for (let attempt = 0; attempt < 4; attempt++) {
+      const { data } = await supabase.from("profiles").select("*").eq("id", userId).single();
+      if (data) { setProfile(data); return; }
+      if (attempt < 3) await new Promise(r => setTimeout(r, 300));
+    }
+    // 끝까지 없으면 (signUp을 안 거친 레거시 케이스) profile=null 유지.
     setProfile(null);
   };
 
@@ -81,7 +77,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => subscription.unsubscribe();
   }, []);
 
-  const signUp = async (email: string, password: string, nickname: string, userType: string = "일반", referralCode?: string, username?: string) => {
+  const signUp = async (email: string, password: string, nickname: string, userType: string = "일반", referralCode?: string, username?: string, phone?: string) => {
     const uname = (username || "").trim();
     // 아이디 중복 사전 확인 (대소문자 무시)
     if (uname) {
@@ -105,18 +101,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // 신규 회원 referral_code 생성
       const newCode = Math.random().toString(36).slice(2, 10);
 
-      // upsert로 race 안전: fetchProfile이 먼저 빈 row를 만들었어도 사용자 입력 닉네임으로 덮어씀
-      await supabase.from("profiles").upsert({
+      // upsert로 race 안전: fetchProfile이 먼저 빈 row를 만들었어도 사용자 입력 닉네임으로 덮어씀.
+      // 전화번호도 함께 저장하고 저장된 row를 바로 받아 setProfile → 추가 조회 왕복 제거
+      const { data: newProfile } = await supabase.from("profiles").upsert({
         id: data.user.id,
         email,
         username: uname || null,
         nickname,
+        phone: (phone || "").trim() || null,
         role: "user",
         user_type: userType,
         referral_code: newCode,
         referred_by: referredBy,
         tournament_tickets: 1,
-      }, { onConflict: "id" });
+      }, { onConflict: "id" }).select().single();
 
       // 추천인에게 무료 토너권 +1
       if (referredBy) {
@@ -132,7 +130,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           .eq("id", referredBy);
       }
 
-      await fetchProfile(data.user.id);
+      // 저장된 프로필을 바로 반영(추가 조회 없음). 실패 시에만 fallback 조회.
+      if (newProfile) setProfile(newProfile as Profile);
+      else await fetchProfile(data.user.id);
     }
     return { error: null };
   };

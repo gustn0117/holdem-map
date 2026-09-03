@@ -5,7 +5,6 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Header from "@/components/Header";
 import { useAuth } from "@/contexts/AuthContext";
-import { supabase } from "@/lib/supabase";
 
 const USER_TYPES = [
   { value: "딜러", label: "딜러", desc: "구직 활동 및 상태 관리", icon: "M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" },
@@ -65,14 +64,12 @@ function RegisterPageInner() {
     const loginEmail = email.trim() ? email.trim() : `${cleanPhoneEarly}@phone.holdemmap.kr`;
 
     setLoading(true);
-    const { error } = await signUp(loginEmail, password, trimmedNickname, userType, referralCode, trimmedUsername);
+    const { error } = await signUp(loginEmail, password, trimmedNickname, userType, referralCode, trimmedUsername, cleanPhoneEarly);
     if (error) {
       setError(error.includes("already registered") ? "이미 등록된 계정입니다." : error);
       setLoading(false);
     } else {
-      // 전화번호는 항상 저장 (필수)
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) await supabase.from("profiles").update({ phone: cleanPhoneEarly }).eq("id", user.id);
+      // 전화번호는 signUp에서 함께 저장됨 (별도 getUser/update 왕복 제거)
       router.push("/mypage");
     }
   };
