@@ -53,7 +53,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (data) { setProfile(data); return; }
       if (attempt < 3) await new Promise(r => setTimeout(r, 300));
     }
-    // 끝까지 없으면 (signUp을 안 거친 레거시 케이스) profile=null 유지.
+
+    // 자가치유: 로그인 계정인데 프로필이 없으면(가입 도중 실패 등) 최소 프로필을 생성한다.
+    // 프로필 null을 그대로 두면 /mypage 등이 영원히 스피너(무한로딩)가 되므로 방지.
+    try {
+      const { data: authData } = await supabase.auth.getUser();
+      const u = authData?.user;
+      if (u && u.id === userId) {
+        const em = u.email || "";
+        const phone = em.endsWith("@phone.holdemmap.kr") ? em.split("@")[0] : "";
+        await supabase.from("profiles").upsert({
+          id: userId, email: em, nickname: "회원" + userId.slice(0, 4),
+          role: "user", user_type: "일반", phone,
+          referral_code: Math.random().toString(36).slice(2, 10), tournament_tickets: 1,
+        }, { onConflict: "id", ignoreDuplicates: true });
+        const { data: healed } = await supabase.from("profiles").select("*").eq("id", userId).single();
+        if (healed) { setProfile(healed); return; }
+      }
+    } catch { /* 무시하고 null 유지 */ }
+
     setProfile(null);
   };
 
